@@ -7,7 +7,16 @@ class Homesick < Thor
   def clone(uri)
     empty_directory homes_dir
     inside homes_dir do
-      run "git clone #{uri}"
+      if uri =~ /^git:\/\//
+        unless File.directory? "#{homes_dir}/#{uri[/[A-Za-z_-]+\/[A-Za-z_-]+$/]}"
+          run "git clone #{uri}"
+         end
+      elsif uri =~ /^[A-Za-z_-]+\/[A-Za-z_-]+$/
+        match = uri.match(/([A-Za-z_-]+)\/([A-Za-z_-]+)/)
+        unless File.directory? "#{homes_dir}/#{match[1]}_#{match[2]}"
+          run "git clone git://github.com/#{match[0]} #{match[1]}_#{match[2]}"
+        end
+      end
     end
   end
 
