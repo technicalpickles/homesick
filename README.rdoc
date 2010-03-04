@@ -1,6 +1,8 @@
 = homesick
 
-Description goes here.
+Homesick is like rip, but for dotfiles. It keeps clones of peoples' git-version
+dotfiles in the ~/.homesick/ directory, and then allows you to very easily
+symlink all the dotfiles from any one of your cloned repos into place.
 
 == Note on Patches/Pull Requests
  
