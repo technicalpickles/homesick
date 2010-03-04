@@ -1,6 +1,7 @@
 # Add dependencies required to use your gem here.
 group :runtime do
   #gem 'bundler', '>= 0.9.5'
+  gem "thor"
 end
 
 # Add dependencies to develop your gem here.
