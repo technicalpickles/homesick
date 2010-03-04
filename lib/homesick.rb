@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'thor'
 
 class Homesick < Thor
