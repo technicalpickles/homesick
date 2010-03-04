@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+require 'pathname'
+lib = Pathname.new(__FILE__).dirname.join('..', 'lib').expand_path
+$LOAD_PATH.unshift.unshift lib.to_s unless $LOAD_PATH.include?(lib.to_s)
+
+require 'homesick'
+
+Homesick.start
