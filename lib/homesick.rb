@@ -27,7 +27,7 @@ class Homesick < Thor
   GIT_URI_PATTERN = /^git:\/\//
   GITHUB_NAME_REPO_PATTERN = /([A-Za-z_-]+)\/([A-Za-z_-]+)/
 
-  desc "clone URI", "Clone home's +uri+ for use with homesick"
+  desc "clone URI", "Clone +uri+ as a castle for homesick"
   def clone(uri)
     empty_directory repos_dir, :verbose => false
     inside repos_dir do
@@ -39,9 +39,9 @@ class Homesick < Thor
     end
   end
 
-  desc "link NAME", "Links everything"
+  desc "link NAME", "Symlinks all dotfiles from the specified castle"
   def link(home)
-    inside home_dir(home) do
+    inside castle_dir(home) do
       files = Pathname.glob('.*')[2..-1] # skip . and .., ie the first two
       files.each do |path|
         absolute_path = path.expand_path
@@ -55,7 +55,7 @@ class Homesick < Thor
     end
   end
 
-  desc "list", "List installed widgets"
+  desc "list", "List cloned castles"
   def list
     inside repos_dir do
       Pathname.glob('*') do |home|
@@ -64,16 +64,17 @@ class Homesick < Thor
     end
   end
 
-  # class method, so it's convenient to stub out during tests
-  def self.user_dir
-    @user_dir ||= Pathname.new('~').expand_path
-  end
-
-  def self.repos_dir
-    @repos_dir ||= Pathname.new('~/.homesick/repos').expand_path
-  end
 
   no_tasks do
+    # class method, so it's convenient to stub out during tests
+    def self.user_dir
+      @user_dir ||= Pathname.new('~').expand_path
+    end
+
+    def self.repos_dir
+      @repos_dir ||= Pathname.new('~/.homesick/repos').expand_path
+    end
+
     def repos_dir
       self.class.repos_dir
     end
@@ -122,7 +123,7 @@ class Homesick < Thor
     self.class.user_dir
   end
 
-  def home_dir(name)
+  def castle_dir(name)
     repos_dir.join(name, 'home')
   end
 
