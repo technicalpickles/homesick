@@ -17,6 +17,7 @@ Jeweler::Tasks.new do |gem|
   gem.email = "josh@technicalpickles.com"
   gem.homepage = "http://github.com/technicalpickles/homesick"
   gem.authors = ["Joshua Nichols"]
+  gem.version = "0.1.0"
   # Have dependencies? Add them to Gemfile
 
   # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
