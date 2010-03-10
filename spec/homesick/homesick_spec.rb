@@ -1,20 +1,19 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe "Homesick" do
-  it "should clone any git repo" do
-    homesick = Homesick.new
-    repos_dir = Pathname.new('~/.homesick/repos').expand_path
-    homesick.clone "git://github.com/technicalpickles/pickled-vim.git"
+  before do
+    @homesick = Homesick.new
+  end
 
-    File.directory?("#{repos_dir}/pickled-vim").should == true
+  it "should clone any git repo" do
+    @homesick.should_receive(:git_clone).with('git://github.com/technicalpickles/pickled-vim.git')
+
+    @homesick.clone "git://github.com/technicalpickles/pickled-vim.git"
   end
 
   it "should clone a github repo" do
-    homesick = Homesick.new
-    repos_dir = Pathname.new('~/.homesick/repos').expand_path
+    @homesick.should_receive(:git_clone).with('git://github.com/wfarr/dotfiles.git', 'wfarr_dotfiles')
 
-    homesick.clone "wfarr/dotfiles"
-
-    File.directory?("#{repos_dir}/wfarr_dotfiles").should == true
+    @homesick.clone "wfarr/dotfiles"
   end
 end

@@ -3,19 +3,18 @@ require 'thor'
 class Homesick < Thor
   include Thor::Actions
 
+  GIT_URI_PATTERN = /^git:\/\//
+  GITHUB_NAME_REPO_PATTERN = /^[A-Za-z_-]+\/[A-Za-z_-]+$/
+
   desc "clone URI", "Clone home's +uri+ for use with homesick"
   def clone(uri)
-    empty_directory homes_dir
-    inside homes_dir do
-      if uri =~ /^git:\/\//
-        unless File.directory? "#{homes_dir}/#{uri[/[A-Za-z_-]+\/[A-Za-z_-]+$/]}"
-          run "git clone #{uri}"
-         end
-      elsif uri =~ /^[A-Za-z_-]+\/[A-Za-z_-]+$/
+    empty_directory repos_dir
+    inside repos_dir do
+      if uri =~ GIT_URI_PATTERN
+        git_clone uri
+      elsif uri =~ GITHUB_NAME_REPO_PATTERN
         match = uri.match(/([A-Za-z_-]+)\/([A-Za-z_-]+)/)
-        unless File.directory? "#{homes_dir}/#{match[1]}_#{match[2]}"
-          run "git clone git://github.com/#{match[0]} #{match[1]}_#{match[2]}"
-        end
+        git_clone "git://github.com/#{match[0]}.git", "#{match[1]}_#{match[2]}"
       end
     end
   end
@@ -37,30 +36,41 @@ class Homesick < Thor
 
   desc "list", "List installed widgets"
   def list
-    inside homes_dir do
+    inside repos_dir do
       Pathname.glob('*') do |home|
         puts home
       end
     end
   end
 
-  protected
-
   # class method, so it's convenient to stub out during tests
   def self.user_dir
     @user_dir ||= Pathname.new('~').expand_path
+  end
+
+  def self.repos_dir
+    @repos_dir ||= Pathname.new('~/.homesick/repos').expand_path
+  end
+
+  no_tasks do
+    def repos_dir
+      self.class.repos_dir
+    end
+  end
+
+  protected
+
+  # TODO move this to be more like thor's template, empty_directory, etc
+  def git_clone(repo, destination = nil)
+    run "git clone #{repo} #{destination}"
   end
 
   def user_dir
     self.class.user_dir
   end
 
-  def homes_dir
-    @homes_dir ||= Pathname.new('~/.homesick/repos').expand_path
-  end
-
   def home_dir(name)
-    homes_dir.join(name, 'home')
+    repos_dir.join(name, 'home')
   end
 
 end
