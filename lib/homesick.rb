@@ -10,8 +10,8 @@ class Homesick < Thor
       destination = Pathname.new(destination)
 
       if destination.symlink?
-        say "+ #{content.expand_path}", :green, true
         say "- #{destination.readlink}", :red, true
+        say "+ #{content.expand_path}", :green, true
       else
         super
       end
