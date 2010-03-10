@@ -3,18 +3,38 @@ require 'thor'
 class Homesick < Thor
   include Thor::Actions
 
+  # Hack in support for diffing symlinks
+  class Shell < Thor::Shell::Color
+
+    def show_diff(destination, content)
+      destination = Pathname.new(destination)
+
+      if destination.symlink?
+        say "+ #{content.expand_path}", :green, true
+        say "- #{destination.readlink}", :red, true
+      else
+        super
+      end
+    end
+
+  end
+
+  def initialize(args=[], options={}, config={})
+    super
+    self.shell = Homesick::Shell.new
+  end
+
   GIT_URI_PATTERN = /^git:\/\//
-  GITHUB_NAME_REPO_PATTERN = /^[A-Za-z_-]+\/[A-Za-z_-]+$/
+  GITHUB_NAME_REPO_PATTERN = /([A-Za-z_-]+)\/([A-Za-z_-]+)/
 
   desc "clone URI", "Clone home's +uri+ for use with homesick"
   def clone(uri)
-    empty_directory repos_dir
+    empty_directory repos_dir, :verbose => false
     inside repos_dir do
       if uri =~ GIT_URI_PATTERN
         git_clone uri
       elsif uri =~ GITHUB_NAME_REPO_PATTERN
-        match = uri.match(/([A-Za-z_-]+)\/([A-Za-z_-]+)/)
-        git_clone "git://github.com/#{match[0]}.git", "#{match[1]}_#{match[2]}"
+        git_clone "git://github.com/#{$1}/#{$2}.git", "#{$1}_#{$2}"
       end
     end
   end
@@ -28,7 +48,8 @@ class Homesick < Thor
 
         inside user_dir do
           adjusted_path = (user_dir + path).basename
-          run "ln -sf #{absolute_path} #{adjusted_path}"
+
+          symlink absolute_path, adjusted_path
         end
       end
     end
@@ -61,8 +82,40 @@ class Homesick < Thor
   protected
 
   # TODO move this to be more like thor's template, empty_directory, etc
-  def git_clone(repo, destination = nil)
-    run "git clone #{repo} #{destination}"
+  def git_clone(repo, config = {})
+    config ||= {}
+    destination = config[:destination] || begin
+                                            repo =~ /([^\/]+)\.git$/
+                                            $1
+                                          end
+
+    destination = Pathname.new(destination) unless destination.kind_of?(Pathname)
+
+    if ! destination.directory?
+      say_status 'git clone', "#{repo} to #{destination.expand_path}", :green if config.fetch(:verbose, true)
+      system "git clone #{repo} #{destination}" unless options[:pretend]
+    else
+      say_status :exist, destination.expand_path, :blue
+    end
+  end
+
+  def symlink(source, destination, config = {})
+    destination = Pathname.new(destination)
+
+    if destination.symlink?
+      if destination.readlink == source
+        say_status :identical, destination.expand_path, :blue
+      else
+        say_status :conflict, "#{destination} exists and points to #{destination.readlink}", :red
+
+        if shell.file_collision(destination) { source }
+          system "ln -sf #{source} #{destination}"
+        end
+      end
+    else
+      say_status :symlink, "#{source.expand_path} to #{destination.expand_path}", :green
+      system "ln -s #{source} #{destination}"
+    end
   end
 
   def user_dir
