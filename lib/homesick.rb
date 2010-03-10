@@ -46,8 +46,13 @@ class Homesick < Thor
 
   protected
 
-  def user_dir
+  # class method, so it's convenient to stub out during tests
+  def self.user_dir
     @user_dir ||= Pathname.new('~').expand_path
+  end
+
+  def user_dir
+    self.class.user_dir
   end
 
   def homes_dir
