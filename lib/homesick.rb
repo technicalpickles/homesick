@@ -42,7 +42,7 @@ class Homesick < Thor
   desc "link NAME", "Symlinks all dotfiles from the specified castle"
   def link(home)
     inside castle_dir(home) do
-      files = Pathname.glob('.*')[2..-1] # skip . and .., ie the first two
+      files = Pathname.glob('.*').reject{|a| [".",".."].include?(a.to_s)}
       files.each do |path|
         absolute_path = path.expand_path
 
