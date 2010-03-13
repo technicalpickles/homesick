@@ -24,17 +24,16 @@ class Homesick < Thor
     self.shell = Homesick::Shell.new
   end
 
-  GIT_URI_PATTERN = /^git:\/\//
   GITHUB_NAME_REPO_PATTERN = /([A-Za-z_-]+)\/([A-Za-z_-]+)/
 
   desc "clone URI", "Clone +uri+ as a castle for homesick"
   def clone(uri)
     empty_directory repos_dir, :verbose => false
     inside repos_dir do
-      if uri =~ GIT_URI_PATTERN
-        git_clone uri
-      elsif uri =~ GITHUB_NAME_REPO_PATTERN
+      if uri =~ GITHUB_NAME_REPO_PATTERN
         git_clone "git://github.com/#{$1}/#{$2}.git", "#{$1}_#{$2}"
+      else
+        git_clone uri
       end
     end
   end
