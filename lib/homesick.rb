@@ -24,7 +24,7 @@ class Homesick < Thor
     self.shell = Homesick::Shell.new
   end
 
-  GITHUB_NAME_REPO_PATTERN = /([A-Za-z_-]+)\/([A-Za-z_-]+)/
+  GITHUB_NAME_REPO_PATTERN = /\A([A-Za-z_-]+)\/([A-Za-z_-]+)\Z/
 
   desc "clone URI", "Clone +uri+ as a castle for homesick"
   def clone(uri)
