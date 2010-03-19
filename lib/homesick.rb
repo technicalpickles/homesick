@@ -57,7 +57,7 @@ class Homesick < Thor
     inside repos_dir do
       Pathname.glob('*') do |home|
         inside home do
-          say_status home, `git config remote.origin.url`
+          say_status home, `git config remote.origin.url`, :cyan
         end
       end
     end

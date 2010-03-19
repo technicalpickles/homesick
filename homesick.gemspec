@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Joshua Nichols"]
-  s.date = %q{2010-03-17}
+  s.date = %q{2010-03-19}
   s.default_executable = %q{homesick}
   s.description = %q{
     A man’s home (directory) is his castle, so don’t leave home with out it.
@@ -35,6 +35,8 @@ Gem::Specification.new do |s|
      "bin/homesick",
      "homesick.gemspec",
      "lib/homesick.rb",
+     "lib/homesick/actions.rb",
+     "lib/homesick/shell.rb",
      "spec/homesick/homesick_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb"
