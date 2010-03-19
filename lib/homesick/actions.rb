@@ -11,10 +11,10 @@ class Homesick
       destination = Pathname.new(destination) unless destination.kind_of?(Pathname)
 
       if ! destination.directory?
-        say_status 'git clone', "#{repo} to #{destination.expand_path}", :green if config.fetch(:verbose, true)
+        say_status 'git clone', "#{repo} to #{destination.expand_path}", :green unless options[:quiet]
         system "git clone -q #{repo} #{destination}" unless options[:pretend]
       else
-        say_status :exist, destination.expand_path, :blue
+        say_status :exist, destination.expand_path, :blue unless options[:quiet]
       end
     end
 
@@ -23,16 +23,16 @@ class Homesick
 
       if destination.symlink?
         if destination.readlink == source
-          say_status :identical, destination.expand_path, :blue
+          say_status :identical, destination.expand_path, :blue unless options[:quiet]
         else
-          say_status :conflict, "#{destination} exists and points to #{destination.readlink}", :red
+          say_status :conflict, "#{destination} exists and points to #{destination.readlink}", :red unless options[:quiet]
 
           if shell.file_collision(destination) { source }
             system "ln -sf #{source} #{destination}" unless options[:pretend]
           end
         end
       else
-        say_status :symlink, "#{source.expand_path} to #{destination.expand_path}", :green
+        say_status :symlink, "#{source.expand_path} to #{destination.expand_path}", :green unless options[:quiet]
         system "ln -s #{source} #{destination}" unless options[:pretend]
       end
     end
