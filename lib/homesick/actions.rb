@@ -12,7 +12,7 @@ class Homesick
 
       if ! destination.directory?
         say_status 'git clone', "#{repo} to #{destination.expand_path}", :green if config.fetch(:verbose, true)
-        system "git clone #{repo} #{destination}" unless options[:pretend]
+        system "git clone -q #{repo} #{destination}" unless options[:pretend]
       else
         say_status :exist, destination.expand_path, :blue
       end

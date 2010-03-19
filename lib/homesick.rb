@@ -21,7 +21,7 @@ class Homesick < Thor
     empty_directory repos_dir, :verbose => false
     inside repos_dir do
       if uri =~ GITHUB_NAME_REPO_PATTERN
-        git_clone "git://github.com/#{$1}/#{$2}.git", "#{$1}_#{$2}"
+        git_clone "git://github.com/#{$1}/#{$2}.git", :destination => "#{$1}_#{$2}"
       else
         git_clone uri
       end
