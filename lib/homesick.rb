@@ -7,12 +7,14 @@ class Homesick < Thor
   include Thor::Actions
   include Homesick::Actions
 
+  add_runtime_options!
+
+  GITHUB_NAME_REPO_PATTERN = /\A([A-Za-z_-]+)\/([A-Za-z_-]+)\Z/
+
   def initialize(args=[], options={}, config={})
     super
     self.shell = Homesick::Shell.new
   end
-
-  GITHUB_NAME_REPO_PATTERN = /\A([A-Za-z_-]+)\/([A-Za-z_-]+)\Z/
 
   desc "clone URI", "Clone +uri+ as a castle for homesick"
   def clone(uri)

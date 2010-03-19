@@ -28,12 +28,12 @@ class Homesick
           say_status :conflict, "#{destination} exists and points to #{destination.readlink}", :red
 
           if shell.file_collision(destination) { source }
-            system "ln -sf #{source} #{destination}"
+            system "ln -sf #{source} #{destination}" unless options[:pretend]
           end
         end
       else
         say_status :symlink, "#{source.expand_path} to #{destination.expand_path}", :green
-        system "ln -s #{source} #{destination}"
+        system "ln -s #{source} #{destination}" unless options[:pretend]
       end
     end
   end
