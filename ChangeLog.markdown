@@ -12,6 +12,6 @@
  * Fixed linking, which tries to exclude . and .. from the list of files to
  link (thanks Martinos!)
 
- # 0.1.0
+# 0.1.0
 
  * Initial release
