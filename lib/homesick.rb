@@ -66,7 +66,9 @@ class Homesick < Thor
   def list
     inside repos_dir do
       Pathname.glob('*') do |home|
-        puts home
+        inside home do
+          say_status home, `git config remote.origin.url`
+        end
       end
     end
   end
