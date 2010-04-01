@@ -44,7 +44,7 @@ class Homesick < Thor
           inside user_dir do
             adjusted_path = (user_dir + path).basename
 
-            symlink absolute_path, adjusted_path
+            ln_s absolute_path, adjusted_path
           end
         end
       end

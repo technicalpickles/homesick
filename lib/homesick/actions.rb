@@ -18,7 +18,7 @@ class Homesick
       end
     end
 
-    def symlink(source, destination, config = {})
+    def ln_s(source, destination, config = {})
       destination = Pathname.new(destination)
 
       if destination.symlink?
