@@ -28,8 +28,8 @@ class Homesick < Thor
     end
   end
 
-  desc "link NAME", "Symlinks all dotfiles from the specified castle"
-  def link(home)
+  desc "symlink NAME", "Symlinks all dotfiles from the specified castle"
+  def symlink(home)
     unless castle_dir(home).exist?
       say_status :error, "Castle #{home} did not exist in #{repos_dir}", :red
 

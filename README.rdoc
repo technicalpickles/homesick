@@ -24,11 +24,15 @@ Alternatively, if it's on github, there's a slightly shorter way:
 
 With the castle cloned, you can now link its contents into your home dir:
 
-    homesick link pickled-vim
+    homesick symlink pickled-vim
 
 If you're not sure what castles you have around, you can easily list them:
 
     homesick list
+
+Not sure what else homesick has up its sleeve? There's always the built in help:
+
+    homesick help
 
 == Note on Patches/Pull Requests
  
