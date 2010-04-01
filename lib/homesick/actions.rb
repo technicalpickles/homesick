@@ -31,6 +31,12 @@ class Homesick
             system "ln -sf #{source} #{destination}" unless options[:pretend]
           end
         end
+      elsif destination.exist?
+        say_status :conflict, "#{destination} exists", :red unless options[:quiet]
+
+        if shell.file_collision(destination) { source }
+          system "ln -sf #{source} #{destination}" unless options[:pretend]
+        end
       else
         say_status :symlink, "#{source.expand_path} to #{destination.expand_path}", :green unless options[:quiet]
         system "ln -s #{source} #{destination}" unless options[:pretend]
