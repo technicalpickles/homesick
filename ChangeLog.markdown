@@ -1,3 +1,8 @@
+# 3.0.0
+
+ * Renamed 'link' to 'symlink'
+ * Fixed conflict resolution when symlink destination exists and is a normal file
+
 # 2.0.0
 
  * Better support for recognizing git urls (thanks jacobat!)
