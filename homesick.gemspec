@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{homesick}
-  s.version = "0.4.0"
+  s.version = "0.4.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Joshua Nichols"]
-  s.date = %q{2010-04-01}
+  s.date = %q{2010-04-02}
   s.default_executable = %q{homesick}
   s.description = %q{
     A man’s home (directory) is his castle, so don’t leave home with out it.
