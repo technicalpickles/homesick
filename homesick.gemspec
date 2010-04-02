@@ -21,25 +21,25 @@ Gem::Specification.new do |s|
   s.executables = ["homesick"]
   s.extra_rdoc_files = [
     "ChangeLog.markdown",
-     "LICENSE",
-     "README.markdown"
+    "LICENSE",
+    "README.markdown"
   ]
   s.files = [
     ".document",
-     ".gitignore",
-     "ChangeLog.markdown",
-     "Gemfile",
-     "LICENSE",
-     "README.markdown",
-     "Rakefile",
-     "bin/homesick",
-     "homesick.gemspec",
-     "lib/homesick.rb",
-     "lib/homesick/actions.rb",
-     "lib/homesick/shell.rb",
-     "spec/homesick/homesick_spec.rb",
-     "spec/spec.opts",
-     "spec/spec_helper.rb"
+    ".gitignore",
+    "ChangeLog.markdown",
+    "Gemfile",
+    "LICENSE",
+    "README.markdown",
+    "Rakefile",
+    "bin/homesick",
+    "homesick.gemspec",
+    "lib/homesick.rb",
+    "lib/homesick/actions.rb",
+    "lib/homesick/shell.rb",
+    "spec/homesick_spec.rb",
+    "spec/spec.opts",
+    "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/technicalpickles/homesick}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -47,8 +47,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{A man's home is his castle. Never leave your dotfiles behind.}
   s.test_files = [
-    "spec/homesick/homesick_spec.rb",
-     "spec/spec_helper.rb"
+    "spec/homesick_spec.rb",
+    "spec/spec_helper.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -56,9 +56,30 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<thor>, [">= 0"])
+      s.add_development_dependency(%q<rake>, [">= 0"])
+      s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
+      s.add_development_dependency(%q<bundler>, [">= 0.9.5"])
+      s.add_development_dependency(%q<jeweler>, [">= 1.4.0"])
+      s.add_development_dependency(%q<rcov>, [">= 0"])
+      s.add_development_dependency(%q<test-construct>, [">= 0"])
     else
+      s.add_dependency(%q<thor>, [">= 0"])
+      s.add_dependency(%q<rake>, [">= 0"])
+      s.add_dependency(%q<rspec>, [">= 1.2.9"])
+      s.add_dependency(%q<bundler>, [">= 0.9.5"])
+      s.add_dependency(%q<jeweler>, [">= 1.4.0"])
+      s.add_dependency(%q<rcov>, [">= 0"])
+      s.add_dependency(%q<test-construct>, [">= 0"])
     end
   else
+    s.add_dependency(%q<thor>, [">= 0"])
+    s.add_dependency(%q<rake>, [">= 0"])
+    s.add_dependency(%q<rspec>, [">= 1.2.9"])
+    s.add_dependency(%q<bundler>, [">= 0.9.5"])
+    s.add_dependency(%q<jeweler>, [">= 1.4.0"])
+    s.add_dependency(%q<rcov>, [">= 0"])
+    s.add_dependency(%q<test-construct>, [">= 0"])
   end
 end
 
