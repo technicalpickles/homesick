@@ -54,11 +54,9 @@ class Homesick < Thor
 
   desc "list", "List cloned castles"
   def list
-    inside repos_dir do
-      Pathname.glob('*') do |home|
-        inside home do
-          say_status home, `git config remote.origin.url`, :cyan
-        end
+    Pathname.glob(repos_dir + "*") do |castle|
+      Dir.chdir castle do # so we can call git config from the right contxt
+        say_status castle.basename.to_s, `git config remote.origin.url`.chomp, :cyan
       end
     end
   end
@@ -67,11 +65,11 @@ class Homesick < Thor
   no_tasks do
     # class method, so it's convenient to stub out during tests
     def self.user_dir
-      @user_dir ||= Pathname.new('~').expand_path
+      @user_dir ||= Pathname.new(ENV['HOME'] || '~').expand_path
     end
 
     def self.repos_dir
-      @repos_dir ||= Pathname.new('~/.homesick/repos').expand_path
+      @repos_dir ||= user_dir.join('.homesick', 'repos').expand_path
     end
 
     def repos_dir

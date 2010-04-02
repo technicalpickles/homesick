@@ -10,7 +10,7 @@ Spec::Runner.configure do |config|
 
   config.before do
     @user_dir = create_construct
-    Homesick.stub!(:user_dir).and_return(@user_dir)
+    ENV['HOME'] = @user_dir.to_s
   end
 
   config.after do

@@ -30,4 +30,24 @@ describe Homesick do
       @homesick.clone "wfarr/dotfiles"
     end
   end
+
+  describe "list" do
+
+    # FIXME only passes in isolation. need to setup data a bit better
+    xit "should say each castle in the castle directory" do
+      @user_dir.directory '.homesick/repos' do |repos_dir|
+        repos_dir.directory 'zomg' do |zomg|
+          Dir.chdir do
+            system "git init >/dev/null 2>&1"
+            system "git remote add origin git://github.com/technicalpickles/zomg.git >/dev/null 2>&1"
+          end
+        end
+      end
+
+      @homesick.should_receive(:say_status).with("zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
+
+      @homesick.list
+    end
+
+  end
 end
