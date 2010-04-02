@@ -9,6 +9,7 @@ class Homesick
       end
 
       destination = Pathname.new(destination) unless destination.kind_of?(Pathname)
+      FileUtils.mkdir_p destination.dirname
 
       if ! destination.directory?
         say_status 'git clone', "#{repo} to #{destination.expand_path}", :green unless options[:quiet]

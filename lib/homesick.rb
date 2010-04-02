@@ -20,7 +20,7 @@ class Homesick < Thor
   def clone(uri)
     inside repos_dir do
       if uri =~ GITHUB_NAME_REPO_PATTERN
-        git_clone "git://github.com/#{$1}/#{$2}.git", :destination => "#{$1}_#{$2}"
+        git_clone "git://github.com/#{$1}/#{$2}.git", :destination => "#{$1}/#{$2}"
       else
         git_clone uri
       end

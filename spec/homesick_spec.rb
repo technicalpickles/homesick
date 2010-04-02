@@ -25,7 +25,7 @@ describe Homesick do
     end
 
     it "should clone a github repo" do
-      @homesick.should_receive(:git_clone).with('git://github.com/wfarr/dotfiles.git', :destination => 'wfarr_dotfiles')
+      @homesick.should_receive(:git_clone).with('git://github.com/wfarr/dotfiles.git', :destination => 'wfarr/dotfiles')
 
       @homesick.clone "wfarr/dotfiles"
     end
