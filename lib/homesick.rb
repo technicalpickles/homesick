@@ -18,7 +18,6 @@ class Homesick < Thor
 
   desc "clone URI", "Clone +uri+ as a castle for homesick"
   def clone(uri)
-    empty_directory repos_dir, :verbose => false
     inside repos_dir do
       if uri =~ GITHUB_NAME_REPO_PATTERN
         git_clone "git://github.com/#{$1}/#{$2}.git", :destination => "#{$1}_#{$2}"
@@ -41,8 +40,8 @@ class Homesick < Thor
         files.each do |path|
           absolute_path = path.expand_path
 
-          inside user_dir do
-            adjusted_path = (user_dir + path).basename
+          inside home_dir do
+            adjusted_path = (home_dir + path).basename
 
             ln_s absolute_path, adjusted_path
           end
@@ -61,27 +60,16 @@ class Homesick < Thor
     end
   end
 
-
-  no_tasks do
-    # class method, so it's convenient to stub out during tests
-    def self.user_dir
-      @user_dir ||= Pathname.new(ENV['HOME'] || '~').expand_path
-    end
-
-    def self.repos_dir
-      @repos_dir ||= user_dir.join('.homesick', 'repos').expand_path
-    end
-
-    def repos_dir
-      self.class.repos_dir
-    end
-  end
-
   protected
 
-  def user_dir
-    self.class.user_dir
+  def home_dir
+    @home_dir ||= Pathname.new(ENV['HOME'] || '~').expand_path
   end
+
+  def repos_dir
+    @repos_dir ||= home_dir.join('.homesick', 'repos').expand_path
+  end
+
 
   def castle_dir(name)
     repos_dir.join(name, 'home')
