@@ -12,5 +12,5 @@ group :development do
   gem "bundler", ">= 0.9.5"
   gem "jeweler", ">= 1.4.0"
   gem "rcov", ">= 0"
-  gem "devver-construct"
+  gem "test-construct"
 end
