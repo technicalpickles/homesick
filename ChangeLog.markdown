@@ -1,3 +1,7 @@
+# 0.4.1
+
+ * Improved error message when a castle's home dir doesn't exist
+
 # 0.4.0
 
  * `homesick clone` can now take a path to a directory on the filesystem, which will be symlinked into place
