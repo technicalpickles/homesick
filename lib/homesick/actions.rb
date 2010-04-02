@@ -20,6 +20,7 @@ class Homesick
     end
 
     def ln_s(source, destination, config = {})
+      source = Pathname.new(source)
       destination = Pathname.new(destination)
 
       if destination.symlink?

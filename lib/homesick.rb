@@ -9,7 +9,7 @@ class Homesick < Thor
 
   add_runtime_options!
 
-  GITHUB_NAME_REPO_PATTERN = /\A([A-Za-z_-]+)\/([A-Za-z_-]+)\Z/
+  GITHUB_NAME_REPO_PATTERN = /\A([A-Za-z_-]+\/[A-Za-z_-]+)\Z/
 
   def initialize(args=[], options={}, config={})
     super
@@ -19,8 +19,10 @@ class Homesick < Thor
   desc "clone URI", "Clone +uri+ as a castle for homesick"
   def clone(uri)
     inside repos_dir do
-      if uri =~ GITHUB_NAME_REPO_PATTERN
-        git_clone "git://github.com/#{$1}/#{$2}.git", :destination => "#{$1}/#{$2}"
+      if File.exist?(uri)
+        ln_s uri, File.basename(uri)
+      elsif uri =~ GITHUB_NAME_REPO_PATTERN
+        git_clone "git://github.com/#{$1}.git", :destination => $1
       else
         git_clone uri
       end

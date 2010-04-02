@@ -6,6 +6,15 @@ describe Homesick do
   end
 
   describe "clone" do
+    it "should symlink existing directories" do
+      somewhere = create_construct
+      somewhere.directory('wtf')
+      wtf = somewhere + 'wtf'
+
+      @homesick.should_receive(:ln_s).with(wtf.to_s, wtf.basename.to_s)
+
+      @homesick.clone wtf.to_s
+    end
     it "should clone git repo like git://host/path/to.git" do
       @homesick.should_receive(:git_clone).with('git://github.com/technicalpickles/pickled-vim.git')
 
