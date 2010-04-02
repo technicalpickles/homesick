@@ -5,7 +5,7 @@ class Homesick
       config ||= {}
       destination = config[:destination] || begin
         repo =~ /([^\/]+)\.git$/
-          $1
+       $1
       end
 
       destination = Pathname.new(destination) unless destination.kind_of?(Pathname)
@@ -17,6 +17,16 @@ class Homesick
       else
         say_status :exist, destination.expand_path, :blue unless options[:quiet]
       end
+    end
+
+    def git_submodule_init(config = {})
+      say_status 'git submodule', 'init', :green unless options[:quiet]
+      system "git submodule --quiet init" unless options[:pretend]
+    end
+
+    def git_submodule_update(config = {})
+      say_status 'git submodule', 'update', :green unless options[:quiet]
+      system "git submodule --quiet update >/dev/null 2>&1" unless options[:pretend]
     end
 
     def ln_s(source, destination, config = {})

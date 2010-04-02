@@ -19,12 +19,27 @@ class Homesick < Thor
   desc "clone URI", "Clone +uri+ as a castle for homesick"
   def clone(uri)
     inside repos_dir do
+      destination = nil
       if File.exist?(uri)
-        ln_s uri, File.basename(uri)
+        destination = Pathname.new(uri).basename
+
+        ln_s uri, destination
       elsif uri =~ GITHUB_NAME_REPO_PATTERN
-        git_clone "git://github.com/#{$1}.git", :destination => $1
+        destination = Pathname.new($1)
+        git_clone "git://github.com/#{$1}.git", :destination => destination
       else
+        if uri =~ /\/([^\/]*).git\Z/
+          destination = Pathname.new($1)
+        end
+
         git_clone uri
+      end
+
+      if destination.join('.gitmodules').exist?
+        inside destination do
+          git_submodule_init
+          git_submodule_update
+        end
       end
     end
   end
