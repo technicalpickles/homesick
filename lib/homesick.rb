@@ -45,27 +45,25 @@ class Homesick < Thor
   end
 
   desc "symlink NAME", "Symlinks all dotfiles from the specified castle"
-  def symlink(home)
-    unless castle_dir(home).exist?
-      say_status :error, "Castle #{home} did not exist in #{repos_dir}", :red
+  def symlink(name)
+    unless castle_dir(name).exist?
+      say_status :error, "Could not symlink #{name}, expected #{castle_dir(name)} exist and contain dotfiles", :red
 
       exit(1)
+    end
 
-    else
-      inside castle_dir(home) do
-        files = Pathname.glob('.*').reject{|a| [".",".."].include?(a.to_s)}
-        files.each do |path|
-          absolute_path = path.expand_path
+    inside castle_dir(name) do
+      files = Pathname.glob('.*').reject{|a| [".",".."].include?(a.to_s)}
+      files.each do |path|
+        absolute_path = path.expand_path
 
-          inside home_dir do
-            adjusted_path = (home_dir + path).basename
+        inside home_dir do
+          adjusted_path = (home_dir + path).basename
 
-            ln_s absolute_path, adjusted_path
-          end
+          ln_s absolute_path, adjusted_path
         end
       end
     end
-
   end
 
   desc "list", "List cloned castles"
