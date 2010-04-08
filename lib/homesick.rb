@@ -75,6 +75,27 @@ class Homesick < Thor
     end
   end
 
+  desc "generate PATH", "generate a homesick-ready git repo at PATH"
+  def generate(castle)
+    castle = Pathname.new(castle).expand_path
+
+    github_user = `git config github.user`.chomp
+    github_user = nil if github_user == ""
+    github_repo = castle.basename
+
+
+    empty_directory castle
+    inside castle do
+      git_init
+      if github_user
+        url = "git@github.com:#{github_user}/#{github_repo}.git"
+        git_remote_add 'origin', url
+      end
+
+      empty_directory "home"
+    end
+  end
+
   protected
 
   def home_dir

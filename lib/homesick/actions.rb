@@ -19,6 +19,31 @@ class Homesick
       end
     end
 
+    def git_init(path = ".")
+      path = Pathname.new(path)
+
+      inside path do
+        unless path.join('.git').exist?
+          say_status 'git init', '' unless options[:quiet]
+          system "git init >/dev/null" unless options[:pretend]
+        else
+          say_status 'git init', 'already initialized', :blue unless options[:quiet]
+        end
+      end
+    end
+
+    def git_remote_add(name, url)
+      existing_remote = `git config remote.#{name}.url`.chomp
+      existing_remote = nil if existing_remote == ''
+
+      unless existing_remote
+        say_status 'git remote', "add #{name} #{url}" unless options[:quiet]
+        system "git remote add #{name} #{url}" unless options[:pretend]
+      else
+        say_status 'git remote', "#{name} already exists", :blue unless options[:quiet]
+      end
+    end
+
     def git_submodule_init(config = {})
       say_status 'git submodule', 'init', :green unless options[:quiet]
       system "git submodule --quiet init" unless options[:pretend]
