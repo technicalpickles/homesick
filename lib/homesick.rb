@@ -44,13 +44,20 @@ class Homesick < Thor
     end
   end
 
+  desc "update NAME", "Update the specified castle"
+  def update(name)
+    check_castle_existance(name, "update")
+
+    inside repos_dir.join(name) do
+      git_pull
+      git_submodule_init
+      git_submodule_update
+    end
+  end
+
   desc "symlink NAME", "Symlinks all dotfiles from the specified castle"
   def symlink(name)
-    unless castle_dir(name).exist?
-      say_status :error, "Could not symlink #{name}, expected #{castle_dir(name)} exist and contain dotfiles", :red
-
-      exit(1)
-    end
+    check_castle_existance(name, "symlink")
 
     inside castle_dir(name) do
       files = Pathname.glob('.*').reject{|a| [".",".."].include?(a.to_s)}
@@ -85,9 +92,16 @@ class Homesick < Thor
     @repos_dir ||= home_dir.join('.homesick', 'repos').expand_path
   end
 
-
   def castle_dir(name)
     repos_dir.join(name, 'home')
+  end
+
+  def check_castle_existance(name, action)
+    unless castle_dir(name).exist?
+      say_status :error, "Could not #{action} #{name}, expected #{castle_dir(name)} exist and contain dotfiles", :red
+
+      exit(1)
+    end
   end
 
 end
