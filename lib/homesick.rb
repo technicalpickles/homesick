@@ -44,9 +44,9 @@ class Homesick < Thor
     end
   end
 
-  desc "update NAME", "Update the specified castle"
-  def update(name)
-    check_castle_existance(name, "update")
+  desc "pull NAME", "Update the specified castle"
+  def pull(name)
+    check_castle_existance(name, "pull")
 
     inside repos_dir.join(name) do
       git_pull
