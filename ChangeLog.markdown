@@ -1,3 +1,9 @@
+# 0.5.0
+
+ * Fixed listing of castles cloned using `homesick clone <github-user>/<github-repo>` (issue 3)
+ * Added `homesick pull <CASTLE>` for updating castles (thanks Jorge Dias!)
+ * Added a very basic `homesick generate <CASTLE>`
+
 # 0.4.1
 
  * Improved error message when a castle's home dir doesn't exist
