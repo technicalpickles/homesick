@@ -25,6 +25,10 @@ With the castle cloned, you can now link its contents into your home dir:
 
     homesick symlink pickled-vim
 
+If uou use the shorthand syntax for GitHub repositories in your clone, please note you will instead need to run:
+
+    homesick symlink technicalpickles/pickled-vim
+
 If you're not sure what castles you have around, you can easily list them:
 
     homesick list

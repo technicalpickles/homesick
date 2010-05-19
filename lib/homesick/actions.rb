@@ -54,6 +54,11 @@ class Homesick
       system "git submodule --quiet update >/dev/null 2>&1" unless options[:pretend]
     end
 
+    def git_pull(config = {})
+      say_status 'git pull', '', :green unless options[:quiet]
+      system "git pull --quiet" unless options[:pretend]
+    end
+
     def ln_s(source, destination, config = {})
       source = Pathname.new(source)
       destination = Pathname.new(destination)
