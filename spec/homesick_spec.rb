@@ -11,10 +11,11 @@ describe Homesick do
       somewhere.directory('wtf')
       wtf = somewhere + 'wtf'
 
-      @homesick.should_receive(:ln_s).with(wtf.to_s, wtf.basename.to_s)
+      @homesick.should_receive(:ln_s).with(wtf.to_s, wtf.basename)
 
       @homesick.clone wtf.to_s
     end
+
     it "should clone git repo like git://host/path/to.git" do
       @homesick.should_receive(:git_clone).with('git://github.com/technicalpickles/pickled-vim.git')
 
@@ -34,7 +35,7 @@ describe Homesick do
     end
 
     it "should clone a github repo" do
-      @homesick.should_receive(:git_clone).with('git://github.com/wfarr/dotfiles.git', :destination => 'wfarr/dotfiles')
+      @homesick.should_receive(:git_clone).with('git://github.com/wfarr/dotfiles.git', :destination => Pathname.new('wfarr/dotfiles'))
 
       @homesick.clone "wfarr/dotfiles"
     end
@@ -51,9 +52,17 @@ describe Homesick do
             system "git remote add origin git://github.com/technicalpickles/zomg.git >/dev/null 2>&1"
           end
         end
+
+        repos_dir.directory 'wtf/zomg' do |zomg|
+          Dir.chdir do
+            system "git init >/dev/null 2>&1"
+            system "git remote add origin git://github.com/technicalpickles/zomg.git >/dev/null 2>&1"
+          end
+        end
       end
 
       @homesick.should_receive(:say_status).with("zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
+      @homesick.should_receive(:say_status).with("wtf/zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
 
       @homesick.list
     end
