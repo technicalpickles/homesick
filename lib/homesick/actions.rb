@@ -69,14 +69,14 @@ class Homesick
         else
           say_status :conflict, "#{destination} exists and points to #{destination.readlink}", :red unless options[:quiet]
 
-          if shell.file_collision(destination) { source }
+          if options[:force] or shell.file_collision(destination) { source }
             system "ln -sf #{source} #{destination}" unless options[:pretend]
           end
         end
       elsif destination.exist?
         say_status :conflict, "#{destination} exists", :red unless options[:quiet]
 
-        if shell.file_collision(destination) { source }
+        if options[:force] or shell.file_collision(destination) { source }
           system "ln -sf #{source} #{destination}" unless options[:pretend]
         end
       else
