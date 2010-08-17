@@ -1,3 +1,5 @@
+source :gemcutter
+
 # Add dependencies required to use your gem here.
 group :runtime do
   #gem 'bundler', '>= 0.9.5'
