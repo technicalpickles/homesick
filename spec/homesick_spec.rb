@@ -34,6 +34,24 @@ describe Homesick do
       @homesick.clone 'http://github.com/technicalpickles/pickled-vim.git'
     end
 
+    it "should clone git repo like http://host/path/to" do
+      @homesick.should_receive(:git_clone).with('http://github.com/technicalpickles/pickled-vim')
+
+      @homesick.clone 'http://github.com/technicalpickles/pickled-vim'
+    end
+
+    it "should not try to clone a malformed uri like malformed" do
+      @homesick.should_not_receive(:git_clone)
+
+      @homesick.clone 'malformed' rescue nil
+    end
+
+    it "should throw an exception when trying to clone a malformed uri like malformed" do
+      lambda {
+        @homesick.clone 'malformed'
+      }.should raise_error
+    end
+
     it "should clone a github repo" do
       @homesick.should_receive(:git_clone).with('git://github.com/wfarr/dotfiles.git', :destination => Pathname.new('wfarr/dotfiles'))
 

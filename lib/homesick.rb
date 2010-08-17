@@ -27,12 +27,11 @@ class Homesick < Thor
       elsif uri =~ GITHUB_NAME_REPO_PATTERN
         destination = Pathname.new($1)
         git_clone "git://github.com/#{$1}.git", :destination => destination
-      else
-        if uri =~ /\/([^\/]*).git\Z/
-          destination = Pathname.new($1)
-        end
-
+      elsif uri =~ /\/([^\/]*)(\.git)?\Z/
+        destination = Pathname.new($1)
         git_clone uri
+      else
+        raise "Unknown URI format: #{uri}"
       end
 
       if destination.join('.gitmodules').exist?
