@@ -40,6 +40,12 @@ describe Homesick do
       @homesick.clone 'http://github.com/technicalpickles/pickled-vim'
     end
 
+    it "should clone git repo like host-alias:repos.git" do
+      @homesick.should_receive(:git_clone).with('gitolite:pickled-vim.git')
+
+      @homesick.clone 'gitolite:pickled-vim.git'
+    end
+
     it "should not try to clone a malformed uri like malformed" do
       @homesick.should_not_receive(:git_clone)
 

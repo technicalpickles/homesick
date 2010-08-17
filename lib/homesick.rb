@@ -30,6 +30,9 @@ class Homesick < Thor
       elsif uri =~ /\/([^\/]*)(\.git)?\Z/
         destination = Pathname.new($1)
         git_clone uri
+      elsif uri =~ /[^:]+:([^:]+)(\.git)?\Z/
+        destination = Pathname.new($1)
+        git_clone uri
       else
         raise "Unknown URI format: #{uri}"
       end
