@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{homesick}
-  s.version = "0.5.3"
+  s.version = "0.5.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Joshua Nichols"]
-  s.date = %q{2010-08-19}
+  s.date = %q{2010-09-03}
   s.default_executable = %q{homesick}
   s.description = %q{
     A man's home (directory) is his castle, so don't leave home with out it.
@@ -44,7 +44,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{http://github.com/technicalpickles/homesick}
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.7}
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{A man's home is his castle. Never leave your dotfiles behind.}
   s.test_files = [
     "spec/homesick_spec.rb",
@@ -55,7 +55,7 @@ Gem::Specification.new do |s|
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<thor>, [">= 0.14.0"])
       s.add_development_dependency(%q<rake>, [">= 0"])
       s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
