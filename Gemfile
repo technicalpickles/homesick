@@ -9,7 +9,7 @@ group :development do
   gem "rake"
   gem "rspec", ">= 1.2.9"
   gem "bundler", ">= 0.9.5"
-  gem "jeweler", ">= 1.5.0.pre"
+  gem "jeweler", ">= 1.5.0.pre2"
   gem "rcov", ">= 0"
   gem "test-construct"
 end

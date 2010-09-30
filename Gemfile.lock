@@ -2,8 +2,8 @@ GEM
   remote: http://rubygems.org/
   specs:
     git (1.2.5)
-    jeweler (1.5.0.pre)
-      bundler (>= 1.0.0.rc.5)
+    jeweler (1.5.0.pre3)
+      bundler (~> 1.0.0)
       git (>= 1.2.5)
       rake
     rake (0.8.7)
@@ -17,7 +17,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (>= 0.9.5)
-  jeweler (>= 1.5.0.pre)
+  jeweler (>= 1.5.0.pre2)
   rake
   rcov
   rspec (>= 1.2.9)
