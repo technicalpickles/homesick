@@ -75,6 +75,19 @@ class Homesick < Thor
     end
   end
 
+  desc "track FILE CASTLE", "add a file to a castle"
+  def track(file, castle)
+    castle = Pathname.new(castle).expand_path
+    file = Pathname.new(file).expand_path
+    check_castle_existance(castle, 'track')
+    
+    github_user = `git config github.user`.chomp
+    github_user = nil if github_user == ""
+    github_repo = castle.basename
+
+    mv(file, castle)
+  end
+
   desc "list", "List cloned castles"
   def list
     #require 'ruby-debug'; breakpoint
@@ -94,7 +107,6 @@ class Homesick < Thor
     github_user = nil if github_user == ""
     github_repo = castle.basename
 
-
     empty_directory castle
     inside castle do
       git_init
@@ -106,6 +118,7 @@ class Homesick < Thor
       empty_directory "home"
     end
   end
+
 
   protected
 
