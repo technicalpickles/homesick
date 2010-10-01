@@ -59,6 +59,22 @@ class Homesick
       system "git pull --quiet" unless options[:pretend]
     end
 
+    def mv(source, destination, config = {})
+      source = Pathname.new(source)
+      destination = Pathname.new(destination + source.basename)
+
+      if destination.exist?
+        say_status :conflict, "#{destination} exists", :red unless options[:quiet]
+
+        if options[:force] || shell.file_collision(destination) { source }
+          system "mv #{source} #{destination}" unless options[:pretend]
+        end
+      else
+        # this needs some sort of message here.
+        system "mv #{source} #{destination}" unless options[:pretend]
+      end
+    end
+
     def ln_s(source, destination, config = {})
       source = Pathname.new(source)
       destination = Pathname.new(destination)

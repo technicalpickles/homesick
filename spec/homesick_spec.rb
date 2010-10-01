@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec_helper' 
 
 describe Homesick do
   before do
@@ -83,13 +83,30 @@ describe Homesick do
             system "git remote add origin git://github.com/technicalpickles/zomg.git >/dev/null 2>&1"
           end
         end
-      end
-
+      end 
       @homesick.should_receive(:say_status).with("zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
       @homesick.should_receive(:say_status).with("wtf/zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
 
       @homesick.list
     end
+  end
 
+  describe "track" do
+    it "should move the tracked file into the castle" do
+      some_rc_file = @user_dir.file '.some_rc_file'
+      homesickrepo = @user_dir.directory('.homesick').directory('repos').directory('castle_repo')
+      castle_path = homesickrepo.directory 'home'
+       
+      # There is some hideous thing going on with construct; rming the file I'm moving works on this test.
+      # Otherwise when track ln_s's it back out, it sees a conflict. Its as if file operations don't
+      # actually effect this thing, or something.
+      system "rm #{some_rc_file.to_s}"
+      Dir.chdir homesickrepo do
+        system "git init >/dev/null 2>&1"
+      end
+      
+      @homesick.should_receive(:mv).with(some_rc_file, castle_path)
+      @homesick.track(some_rc_file.to_s, 'castle_repo')
+    end
   end
 end
