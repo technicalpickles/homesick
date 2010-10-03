@@ -77,7 +77,7 @@ class Homesick < Thor
 
   desc "track FILE CASTLE", "add a file to a castle"
   def track(file, castle)
-    castle = Pathname.new(castle).expand_path
+    castle = Pathname.new(castle).expand_path 
     file = Pathname.new(file).expand_path
     check_castle_existance(castle, 'track')
     
@@ -85,7 +85,11 @@ class Homesick < Thor
     github_user = nil if github_user == ""
     github_repo = castle.basename
 
-    mv(file, castle)
+    mv(file, castle_dir(castle))
+    inside castle do
+      system "git add ./home/#{file.basename}"
+      system "git commit -m \"Added #{file.basename}\""
+    end
   end
 
   desc "list", "List cloned castles"
