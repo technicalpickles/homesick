@@ -1,5 +1,4 @@
-require 'spec_helper'
-
+require 'spec_helper' 
 describe Homesick do
   before do
     @homesick = Homesick.new
@@ -83,13 +82,22 @@ describe Homesick do
             system "git remote add origin git://github.com/technicalpickles/zomg.git >/dev/null 2>&1"
           end
         end
-      end
-
+      end 
       @homesick.should_receive(:say_status).with("zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
       @homesick.should_receive(:say_status).with("wtf/zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
 
       @homesick.list
     end
 
+  end
+
+  describe "track" do
+    it "should move the tracked file into the castle" do
+      somewhere = create_construct
+      wtf = somewhere.file 'wtf'
+      
+      @homesick.should_receive(:mv).with(wtf.basename, wtf)
+      @homesick.track(wtf.to_s)
+    end
   end
 end
