@@ -81,10 +81,6 @@ class Homesick < Thor
     file = Pathname.new(file)
     check_castle_existance(castle, 'track')
     
-    github_user = `git config github.user`.chomp
-    github_user = nil if github_user == ""
-    github_repo = castle.basename
-    
     absolute_path = file.expand_path
     castle_path = castle_dir(castle)
     mv absolute_path, castle_path
