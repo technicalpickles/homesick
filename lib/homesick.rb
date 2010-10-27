@@ -85,11 +85,6 @@ class Homesick < Thor
     castle_path = castle_dir(castle)
     mv absolute_path, castle_path
 
-    inside castle_path do
-      system "git add #{file.basename}"
-      system "git commit -m \"Added #{file.basename}\""
-    end
-
     inside home_dir do
       absolute_path = castle_dir(castle) + file.basename
       home_path = home_dir + file

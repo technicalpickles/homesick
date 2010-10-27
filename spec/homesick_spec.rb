@@ -106,6 +106,7 @@ describe Homesick do
       end
       
       @homesick.should_receive(:mv).with(some_rc_file, castle_path)
+      @homesick.should_receive(:ln_s).with(castle_path +  some_rc_file.basename, some_rc_file)
       @homesick.track(some_rc_file.to_s, 'castle_repo')
     end
   end
