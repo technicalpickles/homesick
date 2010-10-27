@@ -43,6 +43,19 @@ class Homesick < Thor
           git_submodule_update
         end
       end
+
+      homesickrc = destination.join('.homesickrc').expand_path
+      if homesickrc.exist?
+        proceed = shell.yes?("#{uri} has a .homesickrc. Proceed with evaling it? (This could be destructive)")
+        if proceed
+          shell.say_status "eval", homesickrc
+          inside destination do
+            eval homesickrc.read, binding, homesickrc.expand_path
+          end
+        else
+          shell.say_status "eval skip", "not evaling #{homesickrc}, #{destination} may need manual configuration", :blue
+        end
+      end
     end
   end
 
