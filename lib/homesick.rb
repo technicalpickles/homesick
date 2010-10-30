@@ -33,7 +33,7 @@ class Homesick < Thor
       elsif uri =~ GITHUB_NAME_REPO_PATTERN
         destination = Pathname.new($1)
         git_clone "git://github.com/#{$1}.git", :destination => destination
-      elsif uri =~ /\/([^\/]*)(\.git)?\Z/
+      elsif uri =~ /\/([^\/]*?)(\.git)?\Z/
         destination = Pathname.new($1)
         git_clone uri
       elsif uri =~ /[^:]+:([^:]+)(\.git)?\Z/
