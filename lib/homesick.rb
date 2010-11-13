@@ -107,7 +107,6 @@ class Homesick < Thor
 
   desc "list", "List cloned castles"
   def list
-    #require 'ruby-debug'; breakpoint
     Pathname.glob("#{repos_dir}/**/*/.git") do |git_dir|
       castle = git_dir.dirname
       Dir.chdir castle do # so we can call git config from the right contxt
