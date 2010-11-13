@@ -23,6 +23,7 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/technicalpickles/homesick"
   gem.authors = ["Joshua Nichols"]
   gem.version = "0.6.0"
+  gem.license = "MIT"
   # Have dependencies? Add them to Gemfile
 
   # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
