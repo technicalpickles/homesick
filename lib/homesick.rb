@@ -157,8 +157,16 @@ class Homesick < Thor
     end
   end
 
+  def all_castles
+    dirs = Pathname.glob("#{repos_dir}/**/*/.git")
+    # reject paths that lie inside another castle, like git submodules
+    return dirs.reject do |dir|
+      dirs.any? {|other| dir != other && dir.fnmatch(other.parent.join('*').to_s) }
+    end
+  end
+
   def inside_each_castle(&block)
-    Pathname.glob("#{repos_dir}/**/*/.git") do |git_dir|
+    all_castles.each do |git_dir|
       castle = git_dir.dirname
       Dir.chdir castle do # so we can call git config from the right contxt
         yield castle
