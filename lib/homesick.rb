@@ -64,6 +64,7 @@ class Homesick < Thor
   def pull(name="")
     if options[:all]
       inside_each_castle do |castle|
+        shell.say castle.to_s.gsub(repos_dir.to_s + '/', '') + ':'
         update_castle castle
       end
     else
