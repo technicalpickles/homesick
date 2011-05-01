@@ -60,14 +60,17 @@ class Homesick < Thor
   end
 
   desc "pull NAME", "Update the specified castle"
-  def pull(name)
-    check_castle_existance(name, "pull")
-
-    inside repos_dir.join(name) do
-      git_pull
-      git_submodule_init
-      git_submodule_update
+  method_option :all, :type => :boolean, :default => false, :required => false, :desc => "Update all cloned castles"
+  def pull(name="")
+    if options[:all]
+      inside_each_castle do |castle|
+        shell.say castle.to_s.gsub(repos_dir.to_s + '/', '') + ':'
+        update_castle castle
+      end
+    else
+      update_castle name
     end
+
   end
 
   desc "symlink NAME", "Symlinks all dotfiles from the specified castle"
@@ -107,11 +110,8 @@ class Homesick < Thor
 
   desc "list", "List cloned castles"
   def list
-    Pathname.glob("#{repos_dir}/**/*/.git") do |git_dir|
-      castle = git_dir.dirname
-      Dir.chdir castle do # so we can call git config from the right contxt
-        say_status castle.relative_path_from(repos_dir), `git config remote.origin.url`.chomp, :cyan
-      end
+    inside_each_castle do |castle|
+      say_status castle.relative_path_from(repos_dir), `git config remote.origin.url`.chomp, :cyan
     end
   end
 
@@ -158,4 +158,29 @@ class Homesick < Thor
     end
   end
 
+  def all_castles
+    dirs = Pathname.glob("#{repos_dir}/**/*/.git")
+    # reject paths that lie inside another castle, like git submodules
+    return dirs.reject do |dir|
+      dirs.any? {|other| dir != other && dir.fnmatch(other.parent.join('*').to_s) }
+    end
+  end
+
+  def inside_each_castle(&block)
+    all_castles.each do |git_dir|
+      castle = git_dir.dirname
+      Dir.chdir castle do # so we can call git config from the right contxt
+        yield castle
+      end
+    end
+  end
+
+  def update_castle(castle)
+    check_castle_existance(castle, "pull")
+    inside repos_dir.join(castle) do
+      git_pull
+      git_submodule_init
+      git_submodule_update
+    end
+  end
 end
