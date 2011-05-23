@@ -13,7 +13,13 @@ class Homesick
 
       if ! destination.directory?
         say_status 'git clone', "#{repo} to #{destination.expand_path}", :green unless options[:quiet]
-        system "git clone -q #{repo} #{destination}" unless options[:pretend]
+        ok = system "git clone -q #{repo} #{destination}" unless options[:pretend]
+        # Fallback to HTTPS
+        unless ok
+          say_status 'git clone', "#{repo} failed, trying HTTP", :green unless options[:quiet]
+          repo.sub!(/git:\/\//, 'https://')
+          system "git clone -q #{repo} #{destination}" unless options[:pretend]
+        end
       else
         say_status :exist, destination.expand_path, :blue unless options[:quiet]
       end
