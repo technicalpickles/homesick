@@ -1,6 +1,6 @@
 require 'spec_helper' 
 
-describe Homesick do
+describe "homesick" do
   before do
     @homesick = Homesick.new
   end
@@ -89,6 +89,16 @@ describe Homesick do
 
       @homesick.list
     end
+  end
+
+  describe "pull" do
+
+    xit "needs testing"
+
+    describe "--all" do
+      xit "needs testing"
+    end
+
   end
 
   describe "track" do
