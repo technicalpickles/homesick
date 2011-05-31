@@ -21,7 +21,12 @@ class Homesick < Thor
     inside repos_dir do
       destination = nil
       if File.exist?(uri)
-        destination = Pathname.new(uri).basename
+        uri = Pathname.new(uri).expand_path
+        if uri.to_s.start_with?(repos_dir)
+          raise "Castle already cloned to #{uri}"
+        end
+
+        destination = uri.basename
 
         ln_s uri, destination
       elsif uri =~ GITHUB_NAME_REPO_PATTERN
