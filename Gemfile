@@ -12,4 +12,5 @@ group :development do
   gem "jeweler", ">= 1.5.0.pre6"
   gem "rcov", ">= 0"
   gem "test-construct"
+  gem "ruby-debug"
 end
