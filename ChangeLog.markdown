@@ -1,3 +1,20 @@
+# 0.7.0
+ * Fixed double-cloning #14
+ * New option for pull command: --all
+  * pulls each castle, instead of just one
+
+# 0.6.1
+
+ * Add a license
+
+# 0.6.0
+
+ * Introduce .homesickrc
+  * Castles can now have a .homesickrc inside them
+  * On clone, this is eval'd inside the destination directory
+ * Introduce track command
+  * Allows easily moving an existing file into a castle, and symlinking it back
+
 # 0.5.0
 
  * Fixed listing of castles cloned using `homesick clone <github-user>/<github-repo>` (issue 3)

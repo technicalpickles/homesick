@@ -22,7 +22,8 @@ Jeweler::Tasks.new do |gem|
   gem.email = "josh@technicalpickles.com"
   gem.homepage = "http://github.com/technicalpickles/homesick"
   gem.authors = ["Joshua Nichols"]
-  gem.version = "0.6.0"
+  gem.version = "0.7.0"
+  gem.license = "MIT"
   # Have dependencies? Add them to Gemfile
 
   # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
@@ -30,17 +31,16 @@ end
 Jeweler::GemcutterTasks.new
 
 
-require 'spec/rake/spectask'
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
-Spec::Rake::SpecTask.new(:rcov) do |spec|
-  spec.libs << 'lib' << 'spec'
+RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.pattern = 'spec/**/*_spec.rb'
   spec.rcov = true
 end
+
 
 task :default => :spec
 

@@ -7,9 +7,10 @@ gem "thor", ">= 0.14.0"
 # Include everything needed to run rake, tests, features, etc.
 group :development do
   gem "rake"
-  gem "rspec", ">= 1.2.9"
-  gem "bundler", ">= 0.9.5"
-  gem "jeweler", ">= 1.5.0.pre2"
+  gem "rspec", "~> 2.1.0"
+  gem "bundler", "~> 1.0.0"
+  gem "jeweler", ">= 1.5.0.pre6"
   gem "rcov", ">= 0"
   gem "test-construct"
+  gem "ruby-debug"
 end

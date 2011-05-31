@@ -1,19 +1,42 @@
 require 'spec_helper' 
 
-describe Homesick do
+describe "homesick" do
   before do
     @homesick = Homesick.new
   end
 
   describe "clone" do
-    it "should symlink existing directories" do
-      somewhere = create_construct
-      somewhere.directory('wtf')
-      wtf = somewhere + 'wtf'
+    context "of a file" do
+      it "should symlink existing directories" do
+        somewhere = create_construct
+        somewhere.directory('wtf')
+        wtf = somewhere + 'wtf'
 
-      @homesick.should_receive(:ln_s).with(wtf.to_s, wtf.basename)
+        @homesick.should_receive(:ln_s).with(wtf, wtf.basename)
 
-      @homesick.clone wtf.to_s
+        @homesick.clone wtf
+      end
+
+      context "when it exists in a repo directory" do
+        before do
+          @repos_dir = create_construct
+          @existing_dir = @repos_dir.directory('existing_castle')
+          @homesick.stub!(:repos_dir).and_return(@repos_dir)
+        end
+
+        it "should not symlink" do
+          @homesick.should_not_receive(:git_clone)
+
+          @homesick.clone @existing_dir.to_s rescue nil
+        end
+
+        it "should raise an error" do
+          @existing_castle = @homesick.send(:repos_dir) + 'existing_castle'
+          lambda {
+            @homesick.clone @existing_castle.to_s
+          }.should raise_error(/already cloned/i)
+        end
+      end
     end
 
     it "should clone git repo like git://host/path/to.git" do
@@ -89,6 +112,16 @@ describe Homesick do
 
       @homesick.list
     end
+  end
+
+  describe "pull" do
+
+    xit "needs testing"
+
+    describe "--all" do
+      xit "needs testing"
+    end
+
   end
 
   describe "track" do
