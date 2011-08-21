@@ -116,7 +116,7 @@ class Homesick < Thor
   desc "list", "List cloned castles"
   def list
     inside_each_castle do |castle|
-      say_status castle.relative_path_from(repos_dir), `git config remote.origin.url`.chomp, :cyan
+      say_status castle.relative_path_from(repos_dir).to_s, `git config remote.origin.url`.chomp, :cyan
     end
   end
 
