@@ -1,9 +1,7 @@
 require 'spec_helper' 
 
 describe "homesick" do
-  before do
-    @homesick = Homesick.new
-  end
+  let(:homesick) { Homesick.new }
 
   describe "clone" do
     context "of a file" do
@@ -12,79 +10,90 @@ describe "homesick" do
         somewhere.directory('wtf')
         wtf = somewhere + 'wtf'
 
-        @homesick.should_receive(:ln_s).with(wtf, wtf.basename)
+        homesick.should_receive(:ln_s).with(wtf, wtf.basename)
 
-        @homesick.clone wtf
+        homesick.clone wtf
       end
 
       context "when it exists in a repo directory" do
         before do
-          @repos_dir = create_construct
           @existing_dir = @repos_dir.directory('existing_castle')
-          @homesick.stub!(:repos_dir).and_return(@repos_dir)
         end
 
         it "should not symlink" do
-          @homesick.should_not_receive(:git_clone)
+          homesick.should_not_receive(:git_clone)
 
-          @homesick.clone @existing_dir.to_s rescue nil
+          homesick.clone @existing_dir.to_s rescue nil
         end
 
         it "should raise an error" do
-          @existing_castle = @homesick.send(:repos_dir) + 'existing_castle'
+          @existing_castle = homesick.send(:repos_dir) + 'existing_castle'
           lambda {
-            @homesick.clone @existing_castle.to_s
+            homesick.clone @existing_castle.to_s
           }.should raise_error(/already cloned/i)
         end
       end
     end
 
     it "should clone git repo like git://host/path/to.git" do
-      @homesick.should_receive(:git_clone).with('git://github.com/technicalpickles/pickled-vim.git')
+      homesick.should_receive(:git_clone).with('git://github.com/technicalpickles/pickled-vim.git')
 
-      @homesick.clone "git://github.com/technicalpickles/pickled-vim.git"
+      homesick.clone "git://github.com/technicalpickles/pickled-vim.git"
     end
 
     it "should clone git repo like git@host:path/to.git" do
-      @homesick.should_receive(:git_clone).with('git@github.com:technicalpickles/pickled-vim.git')
+      homesick.should_receive(:git_clone).with('git@github.com:technicalpickles/pickled-vim.git')
 
-      @homesick.clone 'git@github.com:technicalpickles/pickled-vim.git'
+      homesick.clone 'git@github.com:technicalpickles/pickled-vim.git'
     end
 
     it "should clone git repo like http://host/path/to.git" do
-      @homesick.should_receive(:git_clone).with('http://github.com/technicalpickles/pickled-vim.git')
+      homesick.should_receive(:git_clone).with('http://github.com/technicalpickles/pickled-vim.git')
 
-      @homesick.clone 'http://github.com/technicalpickles/pickled-vim.git'
+      homesick.clone 'http://github.com/technicalpickles/pickled-vim.git'
     end
 
     it "should clone git repo like http://host/path/to" do
-      @homesick.should_receive(:git_clone).with('http://github.com/technicalpickles/pickled-vim')
+      homesick.should_receive(:git_clone).with('http://github.com/technicalpickles/pickled-vim')
 
-      @homesick.clone 'http://github.com/technicalpickles/pickled-vim'
+      homesick.clone 'http://github.com/technicalpickles/pickled-vim'
     end
 
     it "should clone git repo like host-alias:repos.git" do
-      @homesick.should_receive(:git_clone).with('gitolite:pickled-vim.git')
+      homesick.should_receive(:git_clone).with('gitolite:pickled-vim.git')
 
-      @homesick.clone 'gitolite:pickled-vim.git'
+      homesick.clone 'gitolite:pickled-vim.git'
     end
 
     it "should not try to clone a malformed uri like malformed" do
-      @homesick.should_not_receive(:git_clone)
+      homesick.should_not_receive(:git_clone)
 
-      @homesick.clone 'malformed' rescue nil
+      homesick.clone 'malformed' rescue nil
     end
 
     it "should throw an exception when trying to clone a malformed uri like malformed" do
       lambda {
-        @homesick.clone 'malformed'
+        homesick.clone 'malformed'
       }.should raise_error
     end
 
     it "should clone a github repo" do
-      @homesick.should_receive(:git_clone).with('git://github.com/wfarr/dotfiles.git', :destination => Pathname.new('wfarr/dotfiles'))
+      homesick.should_receive(:git_clone).with('git://github.com/wfarr/dotfiles.git', :destination => Pathname.new('wfarr/dotfiles'))
 
-      @homesick.clone "wfarr/dotfiles"
+      homesick.clone "wfarr/dotfiles"
+    end
+  end
+
+  describe "symlink" do
+    context "for dotfiles" do
+      it "links dotfiles from a castle to the home folder" do
+        castle = given_castle("glencairn")
+        dotfile = castle.file(".some_dotfile")
+
+        homesick.symlink("glencairn")
+
+        @user_dir.join(".some_dotfile").readlink.should == dotfile
+      end
     end
   end
 
@@ -92,25 +101,13 @@ describe "homesick" do
 
     # FIXME only passes in isolation. need to setup data a bit better
     xit "should say each castle in the castle directory" do
-      @user_dir.directory '.homesick/repos' do |repos_dir|
-        repos_dir.directory 'zomg' do |zomg|
-          Dir.chdir do
-            system "git init >/dev/null 2>&1"
-            system "git remote add origin git://github.com/technicalpickles/zomg.git >/dev/null 2>&1"
-          end
-        end
+      given_castle('zomg')
+      given_castle('zomg', 'wtf/zomg')
 
-        repos_dir.directory 'wtf/zomg' do |zomg|
-          Dir.chdir do
-            system "git init >/dev/null 2>&1"
-            system "git remote add origin git://github.com/technicalpickles/zomg.git >/dev/null 2>&1"
-          end
-        end
-      end 
-      @homesick.should_receive(:say_status).with("zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
-      @homesick.should_receive(:say_status).with("wtf/zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
+      homesick.should_receive(:say_status).with("zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
+      homesick.should_receive(:say_status).with("wtf/zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
 
-      @homesick.list
+      homesick.list
     end
   end
 
@@ -138,9 +135,9 @@ describe "homesick" do
         system "git init >/dev/null 2>&1"
       end
       
-      @homesick.should_receive(:mv).with(some_rc_file, castle_path)
-      @homesick.should_receive(:ln_s).with(castle_path +  some_rc_file.basename, some_rc_file)
-      @homesick.track(some_rc_file.to_s, 'castle_repo')
+      homesick.should_receive(:mv).with(some_rc_file, castle_path)
+      homesick.should_receive(:ln_s).with(castle_path +  some_rc_file.basename, some_rc_file)
+      homesick.track(some_rc_file.to_s, 'castle_repo')
     end
   end
 end
