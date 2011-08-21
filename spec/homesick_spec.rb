@@ -81,16 +81,24 @@ describe "homesick" do
   end
 
   describe "symlink" do
-    context "for dotfiles" do
-      it "links dotfiles from a castle to the home folder" do
-        castle = given_castle("glencairn")
-        dotfile = castle.file(".some_dotfile")
+    let(:castle) { given_castle("glencairn") }
 
-        homesick.symlink("glencairn")
+    it "links dotfiles from a castle to the home folder" do
+      dotfile = castle.file(".some_dotfile")
 
-        @user_dir.join(".some_dotfile").readlink.should == dotfile
-      end
+      homesick.symlink("glencairn")
+
+      @user_dir.join(".some_dotfile").readlink.should == dotfile
     end
+
+    it "links non-dotfiles from a castle to the home folder" do
+      dotfile = castle.file("bin")
+
+      homesick.symlink("glencairn")
+
+      @user_dir.join("bin").readlink.should == dotfile
+    end
+
   end
 
   describe "list" do
