@@ -1,8 +1,13 @@
 require 'spec_helper' 
 
 describe "homesick" do
+  let(:home) { create_construct }
+  after { home.destroy! }
+
+  let(:castles) { home.directory(".homesick/repos") }
+
   let(:homesick) { Homesick.new }
-  before { silence! }
+  before { homesick.stub!(:repos_dir).and_return(castles) }
 
   describe "clone" do
     context "of a file" do
@@ -12,13 +17,13 @@ describe "homesick" do
 
         homesick.clone local_repo
 
-        @repos_dir.join("wtf").readlink.should == local_repo
+        castles.join("wtf").readlink.should == local_repo
       end
 
       context "when it exists in a repo directory" do
         before do
-          @existing_castle = given_castle("existing_castle")
-          @existing_dir = @existing_castle.parent
+          existing_castle = given_castle("existing_castle")
+          @existing_dir = existing_castle.parent
         end
 
         it "should not symlink" do
@@ -88,7 +93,7 @@ describe "homesick" do
 
       homesick.symlink("glencairn")
 
-      @user_dir.join(".some_dotfile").readlink.should == dotfile
+      home.join(".some_dotfile").readlink.should == dotfile
     end
 
     it "links non-dotfiles from a castle to the home folder" do
@@ -96,7 +101,7 @@ describe "homesick" do
 
       homesick.symlink("glencairn")
 
-      @user_dir.join("bin").readlink.should == dotfile
+      home.join("bin").readlink.should == dotfile
     end
 
   end
@@ -127,7 +132,7 @@ describe "homesick" do
     it "should move the tracked file into the castle" do
       castle = given_castle('castle_repo')
 
-      some_rc_file = @user_dir.file '.some_rc_file'
+      some_rc_file = home.file '.some_rc_file'
 
       homesick.track(some_rc_file.to_s, 'castle_repo')
 
