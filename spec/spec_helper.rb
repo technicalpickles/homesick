@@ -20,6 +20,10 @@ RSpec.configure do |config|
     @user_dir.destroy!
   end
 
+  def silence!
+    homesick.stub(:say_status)
+  end
+
   def given_castle(name, path=name)
     @repos_dir.directory(path) do |castle|
       Dir.chdir(castle) do

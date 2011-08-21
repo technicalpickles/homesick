@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe "homesick" do
   let(:homesick) { Homesick.new }
+  before { silence! }
 
   describe "clone" do
     context "of a file" do
