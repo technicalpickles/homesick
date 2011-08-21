@@ -7,17 +7,17 @@ describe "homesick" do
     context "of a file" do
       it "should symlink existing directories" do
         somewhere = create_construct
-        somewhere.directory('wtf')
-        wtf = somewhere + 'wtf'
+        local_repo = somewhere.directory('wtf')
 
-        homesick.should_receive(:ln_s).with(wtf, wtf.basename)
+        homesick.clone local_repo
 
-        homesick.clone wtf
+        @repos_dir.join("wtf").readlink.should == local_repo
       end
 
       context "when it exists in a repo directory" do
         before do
-          @existing_dir = @repos_dir.directory('existing_castle')
+          @existing_castle = given_castle("existing_castle")
+          @existing_dir = @existing_castle.parent
         end
 
         it "should not symlink" do
@@ -27,10 +27,7 @@ describe "homesick" do
         end
 
         it "should raise an error" do
-          @existing_castle = homesick.send(:repos_dir) + 'existing_castle'
-          lambda {
-            homesick.clone @existing_castle.to_s
-          }.should raise_error(/already cloned/i)
+          expect { homesick.clone @existing_dir.to_s }.to raise_error(/already cloned/i)
         end
       end
     end
@@ -72,9 +69,7 @@ describe "homesick" do
     end
 
     it "should throw an exception when trying to clone a malformed uri like malformed" do
-      lambda {
-        homesick.clone 'malformed'
-      }.should raise_error
+      expect { homesick.clone 'malformed' }.to raise_error
     end
 
     it "should clone a github repo" do
