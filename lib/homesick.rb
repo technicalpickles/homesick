@@ -79,6 +79,7 @@ class Homesick < Thor
   end
 
   desc "symlink NAME", "Symlinks all dotfiles from the specified castle"
+  method_option :force, :default => false, :desc => "Overwrite existing conflicting symlinks without prompting."
   def symlink(name)
     check_castle_existance(name, "symlink")
 

@@ -7,6 +7,7 @@ describe "homesick" do
   let(:castles) { home.directory(".homesick/repos") }
 
   let(:homesick) { Homesick.new }
+
   before { homesick.stub!(:repos_dir).and_return(castles) }
 
   describe "clone" do
@@ -104,6 +105,21 @@ describe "homesick" do
       home.join("bin").readlink.should == dotfile
     end
 
+    context "when forced" do
+      let(:homesick) { Homesick.new [], :force => true }
+
+      it "can override symlinks to directories" do
+        somewhere_else = create_construct
+        existing_dotdir_link = home.join(".vim")
+        FileUtils.ln_s somewhere_else, existing_dotdir_link
+
+        dotdir = castle.directory(".vim")
+
+        homesick.symlink("glencairn")
+
+        existing_dotdir_link.readlink.should == dotdir
+      end
+    end
   end
 
   describe "list" do
