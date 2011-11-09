@@ -90,14 +90,18 @@ class Homesick
           end
         end
       elsif destination.exist?
-        say_status :conflict, "#{destination} exists", :red unless options[:quiet]
-
-        if options[:force] || shell.file_collision(destination) { source }
-          system "ln -sf #{source} #{destination}" unless options[:pretend]
+        if destination.directory? && source.directory?
+          say_status :overlaying, "#{destination} exists, overlaying castle", :blue unless options[:quiet]
+          files = Pathname.glob([source+"*", source+".*"]).reject{|a| [".",".."].include?(a.split.last.to_s)}
+          files.each do |path|
+            ln_s path.expand_path, destination.expand_path + path.split.last
+          end  
+        else
+          say_status :conflict, "#{destination} exists", :red unless options[:quiet]
+          if options[:force] || shell.file_collision(destination) { source }
+            system "ln -sf #{source} #{destination}" unless options[:pretend]
+          end
         end
-      else
-        say_status :symlink, "#{source.expand_path} to #{destination.expand_path}", :green unless options[:quiet]
-        system "ln -s #{source} #{destination}" unless options[:pretend]
       end
     end
   end
