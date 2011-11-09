@@ -78,7 +78,7 @@ class Homesick
     def ln_s(source, destination, config = {})
       source = Pathname.new(source)
       destination = Pathname.new(destination)
-
+      recurse = false
       if destination.symlink?
         if destination.readlink == source
           say_status :identical, destination.expand_path, :blue unless options[:quiet]
@@ -91,17 +91,35 @@ class Homesick
         end
       elsif destination.exist?
         if destination.directory? && source.directory?
-          say_status :overlaying, "#{destination} exists, overlaying castle", :blue unless options[:quiet]
-          files = Pathname.glob([source+"*", source+".*"]).reject{|a| [".",".."].include?(a.split.last.to_s)}
-          files.each do |path|
-            ln_s path.expand_path, destination.expand_path + path.split.last
-          end  
+          say_status :overlaying, "#{destination} exists, overlaying directory contents", :blue unless options[:quiet]
+          recurse = true
         else
           say_status :conflict, "#{destination} exists", :red unless options[:quiet]
           if options[:force] || shell.file_collision(destination) { source }
-            system "ln -sf #{source} #{destination}" unless options[:pretend]
+            if source.directory?
+              system "rm -rf #{destination}" unless options[:pretend]
+              system "mkdir #{destination}" unless options[:pretend]
+              recurse = true
+            else
+              system "ln -sf #{source} #{destination}" unless options[:pretend]
+            end
           end
         end
+      else
+        if source.directory?
+          #say_status :creating, "Created new directory at #{destination}", :blue unless options[:quiet]
+          system "mkdir #{destination}" unless options[:pretend]
+          recurse = true
+        else
+          system "ln -s #{source} #{destination}" unless options[:pretend]
+        end
+      end
+
+      if recurse
+        files = Pathname.glob([source+"*", source+".*"]).reject{|a| [".",".."].include?(a.split.last.to_s)}          
+        files.each do |path|
+          ln_s path.expand_path, destination.expand_path + path.split.last
+        end  
       end
     end
   end

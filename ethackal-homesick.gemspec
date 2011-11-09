@@ -4,12 +4,12 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{homesick}
+  s.name = %q{ethackal-homesick}
   s.version = "0.6.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Joshua Nichols"]
-  s.date = %q{2010-11-13}
+  s.authors = ["Joshua Nichols", "John Miller"]
+  s.date = %q{2011-11-09}
   s.default_executable = %q{homesick}
   s.description = %q{
     A man's home (directory) is his castle, so don't leave home with out it.
@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
     "README.markdown",
     "Rakefile",
     "bin/homesick",
-    "homesick.gemspec",
+    "ethackal-homesick.gemspec",
     "lib/homesick.rb",
     "lib/homesick/actions.rb",
     "lib/homesick/shell.rb",
