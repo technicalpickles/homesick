@@ -79,9 +79,9 @@ class Homesick < Thor
   end
 
   desc "symlink NAME", "Symlinks all dotfiles from the specified castle"
+  method_option :overlay, :aliases => "-o", :type => :boolean, :default => false, :required => false, :desc => "Overlay directory contents" 
   def symlink(name)
     check_castle_existance(name, "symlink")
-
     inside castle_dir(name) do
       files = Pathname.glob('.*').reject{|a| [".",".."].include?(a.to_s)}
       files.each do |path|
@@ -89,7 +89,6 @@ class Homesick < Thor
 
         inside home_dir do
           adjusted_path = (home_dir + path).basename
-
           ln_s absolute_path, adjusted_path
         end
       end

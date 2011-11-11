@@ -1,6 +1,10 @@
 require 'spec_helper' 
 
 describe "homesick" do
+  def shell
+    @shell ||= Thor::Shell::Basic.new
+  end
+
   before do
     @homesick = Homesick.new
   end
@@ -139,8 +143,52 @@ describe "homesick" do
       end
       
       @homesick.should_receive(:mv).with(some_rc_file, castle_path)
-      @homesick.should_receive(:ln_s).with(castle_path +  some_rc_file.basename, some_rc_file)
+      @homesick.should_receive(:ln_s).with(castle_path + some_rc_file.basename, some_rc_file)
       @homesick.track(some_rc_file.to_s, 'castle_repo')
+    end
+  end
+
+  describe "symlink" do
+    it "should symlink the castle files into the home directory" do
+      homesickrepo = @user_dir.directory('.homesick').directory('repos').directory('castle_repo')
+      castle_path = homesickrepo.directory 'home'
+      dot_file = castle_path.file '.dot_file'
+      dot_dir =  castle_path.directory '.dot_dir'
+
+      Dir.chdir homesickrepo do
+        system "git init >/dev/null 2>&1"
+      end
+
+      @homesick.should_receive(:ln_s).with(dot_file, dot_file.basename)
+      @homesick.should_receive(:ln_s).with(dot_dir, dot_dir.basename)
+      @homesick.symlink('castle_repo')
+    end
+
+    it "should overlay directory contents when pass the overlay flag" do
+      @homesick = Homesick.new([], {:overlay => true})
+      homesickrepo = @user_dir.directory('.homesick').directory('repos').directory('castle_repo')
+      castle_path = homesickrepo.directory 'home'
+      dot_file    = castle_path.file('.dot_file')
+      dot_dir     = castle_path.directory('.dot_dir')
+
+      sub_targets = [
+        '.dot_dir/.dot_file',
+        '.dot_dir/nondot_file',
+        '.dot_dir/.dot_dir/.dot_file',
+        '.dot_dir/.dot_dir/nondot_file',
+        '.dot_dir/nondot_dir/.dot_file',
+        '.dot_dir/nondot_dir/nondot_file'
+      ]
+
+      sub_targets.each {|target| castle_path.file(target) }
+      
+      Dir.chdir homesickrepo do
+        system "git init >/dev/null 2>&1"
+      end
+      
+      @homesick.should_receive(:ln_s).with(dot_file, dot_file.basename)
+      @homesick.should_receive(:ln_s).with(dot_dir, dot_dir.basename)
+      @homesick.symlink('castle_repo')
     end
   end
 end
