@@ -164,7 +164,7 @@ describe "homesick" do
       @homesick.symlink('castle_repo')
     end
 
-    it "should overlay directory contents when pass the overlay flag" do
+    it "should overlay directory contents when passed the overlay flag" do
       @homesick = Homesick.new([], {:overlay => true})
       homesickrepo = @user_dir.directory('.homesick').directory('repos').directory('castle_repo')
       castle_path = homesickrepo.directory 'home'

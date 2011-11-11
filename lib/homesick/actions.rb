@@ -115,8 +115,6 @@ class Homesick
         end
       end
 
-      puts BobsYourUncle      
-
       if recurse && options[:overlay]
         files = Pathname.glob([source+"*", source+".*"]).reject{|a| [".",".."].include?(a.split.last.to_s)}
         files.each do |path|
