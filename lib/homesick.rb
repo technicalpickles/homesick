@@ -83,17 +83,20 @@ class Homesick < Thor
     check_castle_existance(name, "symlink")
 
     inside castle_dir(name) do
-      files = Pathname.glob('.*').reject{|a| [".",".."].include?(a.to_s)}
-      files.each do |path|
-        absolute_path = path.expand_path
-
+      dotfiles.each do |path|
         inside home_dir do
-          adjusted_path = (home_dir + path).basename
-
-          ln_s absolute_path, adjusted_path
+          ln_s path, (home_dir + path).basename
         end
       end
     end
+
+    inside armory_dir(name) do
+      binfiles.each do |path|
+        inside bin_dir do
+          ln_s path, (bin_dir + path).basename
+        end
+      end
+    end if armory_exists?(name)
   end
 
   desc "track FILE CASTLE", "add a file to a castle"
@@ -142,6 +145,10 @@ class Homesick < Thor
 
 
   protected
+  
+  def bin_dir
+    @bin_dir ||= @home_dir.join('bin').expand_path
+  end
 
   def home_dir
     @home_dir ||= Pathname.new(ENV['HOME'] || '~').expand_path
@@ -155,12 +162,28 @@ class Homesick < Thor
     repos_dir.join(name, 'home')
   end
 
+  def armory_dir(name)
+    repos_dir.join(name, 'bin')
+  end
+
+  def dotfiles
+    Pathname.glob('.*').reject{|a| [".",".."].include?(a.to_s)}.map {|a| a.expand_path}
+  end
+
+  def binfiles
+    Pathname.glob('*').reject{|a| [".",".."].include?(a.to_s) || !a.executable?}.map {|a| a.expand_path}
+  end
+
   def check_castle_existance(name, action)
     unless castle_dir(name).exist?
       say_status :error, "Could not #{action} #{name}, expected #{castle_dir(name)} exist and contain dotfiles", :red
 
       exit(1)
     end
+  end
+
+  def armory_exists?(name)
+    armory_dir(name).exist? && bin_dir.exist?
   end
 
   def all_castles
