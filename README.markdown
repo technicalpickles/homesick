@@ -45,6 +45,10 @@ Not sure what else homesick has up its sleeve? There's always the built in help:
 * Commit, do not mess with rakefile, version, or history.  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
+## Need homesick without the ruby dependency?
+
+Check out [homeshick](https://github.com/andsens/homeshick).
+
 ## Copyright
 
 Copyright (c) 2010 Joshua Nichols. See LICENSE for details.
