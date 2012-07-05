@@ -22,7 +22,7 @@ class Homesick < Thor
       destination = nil
       if File.exist?(uri)
         uri = Pathname.new(uri).expand_path
-        if uri.to_s.start_with?(repos_dir)
+        if uri.to_s.start_with?(repos_dir.to_s)
           raise "Castle already cloned to #{uri}"
         end
 
@@ -79,11 +79,12 @@ class Homesick < Thor
   end
 
   desc "symlink NAME", "Symlinks all dotfiles from the specified castle"
+  method_option :force, :default => false, :desc => "Overwrite existing conflicting symlinks without prompting."
   def symlink(name)
     check_castle_existance(name, "symlink")
 
     inside castle_dir(name) do
-      files = Pathname.glob('.*').reject{|a| [".",".."].include?(a.to_s)}
+      files = Pathname.glob('{.*,*}').reject{|a| [".",".."].include?(a.to_s)}
       files.each do |path|
         absolute_path = path.expand_path
 
@@ -116,7 +117,7 @@ class Homesick < Thor
   desc "list", "List cloned castles"
   def list
     inside_each_castle do |castle|
-      say_status castle.relative_path_from(repos_dir), `git config remote.origin.url`.chomp, :cyan
+      say_status castle.relative_path_from(repos_dir).to_s, `git config remote.origin.url`.chomp, :cyan
     end
   end
 
