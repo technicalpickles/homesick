@@ -1,4 +1,5 @@
-require 'spec_helper' 
+# -*- encoding : utf-8 -*-
+require 'spec_helper'
 
 describe "homesick" do
   let(:home) { create_construct }
@@ -156,6 +157,26 @@ describe "homesick" do
       tracked_file.should exist
 
       some_rc_file.readlink.should == tracked_file
+    end
+  end
+
+  describe "destroy" do
+    it "removes the symlink files" do
+      given_castle("stronghold")
+      some_rc_file = home.file '.some_rc_file'
+      homesick.track(some_rc_file.to_s, "stronghold")
+      homesick.destroy('stronghold')
+
+      some_rc_file.should_not be_exist
+    end
+
+    it "deletes the cloned repository" do
+      castle = given_castle("stronghold")
+      some_rc_file = home.file '.some_rc_file'
+      homesick.track(some_rc_file.to_s, "stronghold")
+      homesick.destroy('stronghold')
+
+      castle.should_not be_exist
     end
   end
 end

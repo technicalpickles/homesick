@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'thor'
 
 class Homesick < Thor
@@ -102,7 +103,7 @@ class Homesick < Thor
     castle = Pathname.new(castle)
     file = Pathname.new(file)
     check_castle_existance(castle, 'track')
-    
+
     absolute_path = file.expand_path
     castle_path = castle_dir(castle)
     mv absolute_path, castle_path
@@ -141,6 +142,23 @@ class Homesick < Thor
     end
   end
 
+  desc "destroy CASTLE", "Delete all symlnks and remove the cloned repository"
+  def destroy(name)
+    check_castle_existance name, "destroy"
+
+    inside castle_dir(name) do
+      files = Pathname.glob('{.*,*}').reject{|a| [".",".."].include?(a.to_s)}
+      files.each do |path|
+
+        inside home_dir do
+          adjusted_path = (home_dir + path).basename
+          rm adjusted_path
+        end
+      end
+      rm_r castle_dir(name)
+    end
+
+  end
 
   protected
 
