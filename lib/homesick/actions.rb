@@ -105,7 +105,6 @@ class Homesick
 
     def rm_rf(dir)
       say_status "rm -rf #{dir}", '', :green unless options[:quiet]
-      system "rm -rf #{dir}"
     end
 
     def rm_link(target)
@@ -117,6 +116,16 @@ class Homesick
       else
         say_status :conflict, "#{target} is not a symlink", :red unless options[:quiet]
       end
+    end
+
+    def rm(file)
+      say_status "rm #{file}", '', :green unless options[:quiet]
+      system "rm #{file}"
+    end
+
+    def rm_r(dir)
+      say_status "rm -r #{dir}", '', :green unless options[:quiet]
+      system "rm -r #{dir}"
     end
 
     def ln_s(source, destination, config = {})
