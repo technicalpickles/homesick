@@ -142,7 +142,7 @@ class Homesick < Thor
     end
   end
 
-  desc "destroy CASTLE", "Delete all symlnks and remove the cloned repository"
+  desc "destroy CASTLE", "Delete all symlinks and remove the cloned repository"
   def destroy(name)
     check_castle_existance name, "destroy"
 
