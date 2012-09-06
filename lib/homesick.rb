@@ -155,7 +155,7 @@ class Homesick < Thor
           rm adjusted_path
         end
       end
-      rm_r castle_dir(name)
+      rm_rf repos_dir + name
     end
 
   end

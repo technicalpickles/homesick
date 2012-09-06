@@ -78,12 +78,12 @@ class Homesick
 
     def rm(file)
       say_status "rm #{file}", '', :green unless options[:quiet]
-      system "rm #{file}"
+      system "rm #{file}" if File.exists?(file)
     end
 
-    def rm_r(dir)
-      say_status "rm -r #{dir}", '', :green unless options[:quiet]
-      system "rm -r #{dir}"
+    def rm_rf(dir)
+      say_status "rm -rf #{dir}", '', :green unless options[:quiet]
+      system "rm -rf #{dir}"
     end
 
     def ln_s(source, destination, config = {})
