@@ -64,7 +64,7 @@ class Homesick < Thor
     end
   end
 
-  desc "pull NAME", "Update the specified castle"
+  desc "pull CASTLE", "Update the specified castle"
   method_option :all, :type => :boolean, :default => false, :required => false, :desc => "Update all cloned castles"
   def pull(name="")
     if options[:all]
@@ -78,13 +78,13 @@ class Homesick < Thor
 
   end
 
-  desc "push NAME", "Push the specified castle"
+  desc "push CASTLE", "Push the specified castle"
   def push(name)
     push_castle name
 
   end
 
-  desc "symlink NAME", "Symlinks all dotfiles from the specified castle"
+  desc "symlink CASTLE", "Symlinks all dotfiles from the specified castle"
   method_option :force, :default => false, :desc => "Overwrite existing conflicting symlinks without prompting."
   def symlink(name)
     check_castle_existance(name, "symlink")
