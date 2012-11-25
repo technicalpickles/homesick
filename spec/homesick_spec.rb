@@ -145,6 +145,12 @@ describe "homesick" do
 
   end
 
+  describe "push" do
+
+    xit "needs testing"
+
+  end
+
   describe "track" do
     it "should move the tracked file into the castle" do
       castle = given_castle('castle_repo')
