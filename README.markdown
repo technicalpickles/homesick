@@ -37,6 +37,10 @@ To pull your castle (or all castles):
 
     homesick pull --all|CASTLE
 
+To commit your castle's changes:
+
+    homesick commit CASTLE
+
 To push your castle:
 
     homesick push CASTLE

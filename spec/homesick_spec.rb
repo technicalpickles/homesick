@@ -145,6 +145,12 @@ describe "homesick" do
 
   end
 
+  describe "commit" do
+
+    xit "needs testing"
+
+  end
+
   describe "push" do
 
     xit "needs testing"

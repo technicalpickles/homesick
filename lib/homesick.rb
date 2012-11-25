@@ -79,6 +79,12 @@ class Homesick < Thor
 
   end
 
+  desc "commit CASTLE", "Commit the specified castle's changes"
+  def commit(name)
+    commit_castle name
+
+  end
+
   desc "push CASTLE", "Push the specified castle"
   def push(name)
     push_castle name
@@ -214,10 +220,16 @@ class Homesick < Thor
     end
   end
   
+  def commit_castle(castle)
+    check_castle_existance(castle, "commit")
+    inside repos_dir.join(castle) do
+      git_commit_all
+    end
+  end
+
   def push_castle(castle)
     check_castle_existance(castle, "push")
     inside repos_dir.join(castle) do
-      git_commit_all
       git_push
     end
   end
