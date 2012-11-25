@@ -35,11 +35,11 @@ If you're not sure what castles you have around, you can easily list them:
 
 To pull your castle (or all castles):
 
-    homesick pull --all|CASTLE_NAME
+    homesick pull --all|CASTLE
 
 To push your castle:
 
-    homesick push CASTLE_NAME
+    homesick push CASTLE
 
 Not sure what else homesick has up its sleeve? There's always the built in help:
 
