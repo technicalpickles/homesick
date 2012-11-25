@@ -33,6 +33,14 @@ If you're not sure what castles you have around, you can easily list them:
 
     homesick list
 
+To pull your castle (omit CASTLE_NAME to pull all castles):
+
+    homesick pull CASTLE_NAME
+
+To push your castle:
+
+    homesick push CASTLE_NAME
+
 Not sure what else homesick has up its sleeve? There's always the built in help:
 
     homesick help

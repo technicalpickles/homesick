@@ -79,7 +79,6 @@ class Homesick < Thor
   end
 
   desc "push NAME", "Push the specified castle"
-  method_option :all, :type => :boolean, :default => false, :required => false, :desc => "Update all cloned castles"
   def push(name)
     push_castle name
 
