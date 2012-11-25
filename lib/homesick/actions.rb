@@ -60,6 +60,16 @@ class Homesick
       system "git pull --quiet" unless options[:pretend]
     end
 
+    def git_push(config = {})
+      say_status 'git push', '', :green unless options[:quiet]
+      system "git push" unless options[:pretend]
+    end
+
+    def git_commit_all(config = {})
+      say_status 'git commit all', '', :green unless options[:quiet]
+      system "git commit -v -a" unless options[:pretend]
+    end
+
     def mv(source, destination, config = {})
       source = Pathname.new(source)
       destination = Pathname.new(destination + source.basename)
