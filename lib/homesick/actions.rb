@@ -51,7 +51,7 @@ class Homesick
 
     def git_submodule_update(config = {})
       say_status 'git submodule', 'update', :green unless options[:quiet]
-      system "git submodule --quiet update >/dev/null 2>&1" unless options[:pretend]
+      system "git submodule --quiet update --init --recursive >/dev/null 2>&1" unless options[:pretend]
     end
 
     def git_pull(config = {})
