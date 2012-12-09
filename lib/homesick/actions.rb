@@ -4,7 +4,7 @@ class Homesick
     def git_clone(repo, config = {})
       config ||= {}
       destination = config[:destination] || begin
-        repo =~ /([^\/]+)\.git$/
+        repo =~ /([^\/]+)(?:\.git)?$/
        $1
       end
 
