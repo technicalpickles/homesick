@@ -64,7 +64,7 @@ class Homesick < Thor
     end
   end
 
-  desc "pull NAME", "Update the specified castle"
+  desc "pull CASTLE", "Update the specified castle"
   method_option :all, :type => :boolean, :default => false, :required => false, :desc => "Update all cloned castles"
   def pull(name="")
     if options[:all]
@@ -78,7 +78,19 @@ class Homesick < Thor
 
   end
 
-  desc "symlink NAME", "Symlinks all dotfiles from the specified castle"
+  desc "commit CASTLE", "Commit the specified castle's changes"
+  def commit(name)
+    commit_castle name
+
+  end
+
+  desc "push CASTLE", "Push the specified castle"
+  def push(name)
+    push_castle name
+
+  end
+
+  desc "symlink CASTLE", "Symlinks all dotfiles from the specified castle"
   method_option :force, :default => false, :desc => "Overwrite existing conflicting symlinks without prompting."
   def symlink(name)
     check_castle_existance(name, "symlink")
@@ -187,6 +199,20 @@ class Homesick < Thor
       git_pull
       git_submodule_init
       git_submodule_update
+    end
+  end
+  
+  def commit_castle(castle)
+    check_castle_existance(castle, "commit")
+    inside repos_dir.join(castle) do
+      git_commit_all
+    end
+  end
+
+  def push_castle(castle)
+    check_castle_existance(castle, "push")
+    inside repos_dir.join(castle) do
+      git_push
     end
   end
 end

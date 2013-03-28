@@ -33,6 +33,18 @@ If you're not sure what castles you have around, you can easily list them:
 
     homesick list
 
+To pull your castle (or all castles):
+
+    homesick pull --all|CASTLE
+
+To commit your castle's changes:
+
+    homesick commit CASTLE
+
+To push your castle:
+
+    homesick push CASTLE
+
 Not sure what else homesick has up its sleeve? There's always the built in help:
 
     homesick help
