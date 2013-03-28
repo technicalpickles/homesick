@@ -124,6 +124,10 @@ class Homesick < Thor
       home_path = home_dir + file
       ln_s absolute_path, home_path
     end
+    
+    inside castle_path do
+      git_add absolute_path
+    end
   end
 
   desc "list", "List cloned castles"

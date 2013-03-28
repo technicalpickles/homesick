@@ -67,6 +67,10 @@ class Homesick
     def git_commit_all(config = {})
       say_status 'git commit all', '', :green unless options[:quiet]
       system "git commit -v -a" unless options[:pretend]
+
+    def git_add(file, config = {})
+      say_status 'git add file', '', :green unless options[:quiet]
+      system "git add #{file}" unless options[:pretend]
     end
 
     def mv(source, destination, config = {})
