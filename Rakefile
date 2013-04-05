@@ -19,10 +19,10 @@ Jeweler::Tasks.new do |gem|
     Homesick is sorta like rip, but for dotfiles. It uses git to clone a repository containing dotfiles, and saves them in ~/.homesick. It then allows you to symlink all the dotfiles into place with a single command. 
 
   }
-  gem.email = "josh@technicalpickles.com"
+  gem.email = ["josh@technicalpickles.com", "info@muratayusuke.com"]
   gem.homepage = "http://github.com/technicalpickles/homesick"
-  gem.authors = ["Joshua Nichols"]
-  gem.version = "0.7.0"
+  gem.authors = ["Joshua Nichols", "Yusuke Murata"]
+  gem.version = "0.8.0"
   gem.license = "MIT"
   # Have dependencies? Add them to Gemfile
 

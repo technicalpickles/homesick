@@ -1,3 +1,9 @@
+# 0.8.0
+ * Introduce commit & push command
+  * commit changes in castle and push to remote
+ * Enable recursive submodule update
+ * Git add when track
+ 
 # 0.7.0
  * Fixed double-cloning #14
  * New option for pull command: --all
