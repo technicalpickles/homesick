@@ -181,7 +181,7 @@ class Homesick < Thor
   end
 
   def all_castles
-    dirs = Pathname.glob("#{repos_dir}/**/*/.git")
+    dirs = Pathname.glob("#{repos_dir}/**/*/.git", RUBY_VERSION =~ /^2\.0/ ? File::FNM_DOTMATCH : 0)
     # reject paths that lie inside another castle, like git submodules
     return dirs.reject do |dir|
       dirs.any? {|other| dir != other && dir.fnmatch(other.parent.join('*').to_s) }
