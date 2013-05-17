@@ -125,7 +125,7 @@ class Homesick < Thor
       home_path = home_dir + file
       ln_s absolute_path, home_path
     end
-    
+
     inside castle_path do
       git_add absolute_path
     end
@@ -199,7 +199,7 @@ class Homesick < Thor
   end
 
   def all_castles
-    dirs = Pathname.glob("#{repos_dir}/**/*/.git")
+    dirs = Pathname.glob("#{repos_dir}/**/.git", File::FNM_DOTMATCH)
     # reject paths that lie inside another castle, like git submodules
     return dirs.reject do |dir|
       dirs.any? {|other| dir != other && dir.fnmatch(other.parent.join('*').to_s) }
@@ -223,7 +223,7 @@ class Homesick < Thor
       git_submodule_update
     end
   end
-  
+
   def commit_castle(castle)
     check_castle_existance(castle, "commit")
     inside repos_dir.join(castle) do
