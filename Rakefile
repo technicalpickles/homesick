@@ -22,7 +22,7 @@ Jeweler::Tasks.new do |gem|
   gem.email = ["josh@technicalpickles.com", "info@muratayusuke.com"]
   gem.homepage = "http://github.com/technicalpickles/homesick"
   gem.authors = ["Joshua Nichols", "Yusuke Murata"]
-  gem.version = "0.8.0"
+  gem.version = "0.8.1"
   gem.license = "MIT"
   # Have dependencies? Add them to Gemfile
 
@@ -44,7 +44,7 @@ end
 
 task :default => :spec
 
-require 'rake/rdoctask'
+require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
