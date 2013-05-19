@@ -1,3 +1,6 @@
+# 0.8.1
+ *Fixed `homesick list` bug on ruby 2.0 #37
+ 
 # 0.8.0
  * Introduce commit & push command
   * commit changes in castle and push to remote
