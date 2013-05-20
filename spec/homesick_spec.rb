@@ -105,6 +105,38 @@ describe "homesick" do
       home.join("bin").readlink.should == dotfile
     end
 
+    context "when symlink to directory exists" do
+      it "asks if it should remove symlink" do
+        homesick.shell = double()
+        homesick.shell.should_receive(:file_collision) { false }
+
+        somewhere_else = create_construct.directory(".vim")
+        existing_dotdir_link = home.join(".vim")
+        FileUtils.ln_s somewhere_else, existing_dotdir_link
+
+        dotfile = castle.directory(".vim").file(".some_dotfile")
+
+        homesick.symlink("glencairn")
+
+        existing_dotdir_link.should be_symlink
+        existing_dotdir_link.join(".some_dotfile").readlink.should == dotfile
+      end
+
+      it "detects identical files" do
+        homesick.shell.stub(:file_collision) { false }
+        symlinked_dir = castle.directory(".vim")
+        existing_dotdir_link = home.join(".vim")
+        FileUtils.ln_s symlinked_dir, existing_dotdir_link
+
+        dotfile = symlinked_dir.file(".some_dotfile")
+
+        homesick.symlink("glencairn")
+
+        existing_dotdir_link.readlink.should == symlinked_dir
+        existing_dotdir_link.join(".some_dotfile").realpath.should == dotfile.realpath
+      end
+    end
+
     context "when same directory exists in multiple castles" do
       let(:other_castle) { given_castle("other") }
 
@@ -122,6 +154,21 @@ describe "homesick" do
 
     context "when forced" do
       let(:homesick) { Homesick.new [], :force => true }
+
+      context "when symlink to directory exists" do
+        it "does remove symlink" do
+            somewhere_else = create_construct.directory(".vim")
+            existing_dotdir_link = home.join(".vim")
+            FileUtils.ln_s somewhere_else, existing_dotdir_link
+
+            dotfile = castle.directory(".vim").file(".some_dotfile")
+
+            homesick.symlink("glencairn")
+
+            existing_dotdir_link.should_not be_symlink
+            existing_dotdir_link.join(".some_dotfile").readlink.should == dotfile
+        end
+      end
 
       it "can override symlinks to files" do
         somewhere_else = create_construct.file(".vim")
