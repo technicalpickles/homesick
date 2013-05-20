@@ -96,14 +96,15 @@ class Homesick < Thor
     check_castle_existance(name, "symlink")
 
     inside castle_dir(name) do
-      files = Pathname.glob('{.*,*}').reject{|a| [".",".."].include?(a.to_s)}
+      files = Pathname.glob('**/*', File::FNM_DOTMATCH).select { |path| path.file? }
       files.each do |path|
         absolute_path = path.expand_path
 
         inside home_dir do
-          adjusted_path = (home_dir + path).basename
+          home_path = home_dir + path
 
-          ln_s absolute_path, adjusted_path
+          FileUtils.mkdir_p home_path.dirname
+          ln_s absolute_path, home_path
         end
       end
     end
