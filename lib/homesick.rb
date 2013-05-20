@@ -103,7 +103,7 @@ class Homesick < Thor
         inside home_dir do
           home_path = home_dir + path
 
-          FileUtils.mkdir_p home_path.dirname
+          mkdir_p home_path.dirname
           ln_s absolute_path, home_path
         end
       end
