@@ -105,6 +105,21 @@ describe "homesick" do
       home.join("bin").readlink.should == dotfile
     end
 
+    context "when same directory exists in multiple castles" do
+      let(:other_castle) { given_castle("other") }
+
+      it "will merge directories" do
+        dotfile = castle.directory(".vim").file(".castle")
+        other_file = other_castle.directory(".vim").file(".other_castle")
+
+        homesick.symlink("glencairn")
+        homesick.symlink("other")
+
+        home.join(".vim", ".castle").readlink.should == dotfile
+        home.join(".vim", ".other_castle").readlink.should == other_file
+      end
+    end
+
     context "when forced" do
       let(:homesick) { Homesick.new [], :force => true }
 
