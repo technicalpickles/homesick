@@ -108,16 +108,16 @@ describe "homesick" do
     context "when forced" do
       let(:homesick) { Homesick.new [], :force => true }
 
-      it "can override symlinks to directories" do
-        somewhere_else = create_construct
-        existing_dotdir_link = home.join(".vim")
-        FileUtils.ln_s somewhere_else, existing_dotdir_link
+      it "can override symlinks to files" do
+        somewhere_else = create_construct.file(".vim")
+        existing_dotfile_link = home.join(".vim")
+        FileUtils.ln_s somewhere_else, existing_dotfile_link
 
-        dotdir = castle.directory(".vim")
+        dotfile = castle.file(".vim")
 
         homesick.symlink("glencairn")
 
-        existing_dotdir_link.readlink.should == dotdir
+        existing_dotfile_link.readlink.should == dotfile
       end
     end
   end
