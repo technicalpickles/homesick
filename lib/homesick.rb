@@ -113,16 +113,22 @@ class Homesick < Thor
   desc "track FILE CASTLE", "add a file to a castle"
   def track(file, castle)
     castle = Pathname.new(castle)
-    file = Pathname.new(file)
+    file = Pathname.new(file.chomp('/'))
     check_castle_existance(castle, 'track')
 
     absolute_path = file.expand_path
-    castle_path = castle_dir(castle)
+    relative_dir = absolute_path.relative_path_from(home_dir).dirname
+    castle_path = Pathname.new(castle_dir(castle)).join(relative_dir)
+
+    unless castle_path.exist?
+      FileUtils.mkdir_p castle_path
+    end
+
     mv absolute_path, castle_path
 
     inside home_dir do
-      absolute_path = castle_dir(castle) + file.basename
-      home_path = home_dir + file
+      absolute_path = castle_path + file.basename
+      home_path = home_dir + relative_dir + file.basename
       ln_s absolute_path, home_path
     end
 
