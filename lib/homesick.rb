@@ -101,6 +101,7 @@ class Homesick < Thor
         absolute_path = path.expand_path
 
         inside home_dir do
+          path = Pathname.new(".#{path}") if path.to_s[0] != '.'
           adjusted_path = (home_dir + path).basename
 
           ln_s absolute_path, adjusted_path
