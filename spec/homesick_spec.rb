@@ -192,6 +192,35 @@ describe "homesick" do
       tracked_file.should exist
       File.realdirpath(some_nested_dir).should == File.realdirpath(tracked_file)
     end
+
+    describe "manifest" do
+
+      it 'should add the nested files parent to the manifest' do
+        castle = given_castle('castle_repo')
+
+        some_nested_file = home.file('some/nested/file.txt')
+        homesick.track(some_nested_file.to_s, 'castle_repo')
+
+        manifest = Pathname.new(castle.parent.join('.manifest'))
+        File.open(manifest, 'r') do |f|
+          f.readline.should == "some/nested\n"
+        end
+      end
+
+      it 'should NOT add anything if the files parent is already listed' do
+        castle = given_castle('castle_repo')
+
+        some_nested_file = home.file('some/nested/file.txt')
+        other_nested_file = home.file('some/nested/other.txt')
+        homesick.track(some_nested_file.to_s, 'castle_repo')
+        homesick.track(other_nested_file.to_s, 'castle_repo')
+
+        manifest = Pathname.new(castle.parent.join('.manifest'))
+        File.open(manifest, 'r') do |f|
+          f.readlines.size.should == 1
+        end
+      end
+    end
   end
 
   describe "destroy" do

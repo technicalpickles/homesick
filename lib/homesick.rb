@@ -135,6 +135,15 @@ class Homesick < Thor
     inside castle_path do
       git_add absolute_path
     end
+
+    # are we tracking something nested? Add the parent dir to the manifest unless its already listed
+    unless relative_dir.eql?(Pathname.new('.'))
+      manifest_path = Pathname.new(repos_dir.join(castle, '.manifest'))
+      File.open(manifest_path, 'a+') do |manifest|
+        manifest.puts relative_dir unless manifest.readlines.inject(false) { |memo, line| line.eql?("#{relative_dir.to_s}\n") || memo }
+      end
+    end
+
   end
 
   desc "list", "List cloned castles"
