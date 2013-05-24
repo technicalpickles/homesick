@@ -16,12 +16,19 @@ RSpec.configure do |config|
     homesick.stub(:say_status)
   end
 
-  def given_castle(name, path=name)
+  def given_castle(name, path=name, subdirs=[])
     castles.directory(path) do |castle|
       Dir.chdir(castle) do
         system "git init >/dev/null 2>&1"
         system "git remote add origin git://github.com/technicalpickles/#{name}.git >/dev/null 2>&1"
-        return castle.directory("home")
+        castle_home = castle.directory("home")
+        if subdirs then
+          subdir_file = castle_home.join(Homesick::SUBDIR_FILENAME)
+          subdirs.each do |subdir|
+            system "echo #{subdir} >> #{subdir_file}"
+          end
+        end
+        return castle_home
       end
     end
   end
