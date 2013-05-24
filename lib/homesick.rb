@@ -11,6 +11,7 @@ class Homesick < Thor
   add_runtime_options!
 
   GITHUB_NAME_REPO_PATTERN = /\A([A-Za-z_-]+\/[A-Za-z_-]+)\Z/
+  SUBDIR_FILENAME = ".homesick_subdir"
 
   def initialize(args=[], options={}, config={})
     super
@@ -97,7 +98,17 @@ class Homesick < Thor
     check_castle_existance(name, "symlink")
 
     inside castle_dir(name) do
-      files = Pathname.glob('{.*,*}').reject{|a| [".",".."].include?(a.to_s)}
+      # prepare subdir information
+      subdir_file = Pathname.new(".").join(SUBDIR_FILENAME)
+      subdirs = []
+      if subdir_file.exist? then
+        subdir_file.readlines.each do |subdir|
+          subdirs.push(subdir.chomp)
+        end
+      end
+
+      # link files
+      files = Pathname.glob('{.*,*}').reject{|a| [".", "..", SUBDIR_FILENAME, subdirs].flatten.include?(a.to_s)}
       files.each do |path|
         absolute_path = path.expand_path
 
@@ -105,6 +116,22 @@ class Homesick < Thor
           adjusted_path = (home_dir + path).basename
 
           ln_s absolute_path, adjusted_path
+        end
+      end
+
+      # link files in subdirs
+      subdirs.each do |subdir|
+        inside subdir do
+          files = Pathname.glob('{.*,*}').reject{|a| [".", ".."].include?(a.to_s)}
+          files.each do |path|
+            absolute_path = path.expand_path
+
+            inside home_dir.join(subdir) do
+              adjusted_path =  (home_dir + path).basename
+
+              ln_s absolute_path, adjusted_path
+            end
+          end
         end
       end
     end

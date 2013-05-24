@@ -121,6 +121,21 @@ describe "homesick" do
         existing_dotdir_link.readlink.should == dotdir
       end
     end
+
+    context "when .homesick_subdir exists" do
+      let(:castle) { given_castle("glencairn", "glencairn", [".config"]) }
+
+      it "can symlink in sub directory" do
+        dotdir = castle.directory(".config")
+        dotfile = dotdir.file(".some_dotfile")
+
+        homesick.symlink("glencairn")
+
+        home_dotdir = home.join(".config")
+        home_dotdir.symlink?.should == false
+        home_dotdir.join(".some_dotfile").readlink.should == dotfile
+      end
+    end
   end
 
   describe "list" do
