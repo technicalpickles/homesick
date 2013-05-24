@@ -151,7 +151,38 @@ class Homesick < Thor
       FileUtils.mkdir_p castle_path
     end
 
-    mv absolute_path, castle_path
+    # Are we already tracking this or anything inside it?
+    target = Pathname.new(castle_path.join(file.basename))
+
+    if target.exist?
+
+      if absolute_path.directory?
+        child_files = absolute_path.children
+        child_files.each do |child|
+
+          if target.join(child.basename).exist?
+            next
+          end
+
+          mv child, target
+        end
+        absolute_path.rmtree
+        manifest = Pathname.new(repos_dir.join(castle, '.manifest'))
+        if manifest.exist?
+          lines = IO.readlines(manifest).delete_if { |line| line == "#{relative_dir + file.basename}\n" }
+          File.open(manifest, 'w') { |manfile| manfile.puts lines }
+        end
+
+      elsif absolute_path.mtime > target.mtime && !absolute_path.symlink?
+        target.delete
+        mv absolute_path, castle_path
+      else
+        shell.say_status(:track, "#{target} already exists, and is more recent than #{file}. Run 'homesick SYMLINK CASTLE' to create symlinks.")
+      end
+
+    else
+      mv absolute_path, castle_path
+    end
 
     inside home_dir do
       absolute_path = castle_path + file.basename

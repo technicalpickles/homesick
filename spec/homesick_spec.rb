@@ -235,6 +235,20 @@ describe "homesick" do
           f.readlines.size.should == 1
         end
       end
+
+      it 'should remove the parent of a tracked file from the manifest if the parent itself is tracked' do
+        castle = given_castle('castle_repo')
+
+        some_nested_file = home.file('some/nested/file.txt')
+        nested_parent = home.directory('some/nested/')
+        homesick.track(some_nested_file.to_s, 'castle_repo')
+        homesick.track(nested_parent.to_s, 'castle_repo')
+
+        manifest = Pathname.new(castle.parent.join('.manifest'))
+        File.open(manifest, 'r') do |f|
+          f.each_line { |line| line.should_not == "some/nested\n" }
+        end
+      end
     end
   end
 
