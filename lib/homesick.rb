@@ -105,9 +105,18 @@ class Homesick < Thor
           subdirs.push(subdir.chomp)
         end
       end
+      ignore_dirs = []
+      subdirs.each do |subdir|
+        splited_subdir = Pathname.new(subdir).split
+        ignore_dir = splited_subdir[0].to_s
+        if ignore_dir == "." then
+          ignore_dir = splited_subdir[1].to_s
+        end
+        ignore_dirs.push(ignore_dir)
+      end
 
       # link files
-      files = Pathname.glob('{.*,*}').reject{|a| [".", "..", SUBDIR_FILENAME, subdirs].flatten.include?(a.to_s)}
+      files = Pathname.glob('{.*,*}').reject{|a| [".", "..", SUBDIR_FILENAME, ignore_dirs].flatten.include?(a.to_s)}
       files.each do |path|
         absolute_path = path.expand_path
 
@@ -126,7 +135,7 @@ class Homesick < Thor
             absolute_path = path.expand_path
 
             inside home_dir.join(subdir) do
-              adjusted_path =  (home_dir + path).basename
+              adjusted_path =  (home_dir + subdir + path).basename
 
               ln_s absolute_path, adjusted_path
             end

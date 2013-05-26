@@ -121,9 +121,8 @@ describe "homesick" do
       end
     end
 
-    context "when .homesick_subdir exists" do
+    context "with '.config' in .homesick_subdir" do
       let(:castle) { given_castle("glencairn", "glencairn", [".config"]) }
-
       it "can symlink in sub directory" do
         dotdir = castle.directory(".config")
         dotfile = dotdir.file(".some_dotfile")
@@ -131,6 +130,20 @@ describe "homesick" do
         homesick.symlink("glencairn")
 
         home_dotdir = home.join(".config")
+        home_dotdir.symlink?.should == false
+        home_dotdir.join(".some_dotfile").readlink.should == dotfile
+      end
+    end
+
+    context "with '.config/appA' in .homesick_subdir" do
+      let(:castle) { given_castle("glencairn", "glencairn", [".config/appA"]) }
+      it "can symlink in nested sub directory" do
+        dotdir = castle.directory(".config").directory("appA")
+        dotfile = dotdir.file(".some_dotfile")
+
+        homesick.symlink("glencairn")
+
+        home_dotdir = home.join(".config").join("appA")
         home_dotdir.symlink?.should == false
         home_dotdir.join(".some_dotfile").readlink.should == dotfile
       end
