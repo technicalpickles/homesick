@@ -39,3 +39,7 @@ pkg
 #
 # For vim:
 *.swp
+#
+# For IDEA:
+.idea/
+*.iml
