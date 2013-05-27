@@ -99,10 +99,10 @@ class Homesick < Thor
 
     inside castle_dir(name) do
       # prepare subdir information
-      subdir_file = Pathname.new(".").join(SUBDIR_FILENAME)
+      subdir_filepath = subdir_file(name)
       subdirs = []
-      if subdir_file.exist? then
-        subdir_file.readlines.each do |subdir|
+      if subdir_filepath.exist? then
+        subdir_filepath.readlines.each do |subdir|
           subdirs.push(subdir.chomp)
         end
       end
@@ -155,10 +155,7 @@ class Homesick < Thor
     absolute_path = file.expand_path
     relative_dir = absolute_path.relative_path_from(home_dir).dirname
     castle_path = Pathname.new(castle_dir(castle)).join(relative_dir)
-
-    unless castle_path.exist?
-      FileUtils.mkdir_p castle_path
-    end
+    FileUtils.mkdir_p castle_path
 
     # Are we already tracking this or anything inside it?
     target = Pathname.new(castle_path.join(file.basename))
@@ -166,7 +163,7 @@ class Homesick < Thor
       if absolute_path.directory?
         move_dir_contents(target, absolute_path)
         absolute_path.rmtree
-        manifest_remove(castle, relative_dir + file.basename)
+        subdir_remove(castle, relative_dir + file.basename)
 
       elsif more_recent? absolute_path, target
         target.delete
@@ -190,7 +187,7 @@ class Homesick < Thor
 
     # are we tracking something nested? Add the parent dir to the manifest
     unless relative_dir.eql?(Pathname.new('.'))
-      manifest_add(castle, relative_dir)
+      subdir_add(castle, relative_dir)
     end
   end
 
@@ -301,30 +298,30 @@ class Homesick < Thor
     end
   end
 
-  def manifest(castle)
-    Pathname.new(repos_dir.join(castle, '.manifest'))
+  def subdir_file(castle)
+    castle_dir(castle).join(SUBDIR_FILENAME)
   end
 
-  def manifest_add(castle, path)
-    manifest_path = manifest(castle)
-    File.open(manifest_path, 'a+') do |manifest|
-      manifest.puts path unless manifest.readlines.inject(false) { |memo, line| line.eql?("#{path.to_s}\n") || memo }
+  def subdir_add(castle, path)
+    subdir_filepath = subdir_file(castle)
+    File.open(subdir_filepath, 'a+') do |subdir|
+      subdir.puts path unless subdir.readlines.inject(false) { |memo, line| line.eql?("#{path.to_s}\n") || memo }
     end
 
     inside castle_dir(castle) do
-      git_add manifest_path
+      git_add subdir_filepath
     end
   end
 
-  def manifest_remove(castle, path)
-    manifest_file = manifest(castle)
-    if manifest_file.exist?
-      lines = IO.readlines(manifest_file).delete_if { |line| line == "#{path}\n" }
-      File.open(manifest_file, 'w') { |manfile| manfile.puts lines }
+  def subdir_remove(castle, path)
+    subdir_filepath = subdir_file(castle)
+    if subdir_filepath.exist?
+      lines = IO.readlines(subdir_filepath).delete_if { |line| line == "#{path}\n" }
+      File.open(subdir_filepath, 'w') { |manfile| manfile.puts lines }
     end
 
     inside castle_dir(castle) do
-      git_add manifest_file
+      git_add subdir_filepath
     end
   end
 

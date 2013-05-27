@@ -221,16 +221,16 @@ describe "homesick" do
       File.realdirpath(some_nested_dir).should == File.realdirpath(tracked_file)
     end
 
-    describe "manifest" do
+    describe "subdir_file" do
 
-      it 'should add the nested files parent to the manifest' do
+      it 'should add the nested files parent to the subdir_file' do
         castle = given_castle('castle_repo')
 
         some_nested_file = home.file('some/nested/file.txt')
         homesick.track(some_nested_file.to_s, 'castle_repo')
 
-        manifest = Pathname.new(castle.parent.join('.manifest'))
-        File.open(manifest, 'r') do |f|
+        subdir_file = castle.join(Homesick::SUBDIR_FILENAME)
+        File.open(subdir_file, 'r') do |f|
           f.readline.should == "some/nested\n"
         end
       end
@@ -243,13 +243,13 @@ describe "homesick" do
         homesick.track(some_nested_file.to_s, 'castle_repo')
         homesick.track(other_nested_file.to_s, 'castle_repo')
 
-        manifest = Pathname.new(castle.parent.join('.manifest'))
-        File.open(manifest, 'r') do |f|
+        subdir_file = castle.join(Homesick::SUBDIR_FILENAME)
+        File.open(subdir_file, 'r') do |f|
           f.readlines.size.should == 1
         end
       end
 
-      it 'should remove the parent of a tracked file from the manifest if the parent itself is tracked' do
+      it 'should remove the parent of a tracked file from the subdir_file if the parent itself is tracked' do
         castle = given_castle('castle_repo')
 
         some_nested_file = home.file('some/nested/file.txt')
@@ -257,8 +257,8 @@ describe "homesick" do
         homesick.track(some_nested_file.to_s, 'castle_repo')
         homesick.track(nested_parent.to_s, 'castle_repo')
 
-        manifest = Pathname.new(castle.parent.join('.manifest'))
-        File.open(manifest, 'r') do |f|
+        subdir_file = castle.join(Homesick::SUBDIR_FILENAME)
+        File.open(subdir_file, 'r') do |f|
           f.each_line { |line| line.should_not == "some/nested\n" }
         end
       end
