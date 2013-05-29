@@ -219,17 +219,126 @@ describe "homesick" do
   end
 
   describe "track" do
-    it "should move the tracked file into the castle" do
-      castle = given_castle('castle_repo')
+    let(:castle) { given_castle("castle_repo") }
 
-      some_rc_file = home.file '.some_rc_file'
+    context "file" do
+      it "should move the file into the castle" do
+        some_rc_file = home.file(".some_rc_file")
+        tracked_file = castle.join(".some_rc_file")
 
-      homesick.track(some_rc_file.to_s, 'castle_repo')
+        homesick.track(some_rc_file, "castle_repo")
 
-      tracked_file = castle.join(".some_rc_file")
-      tracked_file.should exist
+        tracked_file.should exist
+        some_rc_file.readlink.should == tracked_file
+      end
 
-      some_rc_file.readlink.should == tracked_file
+      it "should move the file in a nested folder structure into similar structure" do
+        some_nested_file = home.file("some/nested/file.txt")
+        tracked_file = castle.join("some/nested/file.txt")
+
+        homesick.track(some_nested_file, "castle_repo")
+
+        tracked_file.should exist
+        some_nested_file.readlink.should == tracked_file
+      end
+
+      context ".manifest" do
+        before(:each) do
+          castle
+        end
+        let(:manifest) { castle.join(Homesick::MANIFEST_FILENAME) }
+
+        it "should not add file to manifest" do
+          path = ".some_file"
+          some_file = home.file(path)
+
+          homesick.track(some_file, "castle_repo")
+
+          manifest.should_not exist
+        end
+
+      end
+    end
+
+    context "directory" do
+      context "should move the directory into the castle" do
+        it "without trailing slash" do
+          some_dir = home.directory(".some_dir")
+          tracked_dir = castle.join(".some_dir")
+
+          homesick.track(some_dir, "castle_repo")
+
+          tracked_dir.should exist
+          some_dir.readlink.should == tracked_dir
+        end
+
+        it "with trailing slash" do
+          some_dir = home.directory(".some_dir/")
+          tracked_dir = castle.join(".some_dir")
+
+          homesick.track(some_dir, "castle_repo")
+
+          tracked_dir.should exist
+          home.join('.some_dir').readlink.should == tracked_dir
+        end
+      end
+
+      it "should move a nested directory" do
+        some_nested_dir = home.directory("some/nested/directory")
+        tracked_dir = castle.join("some/nested/directory")
+
+        homesick.track(some_nested_dir, "castle_repo")
+
+        some_nested_dir.should exist
+        some_nested_dir.readlink.should == tracked_dir
+      end
+
+      context ".manifest" do
+        before(:each) do
+          castle
+        end
+        let(:manifest) { castle.join(Homesick::MANIFEST_FILENAME) }
+
+        it "should add directory to manifest" do
+          path = ".some_dir"
+          some_dir = home.directory(path)
+
+          homesick.track(some_dir, "castle_repo")
+
+          manifest.open.read.should == "#{path}\n"
+        end
+
+        it "should add nested directory to manifest" do
+          path = "some/nested/directory"
+          some_nested_dir = home.directory(path)
+
+          homesick.track(some_nested_dir, "castle_repo")
+
+          manifest.open.read.should == "#{path}\n"
+        end
+
+        it "should not add nested directory if parent is already listed" do
+          parent_path = "parent"
+          parent_dir = home.directory(parent_path)
+          some_nested_dir = parent_dir.directory("directory")
+
+          homesick.track(parent_dir, "castle_repo")
+          homesick.track(some_nested_dir, "castle_repo")
+
+          manifest.open.read.should == "#{parent_path}\n"
+        end
+
+        it "should remove nested directory if parent is tracked" do
+          parent_path = "parent"
+          parent_dir = home.directory(parent_path)
+          some_nested_dir = parent_dir.directory("directory")
+
+          homesick.track(some_nested_dir, "castle_repo")
+          homesick.track(parent_dir, "castle_repo")
+
+          manifest.open.read.should == "#{parent_path}\n"
+        end
+      end
     end
   end
 end
