@@ -1,6 +1,7 @@
 require 'thor'
 
 class Homesick < Thor
+  MANIFEST_FILENAME = '.manifest'
   autoload :Shell, 'homesick/shell'
   autoload :Actions, 'homesick/actions'
 
@@ -110,25 +111,35 @@ class Homesick < Thor
     end
   end
 
-  desc "track FILE CASTLE", "add a file to a castle"
-  def track(file, castle)
+  desc "track PATH CASTLE", "add a PATH to a castle"
+  def track(path, castle)
     castle = Pathname.new(castle)
-    file = Pathname.new(file)
+    path = Pathname.new(path.to_s.chomp('/')).expand_path
     check_castle_existance(castle, 'track')
 
-    absolute_path = file.expand_path
-    castle_path = castle_dir(castle)
-    mv absolute_path, castle_path
+    castle = castle_dir(castle)
+    return if path_already_in_castle(path, castle)
+
+    relative_path = path.relative_path_from(home_dir)
+    castle_path = castle.join(relative_path)
+
+    castle_path.dirname.tap do |parent_dir|
+      FileUtils.mkdir_p parent_dir
+      merge_path_from_castle path, castle_path, castle if castle_path.exist?
+      mv path, parent_dir
+    end
 
     inside home_dir do
-      absolute_path = castle_dir(castle) + file.basename
-      home_path = home_dir + file
-      ln_s absolute_path, home_path
+      if should_symlink?(relative_path, castle)
+        ln_s castle_path, path
+        add_to_manifest relative_path, castle if path.directory?
+      end
     end
 
-    inside castle_path do
-      git_add absolute_path
+    inside castle do
+      git_add castle_path
     end
+
   end
 
   desc "list", "List cloned castles"
@@ -219,5 +230,72 @@ class Homesick < Thor
     inside repos_dir.join(castle) do
       git_push
     end
+  end
+
+  def manifest_path(castle)
+    repos_dir.join(castle, Homesick::MANIFEST_FILENAME)
+  end
+
+  def manifest_lists?(path, castle)
+    if File.exist? manifest_path(castle)
+      File.open(manifest_path(castle), 'r').each_line do |line|
+        return true if line.strip == path.to_s
+      end
+    end
+    false
+  end
+
+  def remove_from_manifest(path, castle)
+    return unless manifest_lists?(path, castle)
+    manifest = manifest_path(castle)
+    file_changed = false
+
+    lines = File.open(manifest, 'r').each_line.map do |line|
+      unless line.strip == path.to_s
+        return line
+      end
+      file_changed = true
+      nil
+    end
+
+    return unless file_changed
+    File.open(manifest, 'w') do |f|
+      f.puts lines.compact
+    end
+  end
+
+  def add_to_manifest(path, castle)
+    File.open(manifest_path(castle), 'a') do |f|
+      f.puts path
+    end
+  end
+
+  def path_already_in_castle(path, castle_path)
+    path = path.realpath.to_s
+    castle_path = castle_path.realpath.to_s
+
+    path.start_with? castle_path
+  end
+
+  def should_symlink?(path, castle_path)
+      should_symlink = true
+      path.descend do |p|
+        next unless p.exist?
+        next unless path_already_in_castle(p, castle_path)
+        next unless manifest_lists?(p, castle_path)
+        should_symlink = false
+        break
+      end
+      should_symlink
+  end
+
+  def merge_path_from_castle(path, castle_path, castle)
+    castle_path.each_child do |child|
+      file = path + child.basename
+      FileUtils.rm file if file.realpath == child
+      FileUtils.mv child, path, :force => true
+      remove_from_manifest child.relative_path_from(castle), castle
+    end
+    FileUtils.rmdir castle_path
   end
 end
