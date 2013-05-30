@@ -122,12 +122,11 @@ class Homesick
 
     def mkdir_p(path)
       path.descend do |p|
-        if p.exist?
-          if p.symlink? || p.file?
-            say_status :conflict, "#{p} already exists", :red unless options[:quiet]
-            if options[:force] || shell.file_collision(p)
-              system "rm #{p}"
-            end
+        next unless p.exist?
+        if p.symlink? || p.file?
+          say_status :conflict, "#{p} already exists", :red unless options[:quiet]
+          if options[:force] || shell.file_collision(p)
+            system "rm #{p}"
           end
         end
       end
