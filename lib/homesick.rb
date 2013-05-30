@@ -306,7 +306,7 @@ class Homesick < Thor
   end
 
   def merge_path_from_castle(path, castle_path, castle)
-    castle_path.each_child do |child|
+    castle_path.children.each do |child|
       file = path + child.basename
       FileUtils.rm file if file.realpath == child
       FileUtils.mv child, path, :force => true
