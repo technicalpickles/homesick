@@ -152,6 +152,21 @@ describe "homesick" do
       end
     end
 
+    context "when directory listed in .manifest" do
+      let(:manifest) { castle.join(Homesick::MANIFEST_FILENAME) }
+      it "will symlink the directory instead of it's children" do
+        dotdir = castle.directory(".vim")
+        dotfile = dotdir.file(".file")
+        manifest.open('w').puts ".vim"
+
+        homesick.symlink("glencairn")
+
+        home.join(".vim").should be_symlink
+        home.join(".vim").readlink.should == dotdir
+        home.join(".vim", ".file").should_not be_symlink
+      end
+    end
+
     context "when forced" do
       let(:homesick) { Homesick.new [], :force => true }
 
