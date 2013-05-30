@@ -123,7 +123,7 @@ describe "homesick" do
     end
 
     context "with '.config' in .homesick_subdir" do
-      let(:castle) { given_castle("glencairn", "glencairn", [".config"]) }
+      let(:castle) { given_castle("glencairn", [".config"]) }
       it "can symlink in sub directory" do
         dotdir = castle.directory(".config")
         dotfile = dotdir.file(".some_dotfile")
@@ -137,7 +137,7 @@ describe "homesick" do
     end
 
     context "with '.config/appA' in .homesick_subdir" do
-      let(:castle) { given_castle("glencairn", "glencairn", [".config/appA"]) }
+      let(:castle) { given_castle("glencairn", [".config/appA"]) }
       it "can symlink in nested sub directory" do
         dotdir = castle.directory(".config").directory("appA")
         dotfile = dotdir.file(".some_dotfile")
@@ -154,7 +154,7 @@ describe "homesick" do
   describe "list" do
     it "should say each castle in the castle directory" do
       given_castle('zomg')
-      given_castle('zomg', 'wtf/zomg')
+      given_castle('wtf/zomg')
 
       homesick.should_receive(:say_status).with("zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
       homesick.should_receive(:say_status).with("wtf/zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
