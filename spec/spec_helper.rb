@@ -16,7 +16,8 @@ RSpec.configure do |config|
     homesick.stub(:say_status)
   end
 
-  def given_castle(name, path=name, subdirs=[])
+  def given_castle(path, subdirs=[])
+    name = Pathname.new(path).basename
     castles.directory(path) do |castle|
       Dir.chdir(castle) do
         system "git init >/dev/null 2>&1"
