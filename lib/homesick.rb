@@ -95,18 +95,28 @@ class Homesick < Thor
   method_option :force, :default => false, :desc => "Overwrite existing conflicting symlinks without prompting."
   def symlink(name)
     check_castle_existance(name, "symlink")
+    castle = castle_dir(name)
 
-    inside castle_dir(name) do
+    inside castle do
+      if manifest_path(castle).exist?
+        manifest_path(castle).each_line do |line|
+          line = line.chomp
+          directory = Pathname.new(line)
+
+          home_path = home_dir + line
+          mkdir_p home_path.dirname
+          ln_s directory.expand_path, home_path
+        end
+      end
+
       files = Pathname.glob('**/*', File::FNM_DOTMATCH).select { |path| path.file? }
       files.each do |path|
-        absolute_path = path.expand_path
+        next if path_or_parent_listed_in_manifest(path, castle)
 
-        inside home_dir do
-          home_path = home_dir + path
+        home_path = home_dir + path
 
-          mkdir_p home_path.dirname
-          ln_s absolute_path, home_path
-        end
+        mkdir_p home_path.dirname
+        ln_s path.expand_path, home_path
       end
     end
   end
@@ -130,7 +140,7 @@ class Homesick < Thor
     end
 
     inside home_dir do
-      if should_symlink?(relative_path, castle)
+      if should_symlink? relative_path, castle
         ln_s castle_path, path
         add_to_manifest relative_path, castle if path.directory?
       end
@@ -237,8 +247,8 @@ class Homesick < Thor
   end
 
   def manifest_lists?(path, castle)
-    if File.exist? manifest_path(castle)
-      File.open(manifest_path(castle), 'r').each_line do |line|
+    if manifest_path(castle).exist?
+      manifest_path(castle).each_line do |line|
         return true if line.strip == path.to_s
       end
     end
@@ -247,10 +257,10 @@ class Homesick < Thor
 
   def remove_from_manifest(path, castle)
     return unless manifest_lists?(path, castle)
-    manifest = manifest_path(castle)
+    manifest = manifest_path castle
     file_changed = false
 
-    lines = File.open(manifest, 'r').each_line.map do |line|
+    lines = manifest.each_line.map do |line|
       unless line.strip == path.to_s
         return line
       end
@@ -259,30 +269,36 @@ class Homesick < Thor
     end
 
     return unless file_changed
-    File.open(manifest, 'w') do |f|
+    manifest.open('w') do |f|
       f.puts lines.compact
     end
   end
 
+  def path_or_parent_listed_in_manifest(path, castle)
+    path.descend do |p|
+      return true if manifest_lists? p, castle
+    end
+    false
+  end
+
   def add_to_manifest(path, castle)
-    File.open(manifest_path(castle), 'a') do |f|
+    return if path_or_parent_listed_in_manifest(path, castle)
+    manifest_path(castle).open('a') do |f|
       f.puts path
     end
   end
 
-  def path_already_in_castle(path, castle_path)
+  def path_already_in_castle(path, castle)
     path = path.realpath.to_s
-    castle_path = castle_path.realpath.to_s
+    castle = castle.realpath.to_s
 
-    path.start_with? castle_path
+    path.start_with? castle
   end
 
   def should_symlink?(path, castle_path)
       should_symlink = true
       path.descend do |p|
-        next unless p.exist?
-        next unless path_already_in_castle(p, castle_path)
-        next unless manifest_lists?(p, castle_path)
+        next unless path.exist? && path_already_in_castle(p, castle_path)
         should_symlink = false
         break
       end
