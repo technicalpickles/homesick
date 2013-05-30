@@ -218,7 +218,7 @@ describe "homesick" do
 
       tracked_file = castle.join('some/nested/directory/')
       tracked_file.should exist
-      File.realdirpath(some_nested_dir).should == File.realdirpath(tracked_file)
+      some_nested_dir.realpath.should == tracked_file.realpath
     end
 
     describe "subdir_file" do
