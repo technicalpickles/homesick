@@ -157,7 +157,7 @@ describe "homesick" do
       it "will symlink the directory instead of it's children" do
         dotdir = castle.directory(".vim")
         dotfile = dotdir.file(".file")
-        manifest.open('w').puts ".vim"
+        manifest.open('w+') { |f| f.puts ".vim" }
 
         homesick.symlink("glencairn")
 
