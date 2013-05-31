@@ -98,15 +98,13 @@ class Homesick < Thor
     castle = castle_dir(name)
 
     inside castle do
-      if manifest_path(castle).exist?
-        manifest_path(castle).each_line do |line|
-          line = line.chomp
-          directory = Pathname.new(line)
+      manifest(castle).each do |line|
+        line = line.chomp
+        directory = Pathname.new(line)
 
-          home_path = home_dir + line
-          mkdir_p home_path.dirname
-          ln_s directory.expand_path, home_path
-        end
+        home_path = home_dir + line
+        mkdir_p home_path.dirname
+        ln_s directory.expand_path, home_path
       end
 
       files = Pathname.glob('**/*', File::FNM_DOTMATCH).select { |path| path.file? }
@@ -242,25 +240,35 @@ class Homesick < Thor
     end
   end
 
+  def manifest(castle)
+    return @manifest unless @manifest.nil?
+    return if castle.nil?
+
+    manifest_path = manifest_path(castle)
+    if manifest_path.exist?
+      @manifest = manifest_path.each_line
+    else
+      @manifest = "".each_line
+    end
+  end
+
   def manifest_path(castle)
     repos_dir.join(castle, Homesick::MANIFEST_FILENAME)
   end
 
   def manifest_lists?(path, castle)
-    if manifest_path(castle).exist?
-      manifest_path(castle).each_line do |line|
-        return true if line.strip == path.to_s
-      end
+    path = path.to_s
+    manifest(castle).find do |line|
+      return true if line.strip == path
     end
-    false
   end
 
   def remove_from_manifest(path, castle)
     return unless manifest_lists?(path, castle)
-    manifest = manifest_path castle
+    manifest_path = manifest_path(castle)
     file_changed = false
 
-    lines = manifest.each_line.map do |line|
+    lines = manifest(castle).map do |line|
       unless line.strip == path.to_s
         return line
       end
@@ -269,20 +277,22 @@ class Homesick < Thor
     end
 
     return unless file_changed
-    manifest.open('w') do |f|
+    @manifest = nil
+    manifest_path.open('w') do |f|
       f.puts lines.compact
     end
   end
 
   def path_or_parent_listed_in_manifest(path, castle)
     path.descend do |p|
-      return true if manifest_lists? p, castle
+      return true if manifest_lists?(p, castle)
     end
     false
   end
 
   def add_to_manifest(path, castle)
     return if path_or_parent_listed_in_manifest(path, castle)
+    @manifest = nil
     manifest_path(castle).open('a') do |f|
       f.puts path
     end
