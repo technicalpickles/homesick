@@ -260,26 +260,24 @@ class Homesick < Thor
   def manifest_lists?(path, castle)
     path = path.to_s
     manifest(castle).find do |line|
-      return true if line.strip == path
+      line.strip == path
     end
   end
 
   def remove_from_manifest(path, castle)
     return unless manifest_lists?(path, castle)
-    manifest_path = manifest_path(castle)
+    path = path.to_s
     file_changed = false
 
-    lines = manifest(castle).map do |line|
-      unless line.strip == path.to_s
-        return line
+    lines = manifest(castle).reject do |line|
+      if line.strip == path
+        file_changed = true
       end
-      file_changed = true
-      nil
     end
 
     return unless file_changed
     @manifest = nil
-    manifest_path.open('w') do |f|
+    manifest_path(castle).open('w') do |f|
       f.puts lines.compact
     end
   end
@@ -288,7 +286,6 @@ class Homesick < Thor
     path.descend do |p|
       return true if manifest_lists?(p, castle)
     end
-    false
   end
 
   def add_to_manifest(path, castle)
