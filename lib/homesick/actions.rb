@@ -105,15 +105,32 @@ class Homesick
           end
         end
       elsif destination.exist?
-        say_status :conflict, "#{destination} exists", :red unless options[:quiet]
+        if destination.realpath == source.realpath
+          say_status :identical, destination.expand_path, :blue unless options[:quiet]
+        else
+          say_status :conflict, "#{destination} exists", :red unless options[:quiet]
 
-        if options[:force] || shell.file_collision(destination) { source }
-          system "ln -sf #{source} #{destination}" unless options[:pretend]
+          if options[:force] || shell.file_collision(destination) { source }
+            system "ln -sf #{source} #{destination}" unless options[:pretend]
+          end
         end
       else
         say_status :symlink, "#{source.expand_path} to #{destination.expand_path}", :green unless options[:quiet]
         system "ln -s #{source} #{destination}" unless options[:pretend]
       end
+    end
+
+    def mkdir_p(path)
+      path.descend do |p|
+        next unless p.exist?
+        if p.symlink? || p.file?
+          say_status :conflict, "#{p} already exists", :red unless options[:quiet]
+          if options[:force] || shell.file_collision(p)
+            system "rm #{p}"
+          end
+        end
+      end
+      FileUtils.mkdir_p path
     end
   end
 end
