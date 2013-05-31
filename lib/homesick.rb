@@ -131,9 +131,10 @@ class Homesick < Thor
     relative_path = path.relative_path_from(home_dir)
     castle_path = castle.join(relative_path)
 
+    merge_path_from_castle path, castle_path, castle if castle_path.exist?
+
     castle_path.dirname.tap do |parent_dir|
       FileUtils.mkdir_p parent_dir
-      merge_path_from_castle path, castle_path, castle if castle_path.exist?
       mv path, parent_dir
     end
 
