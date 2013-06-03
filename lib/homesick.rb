@@ -97,50 +97,14 @@ class Homesick < Thor
     check_castle_existance(name, "symlink")
 
     inside castle_dir(name) do
-      # prepare subdir information
-      subdir_filepath = subdir_file(name)
-      subdirs = []
-      if subdir_filepath.exist? then
-        subdir_filepath.readlines.each do |subdir|
-          subdirs.push(subdir.chomp)
-        end
-      end
-      ignore_dirs = []
-      subdirs.each do |subdir|
-        splited_subdir = Pathname.new(subdir).split
-        ignore_dir = splited_subdir[0].to_s
-        if ignore_dir == "." then
-          ignore_dir = splited_subdir[1].to_s
-        end
-        ignore_dirs.push(ignore_dir)
-      end
+      subdirs = subdirs(name)
 
       # link files
-      files = Pathname.glob('{.*,*}').reject{|a| [".", "..", SUBDIR_FILENAME, ignore_dirs].flatten.include?(a.to_s)}
-      files.each do |path|
-        absolute_path = path.expand_path
-
-        inside home_dir do
-          adjusted_path = (home_dir + path).basename
-
-          ln_s absolute_path, adjusted_path
-        end
-      end
+      symlink_each(name, castle_dir(name), subdirs)
 
       # link files in subdirs
       subdirs.each do |subdir|
-        inside subdir do
-          files = Pathname.glob('{.*,*}').reject{|a| [".", ".."].include?(a.to_s)}
-          files.each do |path|
-            absolute_path = path.expand_path
-
-            inside home_dir.join(subdir) do
-              adjusted_path =  (home_dir + subdir + path).basename
-
-              ln_s absolute_path, adjusted_path
-            end
-          end
-        end
+        symlink_each(name, subdir, subdirs)
       end
     end
   end
@@ -284,6 +248,17 @@ class Homesick < Thor
     castle_dir(castle).join(SUBDIR_FILENAME)
   end
 
+  def subdirs(castle)
+    subdir_filepath = subdir_file(castle)
+    subdirs = []
+    if subdir_filepath.exist?
+      subdir_filepath.readlines.each do |subdir|
+        subdirs.push(subdir.chomp)
+      end
+    end
+    subdirs
+  end
+
   def subdir_add(castle, path)
     subdir_filepath = subdir_file(castle)
     File.open(subdir_filepath, 'a+') do |subdir|
@@ -328,5 +303,44 @@ class Homesick < Thor
     first_p = Pathname.new(first)
     second_p = Pathname.new(second)
     first_p.mtime > second_p.mtime && !first_p.symlink?
+  end
+
+  def symlink_each(castle, basedir, subdirs)
+    basedir = Pathname.new(basedir).expand_path
+    inside basedir do
+      files = Pathname.glob('{.*,*}').reject{|a| [".", ".."].include?(a.to_s)}
+      files.each do |path|
+        absolute_path = path.expand_path
+        castle_home = castle_dir(castle)
+
+        # ignore subdir file
+        next if absolute_path == castle_home.join(SUBDIR_FILENAME)
+
+        # make ignore dirs
+        ignore_dirs = []
+        subdirs.each do |subdir|
+          splited_subdir = Pathname.new(subdir).split
+          ignore_dir = splited_subdir[0].to_s
+          if ignore_dir == "." then
+            ignore_dir = splited_subdir[1].to_s
+          end
+          ignore_dirs.push(ignore_dir)
+        end
+
+        # ignore dirs written in subdir file
+        matched = false
+        ignore_dirs.each do |ignore_dir|
+          if absolute_path == castle_home.join(ignore_dir)
+            matched = true
+            next
+          end
+        end
+        next if matched
+
+        relative_dir = basedir.relative_path_from(castle_home)
+        home_path = home_dir.join(relative_dir).join(path)
+        ln_s absolute_path, home_path
+      end
+    end
   end
 end
