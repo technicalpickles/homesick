@@ -104,6 +104,7 @@ class Homesick
     def ln_s(source, destination, config = {})
       source = Pathname.new(source)
       destination = Pathname.new(destination)
+      FileUtils.mkdir_p destination.dirname
 
       if destination.symlink?
         if destination.readlink == source
