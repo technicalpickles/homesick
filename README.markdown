@@ -62,20 +62,20 @@ For example, when you have castle like this:
         `-- fooapp
             |-- config1
             |-- config2
-           `-- config3
+            `-- config3
 
 and have home like this:
 
     $ tree -a
-	~
-	|-- .config
-	|   `-- barapp
-	|         |-- config1
-	|         |-- config2
-	|         `-- config3
-	`-- .emacs.d
-	    |-- elisp
-		`-- inits
+    ~
+    |-- .config
+    |   `-- barapp
+    |         |-- config1
+    |         |-- config2
+    |         `-- config3
+    `-- .emacs.d
+        |-- elisp
+        `-- inits
 
 You may want to symlink only to `castle/home/.config/fooapp` instead of `castle/home/.config` because you already have `~/.config/barapp`. In this case, you can use .homesick_subdir. Please write "directories you want to look up sub direcoties (instead of just first depth)" in this file.
 
@@ -85,16 +85,16 @@ castle/home/.homesick_subdir
 
 and run `homesick symlink CASTLE`. The result is:
 
-	~
-	|-- .config
-	|   |-- barapp
-	|   |     |-- config1
-	|   |     |-- config2
-	|   |     `-- config3
-	|   `-- fooapp        -> castle/home/.config/fooapp
-	`-- .emacs.d
-	    |-- elisp
-		`-- inits
+    ~
+    |-- .config
+    |   |-- barapp
+    |   |     |-- config1
+    |   |     |-- config2
+    |   |     `-- config3
+    |   `-- fooapp        -> castle/home/.config/fooapp
+    `-- .emacs.d
+        |-- elisp
+        `-- inits
 
 Or `homesick track NESTED_FILE CASTLE` adds a line automatically. For example:
 
@@ -107,16 +107,16 @@ castle/home/.homesick_subdir
 
 home directory
 
-	~
-	|-- .config
-	|   |-- barapp
-	|   |     |-- config1
-	|   |     |-- config2
-	|   |     `-- config3
-	|   `-- fooapp        -> castle/home/.config/fooapp
-	`-- .emacs.d
-	    |-- elisp         -> castle/home/.emacs/elisp
-		`-- inits
+    ~
+    |-- .config
+    |   |-- barapp
+    |   |     |-- config1
+    |   |     |-- config2
+    |   |     `-- config3
+    |   `-- fooapp        -> castle/home/.config/fooapp
+    `-- .emacs.d
+        |-- elisp         -> castle/home/.emacs/elisp
+        `-- inits
 
 and castle
 
@@ -126,8 +126,8 @@ and castle
     |       |-- config1
     |       |-- config2
     |      `-- config3
-	`-- .emacs.d
-	    `-- elisp
+    `-- .emacs.d
+        `-- elisp
 
 ## Note on Patches/Pull Requests
  
