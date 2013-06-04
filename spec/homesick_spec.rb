@@ -148,6 +148,25 @@ describe "homesick" do
         home_dotdir.join(".some_dotfile").readlink.should == dotfile
       end
     end
+
+    context "with '.config' and '.config/appA' in .homesick_subdir" do
+      let(:castle) { given_castle("glencairn", [".config", ".config/appA"]) }
+      it "can symlink under both of .config and .config/appA" do
+        config_dir = castle.directory(".config")
+        config_dotfile = config_dir.file(".some_dotfile")
+        appA_dir = config_dir.directory("appA")
+        appA_dotfile = appA_dir.file(".some_appfile")
+
+        homesick.symlink("glencairn")
+
+        home_config_dir = home.join(".config")
+        home_appA_dir = home_config_dir.join("appA")
+        home_config_dir.symlink?.should == false
+        home_config_dir.join(".some_dotfile").readlink.should == config_dotfile
+        home_appA_dir.symlink?.should == false
+        home_appA_dir.join(".some_appfile").readlink.should == appA_dotfile
+      end
+    end
   end
 
   describe "list" do

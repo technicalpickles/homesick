@@ -306,7 +306,7 @@ class Homesick < Thor
   end
 
   def symlink_each(castle, basedir, subdirs)
-    basedir = Pathname.new(basedir).expand_path
+    absolute_basedir = Pathname.new(basedir).expand_path
     inside basedir do
       files = Pathname.glob('{.*,*}').reject{|a| [".", ".."].include?(a.to_s)}
       files.each do |path|
@@ -319,25 +319,23 @@ class Homesick < Thor
         # make ignore dirs
         ignore_dirs = []
         subdirs.each do |subdir|
-          splited_subdir = Pathname.new(subdir).split
-          ignore_dir = splited_subdir[0].to_s
-          if ignore_dir == "." then
-            ignore_dir = splited_subdir[1].to_s
+          # ignore all parent of each line in subdir file
+          Pathname.new(subdir).ascend do |p|
+            ignore_dirs.push(p)
           end
-          ignore_dirs.push(ignore_dir)
         end
 
         # ignore dirs written in subdir file
         matched = false
-        ignore_dirs.each do |ignore_dir|
+        ignore_dirs.uniq.each do |ignore_dir|
           if absolute_path == castle_home.join(ignore_dir)
             matched = true
-            next
+            break
           end
         end
         next if matched
 
-        relative_dir = basedir.relative_path_from(castle_home)
+        relative_dir = absolute_basedir.relative_path_from(castle_home)
         home_path = home_dir.join(relative_dir).join(path)
         ln_s absolute_path, home_path
       end
