@@ -51,6 +51,84 @@ Not sure what else homesick has up its sleeve? There's always the built in help:
 
     homesick help
 
+## .homesick_subdir
+
+`homesick symlink` basically makes symlink to only first depth in `castle/home`. If you want to link nested files/directories, please use .homesick_subdir.
+
+For example, when you have castle like this:
+
+    castle/home
+    `-- .config
+        `-- fooapp
+            |-- config1
+            |-- config2
+           `-- config3
+
+and have home like this:
+
+    $ tree -a
+	~
+	|-- .config
+	|   `-- barapp
+	|         |-- config1
+	|         |-- config2
+	|         `-- config3
+	`-- .emacs.d
+	    |-- elisp
+		`-- inits
+
+You may want to symlink only to `castle/home/.config/fooapp` instead of `castle/home/.config` because you already have `~/.config/barapp`. In this case, you can use .homesick_subdir. Please write "directories you want to look up sub direcoties (instead of just first depth)" in this file.
+
+castle/home/.homesick_subdir
+
+    .config
+
+and run `homesick symlink CASTLE`. The result is:
+
+	~
+	|-- .config
+	|   |-- barapp
+	|   |     |-- config1
+	|   |     |-- config2
+	|   |     `-- config3
+	|   `-- fooapp        -> castle/home/.config/fooapp
+	`-- .emacs.d
+	    |-- elisp
+		`-- inits
+
+Or `homesick track NESTED_FILE CASTLE` adds a line automatically. For example:
+
+    homesick track .emacs/elisp castle
+
+castle/home/.homesick_subdir
+
+    .config
+	.emacs.d
+
+home directory
+
+	~
+	|-- .config
+	|   |-- barapp
+	|   |     |-- config1
+	|   |     |-- config2
+	|   |     `-- config3
+	|   `-- fooapp        -> castle/home/.config/fooapp
+	`-- .emacs.d
+	    |-- elisp             -> castle/home/.emacs/elisp
+		`-- inits
+
+and castle
+
+    castle/home
+    |-- .config
+    |   `-- fooapp
+    |       |-- config1
+    |       |-- config2
+    |      `-- config3
+	`-- .emacs.d
+	    `-- elisp
+
 ## Note on Patches/Pull Requests
  
 * Fork the project.
