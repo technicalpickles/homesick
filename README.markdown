@@ -115,7 +115,7 @@ home directory
 	|   |     `-- config3
 	|   `-- fooapp        -> castle/home/.config/fooapp
 	`-- .emacs.d
-	    |-- elisp             -> castle/home/.emacs/elisp
+	    |-- elisp         -> castle/home/.emacs/elisp
 		`-- inits
 
 and castle
