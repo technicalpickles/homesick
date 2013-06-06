@@ -120,12 +120,59 @@ describe "homesick" do
         existing_dotdir_link.readlink.should == dotdir
       end
     end
+
+    context "with '.config' in .homesick_subdir" do
+      let(:castle) { given_castle("glencairn", [".config"]) }
+      it "can symlink in sub directory" do
+        dotdir = castle.directory(".config")
+        dotfile = dotdir.file(".some_dotfile")
+
+        homesick.symlink("glencairn")
+
+        home_dotdir = home.join(".config")
+        home_dotdir.symlink?.should == false
+        home_dotdir.join(".some_dotfile").readlink.should == dotfile
+      end
+    end
+
+    context "with '.config/appA' in .homesick_subdir" do
+      let(:castle) { given_castle("glencairn", [".config/appA"]) }
+      it "can symlink in nested sub directory" do
+        dotdir = castle.directory(".config").directory("appA")
+        dotfile = dotdir.file(".some_dotfile")
+
+        homesick.symlink("glencairn")
+
+        home_dotdir = home.join(".config").join("appA")
+        home_dotdir.symlink?.should == false
+        home_dotdir.join(".some_dotfile").readlink.should == dotfile
+      end
+    end
+
+    context "with '.config' and '.config/appA' in .homesick_subdir" do
+      let(:castle) { given_castle("glencairn", [".config", ".config/appA"]) }
+      it "can symlink under both of .config and .config/appA" do
+        config_dir = castle.directory(".config")
+        config_dotfile = config_dir.file(".some_dotfile")
+        appA_dir = config_dir.directory("appA")
+        appA_dotfile = appA_dir.file(".some_appfile")
+
+        homesick.symlink("glencairn")
+
+        home_config_dir = home.join(".config")
+        home_appA_dir = home_config_dir.join("appA")
+        home_config_dir.symlink?.should == false
+        home_config_dir.join(".some_dotfile").readlink.should == config_dotfile
+        home_appA_dir.symlink?.should == false
+        home_appA_dir.join(".some_appfile").readlink.should == appA_dotfile
+      end
+    end
   end
 
   describe "list" do
     it "should say each castle in the castle directory" do
       given_castle('zomg')
-      given_castle('zomg', 'wtf/zomg')
+      given_castle('wtf/zomg')
 
       homesick.should_receive(:say_status).with("zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
       homesick.should_receive(:say_status).with("wtf/zomg", "git://github.com/technicalpickles/zomg.git", :cyan)
@@ -168,6 +215,71 @@ describe "homesick" do
       tracked_file.should exist
 
       some_rc_file.readlink.should == tracked_file
+    end
+
+    it 'should track a file in nested folder structure' do
+      castle = given_castle('castle_repo')
+
+      some_nested_file = home.file('some/nested/file.txt')
+      homesick.track(some_nested_file.to_s, 'castle_repo')
+
+      tracked_file = castle.join('some/nested/file.txt')
+      tracked_file.should exist
+      some_nested_file.readlink.should == tracked_file
+    end
+
+    it 'should track a nested directory' do
+      castle = given_castle('castle_repo')
+
+      some_nested_dir = home.directory('some/nested/directory/')
+      homesick.track(some_nested_dir.to_s, 'castle_repo')
+
+      tracked_file = castle.join('some/nested/directory/')
+      tracked_file.should exist
+      some_nested_dir.realpath.should == tracked_file.realpath
+    end
+
+    describe "subdir_file" do
+
+      it 'should add the nested files parent to the subdir_file' do
+        castle = given_castle('castle_repo')
+
+        some_nested_file = home.file('some/nested/file.txt')
+        homesick.track(some_nested_file.to_s, 'castle_repo')
+
+        subdir_file = castle.parent.join(Homesick::SUBDIR_FILENAME)
+        File.open(subdir_file, 'r') do |f|
+          f.readline.should == "some/nested\n"
+        end
+      end
+
+      it 'should NOT add anything if the files parent is already listed' do
+        castle = given_castle('castle_repo')
+
+        some_nested_file = home.file('some/nested/file.txt')
+        other_nested_file = home.file('some/nested/other.txt')
+        homesick.track(some_nested_file.to_s, 'castle_repo')
+        homesick.track(other_nested_file.to_s, 'castle_repo')
+
+        subdir_file = castle.parent.join(Homesick::SUBDIR_FILENAME)
+        File.open(subdir_file, 'r') do |f|
+          f.readlines.size.should == 1
+        end
+      end
+
+      it 'should remove the parent of a tracked file from the subdir_file if the parent itself is tracked' do
+        castle = given_castle('castle_repo')
+
+        some_nested_file = home.file('some/nested/file.txt')
+        nested_parent = home.directory('some/nested/')
+        homesick.track(some_nested_file.to_s, 'castle_repo')
+        homesick.track(nested_parent.to_s, 'castle_repo')
+
+        subdir_file = castle.parent.join(Homesick::SUBDIR_FILENAME)
+        File.open(subdir_file, 'r') do |f|
+          f.each_line { |line| line.should_not == "some/nested\n" }
+        end
+      end
     end
   end
 end

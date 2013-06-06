@@ -10,6 +10,7 @@ class Homesick < Thor
   add_runtime_options!
 
   GITHUB_NAME_REPO_PATTERN = /\A([A-Za-z_-]+\/[A-Za-z_-]+)\Z/
+  SUBDIR_FILENAME = ".homesick_subdir"
 
   def initialize(args=[], options={}, config={})
     super
@@ -96,15 +97,14 @@ class Homesick < Thor
     check_castle_existance(name, "symlink")
 
     inside castle_dir(name) do
-      files = Pathname.glob('{.*,*}').reject{|a| [".",".."].include?(a.to_s)}
-      files.each do |path|
-        absolute_path = path.expand_path
+      subdirs = subdirs(name)
 
-        inside home_dir do
-          adjusted_path = (home_dir + path).basename
+      # link files
+      symlink_each(name, castle_dir(name), subdirs)
 
-          ln_s absolute_path, adjusted_path
-        end
+      # link files in subdirs
+      subdirs.each do |subdir|
+        symlink_each(name, subdir, subdirs)
       end
     end
   end
@@ -112,21 +112,45 @@ class Homesick < Thor
   desc "track FILE CASTLE", "add a file to a castle"
   def track(file, castle)
     castle = Pathname.new(castle)
-    file = Pathname.new(file)
+    file = Pathname.new(file.chomp('/'))
     check_castle_existance(castle, 'track')
 
     absolute_path = file.expand_path
-    castle_path = castle_dir(castle)
-    mv absolute_path, castle_path
+    relative_dir = absolute_path.relative_path_from(home_dir).dirname
+    castle_path = Pathname.new(castle_dir(castle)).join(relative_dir)
+    FileUtils.mkdir_p castle_path
+
+    # Are we already tracking this or anything inside it?
+    target = Pathname.new(castle_path.join(file.basename))
+    if target.exist?
+      if absolute_path.directory?
+        move_dir_contents(target, absolute_path)
+        absolute_path.rmtree
+        subdir_remove(castle, relative_dir + file.basename)
+
+      elsif more_recent? absolute_path, target
+        target.delete
+        mv absolute_path, castle_path
+      else
+        shell.say_status(:track, "#{target} already exists, and is more recent than #{file}. Run 'homesick SYMLINK CASTLE' to create symlinks.", :blue) unless options[:quiet]
+      end
+    else
+      mv absolute_path, castle_path
+    end
 
     inside home_dir do
-      absolute_path = castle_dir(castle) + file.basename
-      home_path = home_dir + file
+      absolute_path = castle_path + file.basename
+      home_path = home_dir + relative_dir + file.basename
       ln_s absolute_path, home_path
     end
 
     inside castle_path do
       git_add absolute_path
+    end
+
+    # are we tracking something nested? Add the parent dir to the manifest
+    unless relative_dir.eql?(Pathname.new('.'))
+      subdir_add(castle, relative_dir)
     end
   end
 
@@ -217,6 +241,101 @@ class Homesick < Thor
     check_castle_existance(castle, "push")
     inside repos_dir.join(castle) do
       git_push
+    end
+  end
+
+  def subdir_file(castle)
+    repos_dir.join(castle, SUBDIR_FILENAME)
+  end
+
+  def subdirs(castle)
+    subdir_filepath = subdir_file(castle)
+    subdirs = []
+    if subdir_filepath.exist?
+      subdir_filepath.readlines.each do |subdir|
+        subdirs.push(subdir.chomp)
+      end
+    end
+    subdirs
+  end
+
+  def subdir_add(castle, path)
+    subdir_filepath = subdir_file(castle)
+    File.open(subdir_filepath, 'a+') do |subdir|
+      subdir.puts path unless subdir.readlines.inject(false) { |memo, line| line.eql?("#{path.to_s}\n") || memo }
+    end
+
+    inside castle_dir(castle) do
+      git_add subdir_filepath
+    end
+  end
+
+  def subdir_remove(castle, path)
+    subdir_filepath = subdir_file(castle)
+    if subdir_filepath.exist?
+      lines = IO.readlines(subdir_filepath).delete_if { |line| line == "#{path}\n" }
+      File.open(subdir_filepath, 'w') { |manfile| manfile.puts lines }
+    end
+
+    inside castle_dir(castle) do
+      git_add subdir_filepath
+    end
+  end
+
+  def move_dir_contents(target, dir_path)
+    child_files = dir_path.children
+    child_files.each do |child|
+
+      target_path = target.join(child.basename)
+      if target_path.exist?
+        if more_recent?(child, target_path) && target.file?
+          target_path.delete
+          mv child, target
+        end
+        next
+      end
+
+      mv child, target
+    end
+  end
+
+  def more_recent?(first, second)
+    first_p = Pathname.new(first)
+    second_p = Pathname.new(second)
+    first_p.mtime > second_p.mtime && !first_p.symlink?
+  end
+
+  def symlink_each(castle, basedir, subdirs)
+    absolute_basedir = Pathname.new(basedir).expand_path
+    inside basedir do
+      files = Pathname.glob('{.*,*}').reject{|a| [".", ".."].include?(a.to_s)}
+      files.each do |path|
+        absolute_path = path.expand_path
+        castle_home = castle_dir(castle)
+
+        # make ignore dirs
+        ignore_dirs = []
+        subdirs.each do |subdir|
+          # ignore all parent of each line in subdir file
+          Pathname.new(subdir).ascend do |p|
+            ignore_dirs.push(p)
+          end
+        end
+
+        # ignore dirs written in subdir file
+        matched = false
+        ignore_dirs.uniq.each do |ignore_dir|
+          if absolute_path == castle_home.join(ignore_dir)
+            matched = true
+            break
+          end
+        end
+        next if matched
+
+        relative_dir = absolute_basedir.relative_path_from(castle_home)
+        home_path = home_dir.join(relative_dir).join(path)
+        ln_s absolute_path, home_path
+      end
     end
   end
 end
