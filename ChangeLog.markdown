@@ -1,3 +1,6 @@
+# 0.9.0
+ * Introduce .homesick_subdir #39
+ 
 # 0.8.1
  *Fixed `homesick list` bug on ruby 2.0 #37
  
