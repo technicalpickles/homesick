@@ -98,7 +98,7 @@ and run `homesick symlink CASTLE`. The result is:
 
 Or `homesick track NESTED_FILE CASTLE` adds a line automatically. For example:
 
-    homesick track .emacs/elisp castle
+    homesick track .emacs.d/elisp castle
 
 castle/home/.homesick_subdir
 
@@ -115,7 +115,7 @@ home directory
     |   |     `-- config3
     |   `-- fooapp        -> castle/home/.config/fooapp
     `-- .emacs.d
-        |-- elisp         -> castle/home/.emacs/elisp
+        |-- elisp         -> castle/home/.emacs.d/elisp
         `-- inits
 
 and castle
