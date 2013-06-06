@@ -263,7 +263,7 @@ class Homesick < Thor
   end
 
   def subdir_file(castle)
-    castle_dir(castle).join(SUBDIR_FILENAME)
+    repos_dir.join(castle, SUBDIR_FILENAME)
   end
 
   def subdirs(castle)
@@ -330,9 +330,6 @@ class Homesick < Thor
       files.each do |path|
         absolute_path = path.expand_path
         castle_home = castle_dir(castle)
-
-        # ignore subdir file
-        next if absolute_path == castle_home.join(SUBDIR_FILENAME)
 
         # make ignore dirs
         ignore_dirs = []
