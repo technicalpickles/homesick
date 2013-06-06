@@ -22,14 +22,13 @@ RSpec.configure do |config|
       Dir.chdir(castle) do
         system "git init >/dev/null 2>&1"
         system "git remote add origin git://github.com/technicalpickles/#{name}.git >/dev/null 2>&1"
-        castle_home = castle.directory("home")
         if subdirs then
-          subdir_file = castle_home.join(Homesick::SUBDIR_FILENAME)
+          subdir_file = castle.join(Homesick::SUBDIR_FILENAME)
           subdirs.each do |subdir|
             system "echo #{subdir} >> #{subdir_file}"
           end
         end
-        return castle_home
+        return castle.directory("home")
       end
     end
   end

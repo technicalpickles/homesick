@@ -247,7 +247,7 @@ describe "homesick" do
         some_nested_file = home.file('some/nested/file.txt')
         homesick.track(some_nested_file.to_s, 'castle_repo')
 
-        subdir_file = castle.join(Homesick::SUBDIR_FILENAME)
+        subdir_file = castle.parent.join(Homesick::SUBDIR_FILENAME)
         File.open(subdir_file, 'r') do |f|
           f.readline.should == "some/nested\n"
         end
@@ -261,7 +261,7 @@ describe "homesick" do
         homesick.track(some_nested_file.to_s, 'castle_repo')
         homesick.track(other_nested_file.to_s, 'castle_repo')
 
-        subdir_file = castle.join(Homesick::SUBDIR_FILENAME)
+        subdir_file = castle.parent.join(Homesick::SUBDIR_FILENAME)
         File.open(subdir_file, 'r') do |f|
           f.readlines.size.should == 1
         end
@@ -275,7 +275,7 @@ describe "homesick" do
         homesick.track(some_nested_file.to_s, 'castle_repo')
         homesick.track(nested_parent.to_s, 'castle_repo')
 
-        subdir_file = castle.join(Homesick::SUBDIR_FILENAME)
+        subdir_file = castle.parent.join(Homesick::SUBDIR_FILENAME)
         File.open(subdir_file, 'r') do |f|
           f.each_line { |line| line.should_not == "some/nested\n" }
         end
