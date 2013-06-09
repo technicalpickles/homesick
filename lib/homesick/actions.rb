@@ -109,6 +109,7 @@ class Homesick
         say_status :conflict, "#{destination} exists", :red unless options[:quiet]
 
         if options[:force] || shell.file_collision(destination) { source }
+          system "rm -rf #{destination}" unless options[:pretend]
           system "ln -sf #{source} #{destination}" unless options[:pretend]
         end
       else
