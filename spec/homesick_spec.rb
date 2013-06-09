@@ -120,6 +120,17 @@ describe "homesick" do
 
         existing_dotdir_link.readlink.should == dotdir
       end
+
+      it "can override existing directory" do
+        somewhere_else = create_construct
+        existing_dotdir = home.directory(".vim")
+
+        dotdir = castle.directory(".vim")
+
+        homesick.symlink("glencairn")
+
+        existing_dotdir.readlink.should == dotdir
+      end
     end
 
     context "with '.config' in .homesick_subdir" do
