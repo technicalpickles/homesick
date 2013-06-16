@@ -3,10 +3,7 @@ class Homesick
     # TODO move this to be more like thor's template, empty_directory, etc
     def git_clone(repo, config = {})
       config ||= {}
-      destination = config[:destination] || begin
-        repo =~ /([^\/]+)(?:\.git)?$/
-       $1
-      end
+      destination = config[:destination] || File.basename(repo, '.git')
 
       destination = Pathname.new(destination) unless destination.kind_of?(Pathname)
       FileUtils.mkdir_p destination.dirname
