@@ -40,6 +40,14 @@ describe "homesick" do
       end
     end
 
+    it "should clone git repo like file:///path/to.git" do
+      bare_repo = File.join(create_construct.to_s, "dotfiles.git")
+      system "git init --bare #{bare_repo} >/dev/null 2>&1"
+
+      homesick.clone "file://#{bare_repo}"
+      File.directory?(File.join(home.to_s, '.homesick/repos/dotfiles')).should be_true
+    end
+
     it "should clone git repo like git://host/path/to.git" do
       homesick.should_receive(:git_clone).with('git://github.com/technicalpickles/pickled-vim.git')
 
