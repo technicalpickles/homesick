@@ -4,15 +4,20 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = "homesick"
-  s.version = "0.9.0"
+  s.name = %q{homesick}
+  s.version = "0.9.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Joshua Nichols", "Yusuke Murata"]
-  s.date = "2013-06-06"
-  s.description = "\n    A man's home (directory) is his castle, so don't leave home with out it.\n\n    Homesick is sorta like rip, but for dotfiles. It uses git to clone a repository containing dotfiles, and saves them in ~/.homesick. It then allows you to symlink all the dotfiles into place with a single command. \n\n  "
-  s.email = ["josh@technicalpickles.com", "info@muratayusuke.com"]
-  s.executables = ["homesick"]
+  s.authors = [%q{Joshua Nichols}, %q{Yusuke Murata}]
+  s.date = %q{2013-06-17}
+  s.description = %q{
+    A man's home (directory) is his castle, so don't leave home with out it.
+
+    Homesick is sorta like rip, but for dotfiles. It uses git to clone a repository containing dotfiles, and saves them in ~/.homesick. It then allows you to symlink all the dotfiles into place with a single command. 
+
+  }
+  s.email = [%q{josh@technicalpickles.com}, %q{info@muratayusuke.com}]
+  s.executables = [%q{homesick}]
   s.extra_rdoc_files = [
     "ChangeLog.markdown",
     "LICENSE",
@@ -37,11 +42,11 @@ Gem::Specification.new do |s|
     "spec/spec.opts",
     "spec/spec_helper.rb"
   ]
-  s.homepage = "http://github.com/technicalpickles/homesick"
-  s.licenses = ["MIT"]
-  s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.25"
-  s.summary = "A man's home is his castle. Never leave your dotfiles behind."
+  s.homepage = %q{http://github.com/technicalpickles/homesick}
+  s.licenses = [%q{MIT}]
+  s.require_paths = [%q{lib}]
+  s.rubygems_version = %q{1.8.5}
+  s.summary = %q{A man's home is his castle. Never leave your dotfiles behind.}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
