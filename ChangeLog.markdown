@@ -1,3 +1,6 @@
+# 0.9.1
+ * Fixed small bugs: #35, #40
+ 
 # 0.9.0
  * Introduce .homesick_subdir #39
  
