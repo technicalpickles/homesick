@@ -12,7 +12,7 @@ class Homesick < Thor
   GITHUB_NAME_REPO_PATTERN = /\A([A-Za-z_-]+\/[A-Za-z_-]+)\Z/
   SUBDIR_FILENAME = '.homesick_subdir'
 
-  def initialize(args=[], options={}, config={})
+  def initialize(args = [], options = {}, config = {})
     super
     self.shell = Homesick::Shell.new
   end
@@ -33,7 +33,7 @@ class Homesick < Thor
       elsif uri =~ GITHUB_NAME_REPO_PATTERN
         destination = Pathname.new($1)
         git_clone "git://github.com/#{$1}.git", :destination => destination
-      elsif uri =~ /\/([^\/]*?)(\.git)?\Z/
+      elsif uri =~ /%r([^%r]*?)(\.git)?\Z/
         destination = Pathname.new($1)
         git_clone uri
       elsif uri =~ /[^:]+:([^:]+)(\.git)?\Z/
@@ -67,7 +67,7 @@ class Homesick < Thor
 
   desc 'pull CASTLE', 'Update the specified castle'
   method_option :all, :type => :boolean, :default => false, :required => false, :desc => 'Update all cloned castles'
-  def pull(name='')
+  def pull(name = '')
     if options[:all]
       inside_each_castle do |castle|
         shell.say castle.to_s.gsub(repos_dir.to_s + '/', '') + ':'
@@ -149,9 +149,7 @@ class Homesick < Thor
     end
 
     # are we tracking something nested? Add the parent dir to the manifest
-    unless relative_dir.eql?(Pathname.new('.'))
-      subdir_add(castle, relative_dir)
-    end
+    subdir_add(castle, relative_dir) unless relative_dir.eql?(Pathname.new('.'))
   end
 
   desc 'list', 'List cloned castles'
@@ -208,7 +206,9 @@ class Homesick < Thor
     dirs = Pathname.glob("#{repos_dir}/**/.git", File::FNM_DOTMATCH)
     # reject paths that lie inside another castle, like git submodules
     return dirs.reject do |dir|
-      dirs.any? {|other| dir != other && dir.fnmatch(other.parent.join('*').to_s) }
+      dirs.any? do |other|
+        dir != other && dir.fnmatch(other.parent.join('*').to_s)
+      end
     end
   end
 
@@ -262,7 +262,9 @@ class Homesick < Thor
   def subdir_add(castle, path)
     subdir_filepath = subdir_file(castle)
     File.open(subdir_filepath, 'a+') do |subdir|
-      subdir.puts path unless subdir.readlines.inject(false) { |memo, line| line.eql?("#{path.to_s}\n") || memo }
+      subdir.puts path unless subdir.readlines.reduce(false) do |memo, line|
+        line.eql?("#{path.to_s}\n") || memo
+      end
     end
 
     inside castle_dir(castle) do
@@ -308,7 +310,7 @@ class Homesick < Thor
   def symlink_each(castle, basedir, subdirs)
     absolute_basedir = Pathname.new(basedir).expand_path
     inside basedir do
-      files = Pathname.glob('{.*,*}').reject{|a| ['.', '..'].include?(a.to_s)}
+      files = Pathname.glob('{.*,*}').reject{ |a| ['.', '..'].include?(a.to_s) }
       files.each do |path|
         absolute_path = path.expand_path
         castle_home = castle_dir(castle)
