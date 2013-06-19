@@ -12,4 +12,5 @@ group :development do
   gem "rcov", :platforms => :mri_18
   gem "simplecov", :platforms => :mri_19
   gem "test-construct"
+  gem "rubocop"
 end
