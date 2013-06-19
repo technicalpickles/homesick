@@ -31,7 +31,12 @@ describe 'homesick' do
         it 'should not symlink' do
           homesick.should_not_receive(:git_clone)
 
-          homesick.clone @existing_dir.to_s rescue nil
+          begin
+            homesick.clone @existing_dir.to_s
+            fail 'homesick.clone should raise'
+          rescue => e
+            e.message.should match 'Castle already cloned to'
+          end
         end
 
         it 'should raise an error' do
@@ -81,7 +86,12 @@ describe 'homesick' do
     it 'should not try to clone a malformed uri like malformed' do
       homesick.should_not_receive(:git_clone)
 
-      homesick.clone 'malformed' rescue nil
+      begin
+        homesick.clone 'malformed'
+        fail 'homesick.clone should raise'
+      rescue => e
+        e.message.should match 'Unknown URI format: malformed'
+      end
     end
 
     it 'should throw an exception when trying to clone a malformed uri like malformed' do
@@ -130,7 +140,6 @@ describe 'homesick' do
       end
 
       it 'can override existing directory' do
-        somewhere_else = create_construct
         existing_dotdir = home.directory('.vim')
 
         dotdir = castle.directory('.vim')
@@ -169,22 +178,22 @@ describe 'homesick' do
       end
     end
 
-    context "with '.config' and '.config/appA' in .homesick_subdir" do
-      let(:castle) { given_castle('glencairn', ['.config', '.config/appA']) }
-      it 'can symlink under both of .config and .config/appA' do
+    context "with '.config' and '.config/someapp' in .homesick_subdir" do
+      let(:castle) { given_castle('glencairn', ['.config', '.config/someapp']) }
+      it 'can symlink under both of .config and .config/someapp' do
         config_dir = castle.directory('.config')
         config_dotfile = config_dir.file('.some_dotfile')
-        appA_dir = config_dir.directory('appA')
-        appA_dotfile = appA_dir.file('.some_appfile')
+        someapp_dir = config_dir.directory('someapp')
+        someapp_dotfile = someapp_dir.file('.some_appfile')
 
         homesick.symlink('glencairn')
 
         home_config_dir = home.join('.config')
-        home_appA_dir = home_config_dir.join('appA')
+        home_someapp_dir = home_config_dir.join('someapp')
         home_config_dir.symlink?.should be == false
         home_config_dir.join('.some_dotfile').readlink.should be == config_dotfile
-        home_appA_dir.symlink?.should be == false
-        home_appA_dir.join('.some_appfile').readlink.should == appA_dotfile
+        home_someapp_dir.symlink?.should be == false
+        home_someapp_dir.join('.some_appfile').readlink.should == someapp_dotfile
       end
     end
   end

@@ -21,7 +21,7 @@ class Homesick
       path = Pathname.new(path)
 
       inside path do
-        unless path.join('.git').exist?
+        if !path.join('.git').exist?
           say_status 'git init', '' unless options[:quiet]
           system 'git init >/dev/null' unless options[:pretend]
         else
@@ -34,7 +34,7 @@ class Homesick
       existing_remote = `git config remote.#{name}.url`.chomp
       existing_remote = nil if existing_remote == ''
 
-      unless existing_remote
+      if !existing_remote
         say_status 'git remote', "add #{name} #{url}" unless options[:quiet]
         system "git remote add #{name} #{url}" unless options[:pretend]
       else
