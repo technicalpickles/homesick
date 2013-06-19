@@ -43,7 +43,7 @@ end
 
 task :rubocop do
   if RUBY_VERSION >= '1.9.2'
-    raise unless system('rubocop')
+    system('rubocop')
   end
 end
 
