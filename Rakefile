@@ -41,8 +41,16 @@ RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.rcov = true
 end
 
+task :rubocop do
+  system('rubocop')
+end
 
-task :default => :spec
+task :test do
+  Rake::Task['spec'].execute
+  Rake::Task['rubocop'].execute
+end
+
+task :default => :test
 
 require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
