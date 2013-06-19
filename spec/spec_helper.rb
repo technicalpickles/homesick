@@ -20,7 +20,7 @@ RSpec.configure do |config|
     name = Pathname.new(path).basename
     castles.directory(path) do |castle|
       Dir.chdir(castle) do
-        system "git init >/dev/null 2>&1"
+        system 'git init >/dev/null 2>&1'
         system "git remote add origin git://github.com/technicalpickles/#{name}.git >/dev/null 2>&1"
         if subdirs then
           subdir_file = castle.join(Homesick::SUBDIR_FILENAME)
@@ -28,7 +28,7 @@ RSpec.configure do |config|
             system "echo #{subdir} >> #{subdir_file}"
           end
         end
-        return castle.directory("home")
+        return castle.directory('home')
       end
     end
   end

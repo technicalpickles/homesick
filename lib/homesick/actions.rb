@@ -17,13 +17,13 @@ class Homesick
       end
     end
 
-    def git_init(path = ".")
+    def git_init(path = '.')
       path = Pathname.new(path)
 
       inside path do
         unless path.join('.git').exist?
           say_status 'git init', '' unless options[:quiet]
-          system "git init >/dev/null" unless options[:pretend]
+          system 'git init >/dev/null' unless options[:pretend]
         else
           say_status 'git init', 'already initialized', :blue unless options[:quiet]
         end
@@ -44,27 +44,27 @@ class Homesick
 
     def git_submodule_init(config = {})
       say_status 'git submodule', 'init', :green unless options[:quiet]
-      system "git submodule --quiet init" unless options[:pretend]
+      system 'git submodule --quiet init' unless options[:pretend]
     end
 
     def git_submodule_update(config = {})
       say_status 'git submodule', 'update', :green unless options[:quiet]
-      system "git submodule --quiet update --init --recursive >/dev/null 2>&1" unless options[:pretend]
+      system 'git submodule --quiet update --init --recursive >/dev/null 2>&1' unless options[:pretend]
     end
 
     def git_pull(config = {})
       say_status 'git pull', '', :green unless options[:quiet]
-      system "git pull --quiet" unless options[:pretend]
+      system 'git pull --quiet' unless options[:pretend]
     end
 
     def git_push(config = {})
       say_status 'git push', '', :green unless options[:quiet]
-      system "git push" unless options[:pretend]
+      system 'git push' unless options[:pretend]
     end
 
     def git_commit_all(config = {})
       say_status 'git commit all', '', :green unless options[:quiet]
-      system "git commit -v -a" unless options[:pretend]
+      system 'git commit -v -a' unless options[:pretend]
     end
 
     def git_add(file, config = {})
