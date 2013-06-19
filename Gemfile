@@ -12,5 +12,7 @@ group :development do
   gem "rcov", :platforms => :mri_18
   gem "simplecov", :platforms => :mri_19
   gem "test-construct"
-  gem "rubocop"
+  if RUBY_VERSION >= '1.9.2'
+    gem "rubocop"
+  end
 end
