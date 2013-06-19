@@ -150,7 +150,7 @@ describe "homesick" do
         homesick.symlink("glencairn")
 
         home_dotdir = home.join(".config")
-        home_dotdir.symlink?.should == false
+        home_dotdir.symlink?.should be == false
         home_dotdir.join(".some_dotfile").readlink.should == dotfile
       end
     end
@@ -164,7 +164,7 @@ describe "homesick" do
         homesick.symlink("glencairn")
 
         home_dotdir = home.join(".config").join("appA")
-        home_dotdir.symlink?.should == false
+        home_dotdir.symlink?.should be == false
         home_dotdir.join(".some_dotfile").readlink.should == dotfile
       end
     end
@@ -181,9 +181,9 @@ describe "homesick" do
 
         home_config_dir = home.join(".config")
         home_appA_dir = home_config_dir.join("appA")
-        home_config_dir.symlink?.should == false
-        home_config_dir.join(".some_dotfile").readlink.should == config_dotfile
-        home_appA_dir.symlink?.should == false
+        home_config_dir.symlink?.should be == false
+        home_config_dir.join(".some_dotfile").readlink.should be == config_dotfile
+        home_appA_dir.symlink?.should be == false
         home_appA_dir.join(".some_appfile").readlink.should == appA_dotfile
       end
     end
