@@ -10,14 +10,14 @@ class Homesick < Thor
   add_runtime_options!
 
   GITHUB_NAME_REPO_PATTERN = /\A([A-Za-z_-]+\/[A-Za-z_-]+)\Z/
-  SUBDIR_FILENAME = ".homesick_subdir"
+  SUBDIR_FILENAME = '.homesick_subdir'
 
   def initialize(args=[], options={}, config={})
     super
     self.shell = Homesick::Shell.new
   end
 
-  desc "clone URI", "Clone +uri+ as a castle for homesick"
+  desc 'clone URI', 'Clone +uri+ as a castle for homesick'
   def clone(uri)
     inside repos_dir do
       destination = nil
@@ -54,20 +54,20 @@ class Homesick < Thor
       if homesickrc.exist?
         proceed = shell.yes?("#{uri} has a .homesickrc. Proceed with evaling it? (This could be destructive)")
         if proceed
-          shell.say_status "eval", homesickrc
+          shell.say_status 'eval', homesickrc
           inside destination do
             eval homesickrc.read, binding, homesickrc.expand_path
           end
         else
-          shell.say_status "eval skip", "not evaling #{homesickrc}, #{destination} may need manual configuration", :blue
+          shell.say_status 'eval skip', "not evaling #{homesickrc}, #{destination} may need manual configuration", :blue
         end
       end
     end
   end
 
-  desc "pull CASTLE", "Update the specified castle"
-  method_option :all, :type => :boolean, :default => false, :required => false, :desc => "Update all cloned castles"
-  def pull(name="")
+  desc 'pull CASTLE', 'Update the specified castle'
+  method_option :all, :type => :boolean, :default => false, :required => false, :desc => 'Update all cloned castles'
+  def pull(name='')
     if options[:all]
       inside_each_castle do |castle|
         shell.say castle.to_s.gsub(repos_dir.to_s + '/', '') + ':'
@@ -79,22 +79,22 @@ class Homesick < Thor
 
   end
 
-  desc "commit CASTLE", "Commit the specified castle's changes"
+  desc 'commit CASTLE', "Commit the specified castle's changes"
   def commit(name)
     commit_castle name
 
   end
 
-  desc "push CASTLE", "Push the specified castle"
+  desc 'push CASTLE', 'Push the specified castle'
   def push(name)
     push_castle name
 
   end
 
-  desc "symlink CASTLE", "Symlinks all dotfiles from the specified castle"
-  method_option :force, :default => false, :desc => "Overwrite existing conflicting symlinks without prompting."
+  desc 'symlink CASTLE', 'Symlinks all dotfiles from the specified castle'
+  method_option :force, :default => false, :desc => 'Overwrite existing conflicting symlinks without prompting.'
   def symlink(name)
-    check_castle_existance(name, "symlink")
+    check_castle_existance(name, 'symlink')
 
     inside castle_dir(name) do
       subdirs = subdirs(name)
@@ -109,7 +109,7 @@ class Homesick < Thor
     end
   end
 
-  desc "track FILE CASTLE", "add a file to a castle"
+  desc 'track FILE CASTLE', 'add a file to a castle'
   def track(file, castle)
     castle = Pathname.new(castle)
     file = Pathname.new(file.chomp('/'))
@@ -154,19 +154,19 @@ class Homesick < Thor
     end
   end
 
-  desc "list", "List cloned castles"
+  desc 'list', 'List cloned castles'
   def list
     inside_each_castle do |castle|
       say_status castle.relative_path_from(repos_dir).to_s, `git config remote.origin.url`.chomp, :cyan
     end
   end
 
-  desc "generate PATH", "generate a homesick-ready git repo at PATH"
+  desc 'generate PATH', 'generate a homesick-ready git repo at PATH'
   def generate(castle)
     castle = Pathname.new(castle).expand_path
 
     github_user = `git config github.user`.chomp
-    github_user = nil if github_user == ""
+    github_user = nil if github_user == ''
     github_repo = castle.basename
 
     empty_directory castle
@@ -177,7 +177,7 @@ class Homesick < Thor
         git_remote_add 'origin', url
       end
 
-      empty_directory "home"
+      empty_directory 'home'
     end
   end
 
@@ -222,7 +222,7 @@ class Homesick < Thor
   end
 
   def update_castle(castle)
-    check_castle_existance(castle, "pull")
+    check_castle_existance(castle, 'pull')
     inside repos_dir.join(castle) do
       git_pull
       git_submodule_init
@@ -231,14 +231,14 @@ class Homesick < Thor
   end
 
   def commit_castle(castle)
-    check_castle_existance(castle, "commit")
+    check_castle_existance(castle, 'commit')
     inside repos_dir.join(castle) do
       git_commit_all
     end
   end
 
   def push_castle(castle)
-    check_castle_existance(castle, "push")
+    check_castle_existance(castle, 'push')
     inside repos_dir.join(castle) do
       git_push
     end
@@ -308,7 +308,7 @@ class Homesick < Thor
   def symlink_each(castle, basedir, subdirs)
     absolute_basedir = Pathname.new(basedir).expand_path
     inside basedir do
-      files = Pathname.glob('{.*,*}').reject{|a| [".", ".."].include?(a.to_s)}
+      files = Pathname.glob('{.*,*}').reject{|a| ['.', '..'].include?(a.to_s)}
       files.each do |path|
         absolute_path = path.expand_path
         castle_home = castle_dir(castle)
