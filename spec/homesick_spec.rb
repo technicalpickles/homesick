@@ -28,18 +28,8 @@ describe 'homesick' do
           @existing_dir = existing_castle.parent
         end
 
-        it 'should not symlink' do
-          homesick.should_not_receive(:git_clone)
-
-          begin
-            homesick.clone @existing_dir.to_s
-            fail 'homesick.clone should raise'
-          rescue => e
-            e.message.should match 'Castle already cloned to'
-          end
-        end
-
         it 'should raise an error' do
+          homesick.should_not_receive(:git_clone)
           expect { homesick.clone @existing_dir.to_s }.to raise_error(/already cloned/i)
         end
       end
@@ -83,18 +73,8 @@ describe 'homesick' do
       homesick.clone 'gitolite:pickled-vim.git'
     end
 
-    it 'should not try to clone a malformed uri like malformed' do
-      homesick.should_not_receive(:git_clone)
-
-      begin
-        homesick.clone 'malformed'
-        fail 'homesick.clone should raise'
-      rescue => e
-        e.message.should match 'Unknown URI format: malformed'
-      end
-    end
-
     it 'should throw an exception when trying to clone a malformed uri like malformed' do
+      homesick.should_not_receive(:git_clone)
       expect { homesick.clone 'malformed' }.to raise_error
     end
 
