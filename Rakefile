@@ -42,7 +42,9 @@ RSpec::Core::RakeTask.new(:rcov) do |spec|
 end
 
 task :rubocop do
-  system('rubocop')
+  if RUBY_VERSION >= '1.9.2'
+    raise unless system('rubocop')
+  end
 end
 
 task :test do
