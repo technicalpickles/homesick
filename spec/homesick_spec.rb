@@ -176,6 +176,17 @@ describe 'homesick' do
         home_someapp_dir.join('.some_appfile').readlink.should == someapp_dotfile
       end
     end
+
+    context "when call with no castle name" do
+      let(:castle) { given_castle('dotfiles') }
+      it 'using default castle name: "dotfiles"' do
+        dotfile = castle.file('.some_dotfile')
+
+        homesick.symlink
+
+        home.join('.some_dotfile').readlink.should == dotfile
+      end
+    end
   end
 
   describe 'list' do
@@ -246,6 +257,21 @@ describe 'homesick' do
       tracked_file = castle.join('some/nested/directory/')
       tracked_file.should exist
       some_nested_dir.realpath.should == tracked_file.realpath
+    end
+
+    context "when call with no castle name" do
+      it 'using default castle name: "dotfiles"' do
+        castle = given_castle('dotfiles')
+
+        some_rc_file = home.file '.some_rc_file'
+
+        homesick.track(some_rc_file.to_s)
+
+        tracked_file = castle.join('.some_rc_file')
+        tracked_file.should exist
+
+        some_rc_file.readlink.should == tracked_file
+      end
     end
 
     describe 'subdir_file' do

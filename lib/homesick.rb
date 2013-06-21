@@ -68,7 +68,7 @@ class Homesick < Thor
 
   desc 'pull CASTLE', 'Update the specified castle'
   method_option :all, :type => :boolean, :default => false, :required => false, :desc => 'Update all cloned castles'
-  def pull(name = '')
+  def pull(name = 'dotfiles')
     if options[:all]
       inside_each_castle do |castle|
         shell.say castle.to_s.gsub(repos_dir.to_s + '/', '') + ':'
@@ -81,20 +81,20 @@ class Homesick < Thor
   end
 
   desc 'commit CASTLE', "Commit the specified castle's changes"
-  def commit(name)
+  def commit(name = 'dotfiles')
     commit_castle name
 
   end
 
   desc 'push CASTLE', 'Push the specified castle'
-  def push(name)
+  def push(name = 'dotfiles')
     push_castle name
 
   end
 
   desc 'symlink CASTLE', 'Symlinks all dotfiles from the specified castle'
   method_option :force, :default => false, :desc => 'Overwrite existing conflicting symlinks without prompting.'
-  def symlink(name)
+  def symlink(name = 'dotfiles')
     check_castle_existance(name, 'symlink')
 
     inside castle_dir(name) do
@@ -111,7 +111,7 @@ class Homesick < Thor
   end
 
   desc 'track FILE CASTLE', 'add a file to a castle'
-  def track(file, castle)
+  def track(file, castle = 'dotfiles')
     castle = Pathname.new(castle)
     file = Pathname.new(file.chomp('/'))
     check_castle_existance(castle, 'track')
