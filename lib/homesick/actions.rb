@@ -72,6 +72,16 @@ class Homesick
       system "git add #{file}" unless options[:pretend]
     end
 
+    def git_status(config = {})
+      say_status 'git status', '', :green unless options[:quiet]
+      system "git status" unless options[:pretend]
+    end
+
+    def git_diff(config = {})
+      say_status 'git diff', '', :green unless options[:quiet]
+      system "git diff" unless options[:pretend]
+    end
+
     def mv(source, destination, config = {})
       source = Pathname.new(source)
       destination = Pathname.new(destination + source.basename)
