@@ -161,6 +161,28 @@ class Homesick < Thor
     end
   end
 
+  desc 'status CASTLE', 'Shows the git status of a castle'
+  def status(castle = DEFAULT_CASTLE_NAME)
+    check_castle_existance(castle, 'status')
+    inside repos_dir.join(castle) do
+      git_status
+    end
+  end
+
+  desc 'diff CASTLE', 'Shows the git diff of uncommitted changes in a castle'
+  def diff(castle = DEFAULT_CASTLE_NAME)
+    check_castle_existance(castle, 'diff')
+    inside repos_dir.join(castle) do
+      git_diff
+    end
+  end
+
+  desc 'show_path CASTLE', 'Prints the path of a castle'
+  def show_path(castle = DEFAULT_CASTLE_NAME)
+    check_castle_existance(castle, 'show_path')
+    say repos_dir.join(castle)
+  end
+
   desc 'generate PATH', 'generate a homesick-ready git repo at PATH'
   def generate(castle)
     castle = Pathname.new(castle).expand_path
