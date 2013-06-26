@@ -163,15 +163,15 @@ class Homesick < Thor
   end
 
   desc 'status CASTLE', 'Shows the git status of a castle'
-  def status(castle)
+  def status(castle = DEFAULT_CASTLE_NAME)
     check_castle_existance(castle, 'status')
     inside repos_dir.join(castle) do
       git_status
     end
   end
 
-  desc 'diff CASTLE', 'Shows the git diff of a castle'
-  def diff(castle)
+  desc 'diff CASTLE', 'Shows the git diff of uncommitted changes in a castle'
+  def diff(castle = DEFAULT_CASTLE_NAME)
     check_castle_existance(castle, 'diff')
     inside repos_dir.join(castle) do
       git_diff
@@ -179,7 +179,7 @@ class Homesick < Thor
   end
 
   desc 'show_path CASTLE', 'Prints the path of a castle'
-  def show_path(castle)
+  def show_path(castle = DEFAULT_CASTLE_DAME)
     check_castle_existance(castle, 'show_path')
     say repos_dir.join(castle)
   end
