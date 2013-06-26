@@ -178,7 +178,7 @@ class Homesick < Thor
   end
 
   desc 'show_path CASTLE', 'Prints the path of a castle'
-  def show_path(castle = DEFAULT_CASTLE_DAME)
+  def show_path(castle = DEFAULT_CASTLE_NAME)
     check_castle_existance(castle, 'show_path')
     say repos_dir.join(castle)
   end
