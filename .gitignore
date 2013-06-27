@@ -43,3 +43,5 @@ pkg
 # For IDEA:
 .idea/
 *.iml
+
+Gemfile.lock
