@@ -200,6 +200,28 @@ describe 'homesick' do
     end
   end
 
+  describe 'status' do
+
+    xit 'needs testing'
+
+  end
+
+  describe 'diff' do
+
+    xit 'needs testing'
+
+  end
+
+  describe 'show_path' do
+    it 'should say the path of a castle' do
+      castle = given_castle('castle_repo')
+
+      homesick.should_receive(:say).with(castle.dirname)
+
+      homesick.show_path('castle_repo')
+    end
+  end
+
   describe 'pull' do
 
     xit 'needs testing'
