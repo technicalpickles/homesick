@@ -1,3 +1,10 @@
+# 0.9.2
+ * Set "dotfiles" as default castle name
+ * Introduce new commands
+     * `homesick show_path`
+     * `homesick status`
+     * `homesick diff`
+
 # 0.9.1
  * Fixed small bugs: #35, #40
  
