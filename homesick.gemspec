@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{homesick}
-  s.version = "0.9.1"
+  s.version = "0.9.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{Joshua Nichols}, %q{Yusuke Murata}]
-  s.date = %q{2013-06-17}
+  s.date = %q{2013-06-27}
   s.description = %q{
     A man's home (directory) is his castle, so don't leave home with out it.
 
@@ -29,7 +29,6 @@ Gem::Specification.new do |s|
     ".travis.yml",
     "ChangeLog.markdown",
     "Gemfile",
-    "Gemfile.lock",
     "LICENSE",
     "README.markdown",
     "Rakefile",
