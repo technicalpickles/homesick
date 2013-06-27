@@ -77,9 +77,9 @@ and have home like this:
         |-- elisp
         `-- inits
 
-You may want to symlink only to `castle/home/.config/fooapp` instead of `castle/home/.config` because you already have `~/.config/barapp`. In this case, you can use .homesick_subdir. Please write "directories you want to look up sub direcoties (instead of just first depth)" in this file.
+You may want to symlink only to `castle/home/.config/fooapp` instead of `castle/home/.config` because you already have `~/.config/barapp`. In this case, you can use .homesick_subdir. Please write "directories you want to look up sub directories (instead of just first depth)" in this file.
 
-castle/home/.homesick_subdir
+castle/.homesick_subdir
 
     .config
 
@@ -100,7 +100,7 @@ Or `homesick track NESTED_FILE CASTLE` adds a line automatically. For example:
 
     homesick track .emacs.d/elisp castle
 
-castle/home/.homesick_subdir
+castle/.homesick_subdir
 
     .config
 	.emacs.d
