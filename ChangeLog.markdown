@@ -1,3 +1,6 @@
+# 0.9.3
+ * Add recursive option to `homesick clone`
+
 # 0.9.2
  * Set "dotfiles" as default castle name
  * Introduce new commands
