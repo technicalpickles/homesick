@@ -4,20 +4,15 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{homesick}
-  s.version = "0.9.2"
+  s.name = "homesick"
+  s.version = "0.9.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = [%q{Joshua Nichols}, %q{Yusuke Murata}]
-  s.date = %q{2013-06-27}
-  s.description = %q{
-    A man's home (directory) is his castle, so don't leave home with out it.
-
-    Homesick is sorta like rip, but for dotfiles. It uses git to clone a repository containing dotfiles, and saves them in ~/.homesick. It then allows you to symlink all the dotfiles into place with a single command. 
-
-  }
-  s.email = [%q{josh@technicalpickles.com}, %q{info@muratayusuke.com}]
-  s.executables = [%q{homesick}]
+  s.authors = ["Joshua Nichols", "Yusuke Murata"]
+  s.date = "2013-07-06"
+  s.description = "\n    A man's home (directory) is his castle, so don't leave home with out it.\n\n    Homesick is sorta like rip, but for dotfiles. It uses git to clone a repository containing dotfiles, and saves them in ~/.homesick. It then allows you to symlink all the dotfiles into place with a single command. \n\n  "
+  s.email = ["josh@technicalpickles.com", "info@muratayusuke.com"]
+  s.executables = ["homesick"]
   s.extra_rdoc_files = [
     "ChangeLog.markdown",
     "LICENSE",
@@ -41,14 +36,14 @@ Gem::Specification.new do |s|
     "spec/spec.opts",
     "spec/spec_helper.rb"
   ]
-  s.homepage = %q{http://github.com/technicalpickles/homesick}
-  s.licenses = [%q{MIT}]
-  s.require_paths = [%q{lib}]
-  s.rubygems_version = %q{1.8.5}
-  s.summary = %q{A man's home is his castle. Never leave your dotfiles behind.}
+  s.homepage = "http://github.com/technicalpickles/homesick"
+  s.licenses = ["MIT"]
+  s.require_paths = ["lib"]
+  s.rubygems_version = "2.0.3"
+  s.summary = "A man's home is his castle. Never leave your dotfiles behind."
 
   if s.respond_to? :specification_version then
-    s.specification_version = 3
+    s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<thor>, [">= 0.14.0"])
@@ -58,6 +53,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rcov>, [">= 0"])
       s.add_development_dependency(%q<simplecov>, [">= 0"])
       s.add_development_dependency(%q<test-construct>, [">= 0"])
+      s.add_development_dependency(%q<rubocop>, [">= 0"])
     else
       s.add_dependency(%q<thor>, [">= 0.14.0"])
       s.add_dependency(%q<rake>, [">= 0.8.7"])
@@ -66,6 +62,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rcov>, [">= 0"])
       s.add_dependency(%q<simplecov>, [">= 0"])
       s.add_dependency(%q<test-construct>, [">= 0"])
+      s.add_dependency(%q<rubocop>, [">= 0"])
     end
   else
     s.add_dependency(%q<thor>, [">= 0.14.0"])
@@ -75,6 +72,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rcov>, [">= 0"])
     s.add_dependency(%q<simplecov>, [">= 0"])
     s.add_dependency(%q<test-construct>, [">= 0"])
+    s.add_dependency(%q<rubocop>, [">= 0"])
   end
 end
 
