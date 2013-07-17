@@ -188,6 +188,94 @@ describe 'homesick' do
     end
   end
 
+  describe 'unlink' do
+    let(:castle) { given_castle('glencairn') }
+
+    it 'unlinks dotfiles in the home folder' do
+      dotfile = castle.file('.some_dotfile')
+
+      homesick.symlink('glencairn')
+      homesick.unlink('glencairn')
+
+      home.join('.some_dotfile').should_not exist
+    end
+
+    it 'unlinks non-dotfiles from the home folder' do
+      dotfile = castle.file('bin')
+
+      homesick.symlink('glencairn')
+      homesick.unlink('glencairn')
+
+      home.join('bin').should_not exist
+    end
+
+    context "with '.config' in .homesick_subdir" do
+      let(:castle) { given_castle('glencairn', ['.config']) }
+
+      it 'can unlink sub directories' do
+        dotdir = castle.directory('.config')
+        dotfile = dotdir.file('.some_dotfile')
+
+        homesick.symlink('glencairn')
+        homesick.unlink('glencairn')
+
+        home_dotdir = home.join('.config')
+        home_dotdir.should exist
+        home_dotdir.join('.some_dotfile').should_not exist
+      end
+    end
+
+    context "with '.config/appA' in .homesick_subdir" do
+      let(:castle) { given_castle('glencairn', ['.config/appA']) }
+
+      it 'can unsymlink in nested sub directory' do
+        dotdir = castle.directory('.config').directory('appA')
+        dotfile = dotdir.file('.some_dotfile')
+
+        homesick.symlink('glencairn')
+        homesick.unlink('glencairn')
+
+        home_dotdir = home.join('.config').join('appA')
+        home_dotdir.should exist
+        home_dotdir.join('.some_dotfile').should_not exist
+      end
+    end
+
+    context "with '.config' and '.config/someapp' in .homesick_subdir" do
+      let(:castle) { given_castle('glencairn', ['.config', '.config/someapp']) }
+
+      it 'can unsymlink under both of .config and .config/someapp' do
+        config_dir = castle.directory('.config')
+        config_dotfile = config_dir.file('.some_dotfile')
+        someapp_dir = config_dir.directory('someapp')
+        someapp_dotfile = someapp_dir.file('.some_appfile')
+
+        homesick.symlink('glencairn')
+        homesick.unlink('glencairn')
+
+        home_config_dir = home.join('.config')
+        home_someapp_dir = home_config_dir.join('someapp')
+        home_config_dir.should exist
+        home_config_dir.join('.some_dotfile').should_not exist
+        home_someapp_dir.should exist
+        home_someapp_dir.join('.some_appfile').should_not exist
+      end
+    end
+
+    context "when call with no castle name" do
+      let(:castle) { given_castle('dotfiles') }
+
+      it 'using default castle name: "dotfiles"' do
+        dotfile = castle.file('.some_dotfile')
+
+        homesick.symlink
+        homesick.unlink
+
+        home.join('.some_dotfile').should_not exist
+      end
+    end
+  end
+
   describe 'list' do
     it 'should say each castle in the castle directory' do
       given_castle('zomg')
