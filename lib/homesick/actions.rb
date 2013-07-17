@@ -108,6 +108,17 @@ class Homesick
       system "rm -rf #{dir}"
     end
 
+    def rm_link(target)
+      target = Pathname.new(target)
+
+      if target.symlink?
+        say_status :unlink, "#{target.expand_path}", :green unless options[:quiet]
+        FileUtils.rm_rf target
+      else
+        say_status :conflict, "#{target} is not a symlink", :red unless options[:quiet]
+      end
+    end
+
     def ln_s(source, destination, config = {})
       source = Pathname.new(source)
       destination = Pathname.new(destination)
