@@ -45,3 +45,4 @@ pkg
 *.iml
 
 Gemfile.lock
+vendor/
