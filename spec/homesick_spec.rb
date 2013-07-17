@@ -78,7 +78,7 @@ describe 'homesick' do
     end
 
     it 'should clone a github repo' do
-      homesick.should_receive(:git_clone).with('git://github.com/wfarr/dotfiles.git', :destination => Pathname.new('wfarr/dotfiles'))
+      homesick.should_receive(:git_clone).with('https://github.com/wfarr/dotfiles.git', :destination => Pathname.new('wfarr/dotfiles'))
 
       homesick.clone 'wfarr/dotfiles'
     end
