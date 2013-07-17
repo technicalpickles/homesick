@@ -12,6 +12,22 @@ describe 'homesick' do
   before { homesick.stub!(:repos_dir).and_return(castles) }
 
   describe 'clone' do
+    context 'has a .homesickrc' do
+      it 'should run the .homesickrc' do
+        somewhere = create_construct
+        local_repo = somewhere.directory('some_repo')
+        local_repo.file('.homesickrc') do |file|
+          file << "File.open(Dir.pwd + '/testing', 'w') { |f| f.print 'testing' }"
+        end
+
+        expect($stdout).to receive(:print)
+        expect($stdin).to receive(:gets).and_return('y')
+        homesick.clone local_repo
+
+        castles.join('some_repo').join('testing').should exist
+      end
+    end
+
     context 'of a file' do
       it 'should symlink existing directories' do
         somewhere = create_construct
