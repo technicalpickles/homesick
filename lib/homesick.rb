@@ -90,7 +90,23 @@ class Homesick < Thor
   desc 'push CASTLE', 'Push the specified castle'
   def push(name = DEFAULT_CASTLE_NAME)
     push_castle name
+  end
 
+  desc 'unlink CASTLE', 'Unsymlinks all dotfiles from the specified castle'
+  def unlink(name = DEFAULT_CASTLE_NAME)
+    check_castle_existance(name, 'symlink')
+
+    inside castle_dir(name) do
+      subdirs = subdirs(name)
+
+      # unlink files
+      unsymlink_each(name, castle_dir(name), subdirs)
+
+      # unlink files in subdirs
+      subdirs.each do |subdir|
+        unsymlink_each(name, subdir, subdirs)
+      end
+    end
   end
 
   desc 'symlink CASTLE', 'Symlinks all dotfiles from the specified castle'
@@ -331,7 +347,7 @@ class Homesick < Thor
     first_p.mtime > second_p.mtime && !first_p.symlink?
   end
 
-  def symlink_each(castle, basedir, subdirs)
+  def each_file(castle, basedir, subdirs)
     absolute_basedir = Pathname.new(basedir).expand_path
     inside basedir do
       files = Pathname.glob('{.*,*}').reject{ |a| ['.', '..'].include?(a.to_s) }
@@ -360,8 +376,21 @@ class Homesick < Thor
 
         relative_dir = absolute_basedir.relative_path_from(castle_home)
         home_path = home_dir.join(relative_dir).join(path)
-        ln_s absolute_path, home_path
+
+        yield(absolute_path, home_path)
       end
+    end
+  end
+
+  def unsymlink_each(castle, basedir, subdirs)
+    each_file(castle, basedir, subdirs) do |absolute_path, home_path|
+      rm_link home_path
+    end
+  end
+
+  def symlink_each(castle, basedir, subdirs)
+    each_file(castle, basedir, subdirs) do |absolute_path, home_path|
+      ln_s absolute_path, home_path
     end
   end
 end
