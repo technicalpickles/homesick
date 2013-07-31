@@ -22,7 +22,7 @@ Jeweler::Tasks.new do |gem|
   gem.email = ["josh@technicalpickles.com", "info@muratayusuke.com"]
   gem.homepage = "http://github.com/technicalpickles/homesick"
   gem.authors = ["Joshua Nichols", "Yusuke Murata"]
-  gem.version = "0.9.3"
+  gem.version = "0.9.4"
   gem.license = "MIT"
   # Have dependencies? Add them to Gemfile
 
