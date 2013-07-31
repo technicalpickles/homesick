@@ -31,6 +31,10 @@ If you use the shorthand syntax for GitHub repositories in your clone, please no
 
     homesick symlink technicalpickles/pickled-vim
 
+You can remove symlinks anytime when you don't need them anymore
+
+    homesick unlink pickled-vim
+
 If you're not sure what castles you have around, you can easily list them:
 
     homesick list

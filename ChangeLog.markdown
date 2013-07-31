@@ -1,3 +1,9 @@
+# 0.9.4
+ * Use https protocol instead of git protocol
+ * Introduce new commands
+     * `homesick unlink`
+     * `homesick rc`
+
 # 0.9.3
  * Add recursive option to `homesick clone`
 
