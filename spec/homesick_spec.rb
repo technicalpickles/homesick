@@ -246,7 +246,7 @@ describe 'homesick' do
     let(:castle) { given_castle('glencairn') }
 
     it 'unlinks dotfiles in the home folder' do
-      dotfile = castle.file('.some_dotfile')
+      castle.file('.some_dotfile')
 
       homesick.symlink('glencairn')
       homesick.unlink('glencairn')
@@ -255,7 +255,7 @@ describe 'homesick' do
     end
 
     it 'unlinks non-dotfiles from the home folder' do
-      dotfile = castle.file('bin')
+      castle.file('bin')
 
       homesick.symlink('glencairn')
       homesick.unlink('glencairn')
@@ -267,8 +267,7 @@ describe 'homesick' do
       let(:castle) { given_castle('glencairn', ['.config']) }
 
       it 'can unlink sub directories' do
-        dotdir = castle.directory('.config')
-        dotfile = dotdir.file('.some_dotfile')
+        castle.directory('.config').file('.some_dotfile')
 
         homesick.symlink('glencairn')
         homesick.unlink('glencairn')
@@ -283,8 +282,7 @@ describe 'homesick' do
       let(:castle) { given_castle('glencairn', ['.config/appA']) }
 
       it 'can unsymlink in nested sub directory' do
-        dotdir = castle.directory('.config').directory('appA')
-        dotfile = dotdir.file('.some_dotfile')
+        castle.directory('.config').directory('appA').file('.some_dotfile')
 
         homesick.symlink('glencairn')
         homesick.unlink('glencairn')
@@ -300,9 +298,8 @@ describe 'homesick' do
 
       it 'can unsymlink under both of .config and .config/someapp' do
         config_dir = castle.directory('.config')
-        config_dotfile = config_dir.file('.some_dotfile')
-        someapp_dir = config_dir.directory('someapp')
-        someapp_dotfile = someapp_dir.file('.some_appfile')
+        config_dir.file('.some_dotfile')
+        config_dir.directory('someapp').file('.some_appfile')
 
         homesick.symlink('glencairn')
         homesick.unlink('glencairn')
@@ -320,7 +317,7 @@ describe 'homesick' do
       let(:castle) { given_castle('dotfiles') }
 
       it 'using default castle name: "dotfiles"' do
-        dotfile = castle.file('.some_dotfile')
+        castle.file('.some_dotfile')
 
         homesick.symlink
         homesick.unlink
