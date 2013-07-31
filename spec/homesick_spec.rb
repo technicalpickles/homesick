@@ -8,7 +8,7 @@ describe 'homesick' do
 
   let(:homesick) { Homesick.new }
 
-  before { homesick.stub!(:repos_dir).and_return(castles) }
+  before { homesick.stub(:repos_dir).and_return(castles) }
 
   describe 'clone' do
     context 'has a .homesickrc' do
