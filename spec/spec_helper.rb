@@ -23,7 +23,7 @@ RSpec.configure do |config|
         system 'git init >/dev/null 2>&1'
         system "git remote add origin git://github.com/technicalpickles/#{name}.git >/dev/null 2>&1"
         if subdirs
-          subdir_file = castle.join(Homesick::SUBDIR_FILENAME)
+          subdir_file = castle.join(Homesick::CLI::SUBDIR_FILENAME)
           subdirs.each do |subdir|
             system "echo #{subdir} >> #{subdir_file}"
           end

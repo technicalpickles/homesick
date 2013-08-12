@@ -6,99 +6,9 @@ describe 'homesick' do
 
   let(:castles) { home.directory('.homesick/repos') }
 
-  let(:homesick) { Homesick.new }
+  let(:homesick) { Homesick::CLI.new }
 
   before { homesick.stub(:repos_dir).and_return(castles) }
-
-  describe 'clone' do
-    context 'has a .homesickrc' do
-      it 'should run the .homesickrc' do
-        somewhere = create_construct
-        local_repo = somewhere.directory('some_repo')
-        local_repo.file('.homesickrc') do |file|
-          file << "File.open(Dir.pwd + '/testing', 'w') { |f| f.print 'testing' }"
-        end
-
-        expect($stdout).to receive(:print)
-        expect($stdin).to receive(:gets).and_return('y')
-        homesick.clone local_repo
-
-        castles.join('some_repo').join('testing').should exist
-      end
-    end
-
-    context 'of a file' do
-      it 'should symlink existing directories' do
-        somewhere = create_construct
-        local_repo = somewhere.directory('wtf')
-
-        homesick.clone local_repo
-
-        castles.join('wtf').readlink.should == local_repo
-      end
-
-      context 'when it exists in a repo directory' do
-        before do
-          existing_castle = given_castle('existing_castle')
-          @existing_dir = existing_castle.parent
-        end
-
-        it 'should raise an error' do
-          homesick.should_not_receive(:git_clone)
-          expect { homesick.clone @existing_dir.to_s }.to raise_error(/already cloned/i)
-        end
-      end
-    end
-
-    it 'should clone git repo like file:///path/to.git' do
-      bare_repo = File.join(create_construct.to_s, 'dotfiles.git')
-      system "git init --bare #{bare_repo} >/dev/null 2>&1"
-
-      homesick.clone "file://#{bare_repo}"
-      File.directory?(File.join(home.to_s, '.homesick/repos/dotfiles')).should be_true
-    end
-
-    it 'should clone git repo like git://host/path/to.git' do
-      homesick.should_receive(:git_clone).with('git://github.com/technicalpickles/pickled-vim.git')
-
-      homesick.clone 'git://github.com/technicalpickles/pickled-vim.git'
-    end
-
-    it 'should clone git repo like git@host:path/to.git' do
-      homesick.should_receive(:git_clone).with('git@github.com:technicalpickles/pickled-vim.git')
-
-      homesick.clone 'git@github.com:technicalpickles/pickled-vim.git'
-    end
-
-    it 'should clone git repo like http://host/path/to.git' do
-      homesick.should_receive(:git_clone).with('http://github.com/technicalpickles/pickled-vim.git')
-
-      homesick.clone 'http://github.com/technicalpickles/pickled-vim.git'
-    end
-
-    it 'should clone git repo like http://host/path/to' do
-      homesick.should_receive(:git_clone).with('http://github.com/technicalpickles/pickled-vim')
-
-      homesick.clone 'http://github.com/technicalpickles/pickled-vim'
-    end
-
-    it 'should clone git repo like host-alias:repos.git' do
-      homesick.should_receive(:git_clone).with('gitolite:pickled-vim.git')
-
-      homesick.clone 'gitolite:pickled-vim.git'
-    end
-
-    it 'should throw an exception when trying to clone a malformed uri like malformed' do
-      homesick.should_not_receive(:git_clone)
-      expect { homesick.clone 'malformed' }.to raise_error
-    end
-
-    it 'should clone a github repo' do
-      homesick.should_receive(:git_clone).with('https://github.com/wfarr/dotfiles.git', :destination => Pathname.new('wfarr/dotfiles'))
-
-      homesick.clone 'wfarr/dotfiles'
-    end
-  end
 
   describe 'rc' do
     let(:castle) { given_castle('glencairn') }
@@ -158,7 +68,7 @@ describe 'homesick' do
     end
 
     context 'when forced' do
-      let(:homesick) { Homesick.new [], :force => true }
+      let(:homesick) { Homesick::CLI.new [], :force => true }
 
       it 'can override symlinks to directories' do
         somewhere_else = create_construct
@@ -442,7 +352,7 @@ describe 'homesick' do
         some_nested_file = home.file('some/nested/file.txt')
         homesick.track(some_nested_file.to_s, 'castle_repo')
 
-        subdir_file = castle.parent.join(Homesick::SUBDIR_FILENAME)
+        subdir_file = castle.parent.join(Homesick::CLI::SUBDIR_FILENAME)
         File.open(subdir_file, 'r') do |f|
           f.readline.should == "some/nested\n"
         end
@@ -456,7 +366,7 @@ describe 'homesick' do
         homesick.track(some_nested_file.to_s, 'castle_repo')
         homesick.track(other_nested_file.to_s, 'castle_repo')
 
-        subdir_file = castle.parent.join(Homesick::SUBDIR_FILENAME)
+        subdir_file = castle.parent.join(Homesick::CLI::SUBDIR_FILENAME)
         File.open(subdir_file, 'r') do |f|
           f.readlines.size.should == 1
         end
@@ -470,7 +380,7 @@ describe 'homesick' do
         homesick.track(some_nested_file.to_s, 'castle_repo')
         homesick.track(nested_parent.to_s, 'castle_repo')
 
-        subdir_file = castle.parent.join(Homesick::SUBDIR_FILENAME)
+        subdir_file = castle.parent.join(Homesick::CLI::SUBDIR_FILENAME)
         File.open(subdir_file, 'r') do |f|
           f.each_line { |line| line.should_not == "some/nested\n" }
         end

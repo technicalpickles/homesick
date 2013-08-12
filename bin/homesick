@@ -6,4 +6,4 @@ $LOAD_PATH.unshift lib.to_s
 
 require 'homesick'
 
-Homesick.start
+Homesick::CLI.start
