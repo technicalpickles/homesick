@@ -1,4 +1,5 @@
 require 'homesick/commands/clone'
+require 'homesick/commands/rc'
 
 module Homesick
   class CLI < Thor
@@ -17,24 +18,7 @@ module Homesick
 
     register Homesick::Commands::Clone, "clone", "clone URI", "Clone +uri+ as a castle for homesick"
 
-    desc 'rc CASTLE', 'Run the .homesickrc for the specified castle'
-    def rc(name = DEFAULT_CASTLE_NAME)
-      inside repos_dir do
-        destination = Pathname.new(name)
-        homesickrc = destination.join('.homesickrc').expand_path
-        if homesickrc.exist?
-          proceed = shell.yes?("#{name} has a .homesickrc. Proceed with evaling it? (This could be destructive)")
-          if proceed
-            shell.say_status 'eval', homesickrc
-            inside destination do
-              eval homesickrc.read, binding, homesickrc.expand_path.to_s
-            end
-          else
-            shell.say_status 'eval skip', "not evaling #{homesickrc}, #{destination} may need manual configuration", :blue
-          end
-        end
-      end
-    end
+    register Homesick::Commands::Rc, "rc", "rc CASTLE", "Run the .homesickrc for the specified +castle+"
 
     desc 'pull CASTLE', 'Update the specified castle'
     method_option :all, :type => :boolean, :default => false, :required => false, :desc => 'Update all cloned castles'
