@@ -1,5 +1,6 @@
 require 'homesick/commands/clone'
 require 'homesick/commands/rc'
+require 'homesick/commands/pull'
 
 module Homesick
   class CLI < Thor
@@ -20,19 +21,7 @@ module Homesick
 
     register Homesick::Commands::Rc, "rc", "rc CASTLE", "Run the .homesickrc for the specified +castle+"
 
-    desc 'pull CASTLE', 'Update the specified castle'
-    method_option :all, :type => :boolean, :default => false, :required => false, :desc => 'Update all cloned castles'
-    def pull(name = DEFAULT_CASTLE_NAME)
-      if options[:all]
-        inside_each_castle do |castle|
-          shell.say castle.to_s.gsub(repos_dir.to_s + '/', '') + ':'
-          update_castle castle
-        end
-      else
-        update_castle name
-      end
-
-    end
+    register Homesick::Commands::Pull, "pull", "pull CASTLE", "Update the specified +castle+"
 
     desc 'commit CASTLE', "Commit the specified castle's changes"
     def commit(name = DEFAULT_CASTLE_NAME)

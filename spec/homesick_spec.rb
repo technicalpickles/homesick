@@ -233,16 +233,6 @@ describe 'homesick' do
     end
   end
 
-  describe 'pull' do
-
-    xit 'needs testing'
-
-    describe '--all' do
-      xit 'needs testing'
-    end
-
-  end
-
   describe 'commit' do
 
     xit 'needs testing'
