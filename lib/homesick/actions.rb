@@ -68,7 +68,7 @@ class Homesick
 
     def git_add(file, config = {})
       say_status 'git add file', '', :green unless options[:quiet]
-      system "git add #{file}" unless options[:pretend]
+      system "git add '#{file}'" unless options[:pretend]
     end
 
     def git_status(config = {})
@@ -89,11 +89,11 @@ class Homesick
         say_status :conflict, "#{destination} exists", :red unless options[:quiet]
 
         if options[:force] || shell.file_collision(destination) { source }
-          system "mv #{source} #{destination}" unless options[:pretend]
+          system "mv '#{source}' '#{destination}'" unless options[:pretend]
         end
       else
         # this needs some sort of message here.
-        system "mv #{source} #{destination}" unless options[:pretend]
+        system "mv '#{source}' '#{destination}'" unless options[:pretend]
       end
     end
 
@@ -120,19 +120,19 @@ class Homesick
           say_status :conflict, "#{destination} exists and points to #{destination.readlink}", :red unless options[:quiet]
 
           if options[:force] || shell.file_collision(destination) { source }
-            system "ln -nsf #{source} #{destination}" unless options[:pretend]
+            system "ln -nsf '#{source}' '#{destination}'" unless options[:pretend]
           end
         end
       elsif destination.exist?
         say_status :conflict, "#{destination} exists", :red unless options[:quiet]
 
         if options[:force] || shell.file_collision(destination) { source }
-          system "rm -rf #{destination}" unless options[:pretend]
-          system "ln -sf #{source} #{destination}" unless options[:pretend]
+          system "rm -rf '#{destination}'" unless options[:pretend]
+          system "ln -sf '#{source}' '#{destination}'" unless options[:pretend]
         end
       else
         say_status :symlink, "#{source.expand_path} to #{destination.expand_path}", :green unless options[:quiet]
-        system "ln -s #{source} #{destination}" unless options[:pretend]
+        system "ln -s '#{source}' '#{destination}'" unless options[:pretend]
       end
     end
   end
