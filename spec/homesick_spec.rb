@@ -398,6 +398,19 @@ describe 'homesick' do
       some_rc_file.readlink.should == tracked_file
     end
 
+    it 'should handle files with parens' do
+      castle = given_castle('castle_repo')
+
+      some_rc_file = home.file 'Default (Linux).sublime-keymap'
+
+      homesick.track(some_rc_file.to_s, 'castle_repo')
+
+      tracked_file = castle.join('Default (Linux).sublime-keymap')
+      tracked_file.should exist
+
+      some_rc_file.readlink.should == tracked_file
+    end
+
     it 'should track a file in nested folder structure' do
       castle = given_castle('castle_repo')
 
