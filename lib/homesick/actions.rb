@@ -10,7 +10,7 @@ class Homesick
 
       if ! destination.directory?
         say_status 'git clone', "#{repo} to #{destination.expand_path}", :green unless options[:quiet]
-        system "git clone -q --recursive #{repo} #{destination}" unless options[:pretend]
+        system "git clone -q --config push.default=upstream --recursive #{repo} #{destination}" unless options[:pretend]
       else
         say_status :exist, destination.expand_path, :blue unless options[:quiet]
       end
