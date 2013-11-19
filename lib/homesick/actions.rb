@@ -81,6 +81,11 @@ class Homesick
       system "git diff" unless options[:pretend]
     end
 
+    def which_check(command)
+      installed = system "which #{command} 2>&1 >/dev/null"
+      say_status :error, "Could not find #{command}, expected #{command} to be installed", :red and exit unless installed
+    end
+
     def mv(source, destination, config = {})
       source = Pathname.new(source)
       destination = Pathname.new(destination + source.basename)
