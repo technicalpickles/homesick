@@ -232,16 +232,18 @@ class Homesick < Thor
   def destroy(name)
     check_castle_existance name, "destroy"
 
-    inside castle_dir(name) do
-      files = Pathname.glob('{.*,*}').reject{|a| [".",".."].include?(a.to_s)}
-      files.each do |path|
+    if shell.yes?("This will destroy your castle irreversible! Are you sure?")
+      inside castle_dir(name) do
+        files = Pathname.glob('{.*,*}').reject{|a| [".",".."].include?(a.to_s)}
+        files.each do |path|
 
-        inside home_dir do
-          adjusted_path = (home_dir + path).basename
-          rm adjusted_path
+          inside home_dir do
+            adjusted_path = (home_dir + path).basename
+            rm adjusted_path
+          end
         end
+        rm_r castle_dir(name)
       end
-      rm_rf repos_dir + name
     end
 
   end

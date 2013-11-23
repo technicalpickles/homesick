@@ -494,6 +494,7 @@ describe 'homesick' do
 
   describe "destroy" do
     it "removes the symlink files" do
+      expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).and_return('y')
       given_castle("stronghold")
       some_rc_file = home.file '.some_rc_file'
       homesick.track(some_rc_file.to_s, "stronghold")
@@ -503,6 +504,7 @@ describe 'homesick' do
     end
 
     it "deletes the cloned repository" do
+      expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).and_return('y')
       castle = given_castle("stronghold")
       some_rc_file = home.file '.some_rc_file'
       homesick.track(some_rc_file.to_s, "stronghold")
