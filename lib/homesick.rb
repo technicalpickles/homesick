@@ -233,17 +233,8 @@ class Homesick < Thor
     check_castle_existance name, "destroy"
 
     if shell.yes?("This will destroy your castle irreversible! Are you sure?")
-      inside castle_dir(name) do
-        files = Pathname.glob('{.*,*}').reject{|a| [".",".."].include?(a.to_s)}
-        files.each do |path|
-
-          inside home_dir do
-            adjusted_path = (home_dir + path).basename
-            rm adjusted_path
-          end
-        end
-        rm_r castle_dir(name)
-      end
+      unlink(name)
+      rm_r castle_dir(name)
     end
 
   end
