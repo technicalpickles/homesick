@@ -234,7 +234,7 @@ class Homesick < Thor
 
     if shell.yes?("This will destroy your castle irreversible! Are you sure?")
       unlink(name)
-      rm_r castle_dir(name)
+      rm_rf castle_dir(name)
     end
 
   end

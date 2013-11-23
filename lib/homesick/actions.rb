@@ -105,6 +105,7 @@ class Homesick
 
     def rm_rf(dir)
       say_status "rm -rf #{dir}", '', :green unless options[:quiet]
+      system "rm -rf #{dir}"
     end
 
     def rm_link(target)
