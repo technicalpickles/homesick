@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'spec_helper'
 
 describe 'homesick' do
@@ -488,6 +489,28 @@ describe 'homesick' do
           f.each_line { |line| line.should_not == "some/nested\n" }
         end
       end
+    end
+  end
+
+  describe "destroy" do
+    it "removes the symlink files" do
+      expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).and_return('y')
+      given_castle("stronghold")
+      some_rc_file = home.file '.some_rc_file'
+      homesick.track(some_rc_file.to_s, "stronghold")
+      homesick.destroy('stronghold')
+
+      some_rc_file.should_not be_exist
+    end
+
+    it "deletes the cloned repository" do
+      expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).and_return('y')
+      castle = given_castle("stronghold")
+      some_rc_file = home.file '.some_rc_file'
+      homesick.track(some_rc_file.to_s, "stronghold")
+      homesick.destroy('stronghold')
+
+      castle.should_not be_exist
     end
   end
 end

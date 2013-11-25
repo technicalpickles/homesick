@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'thor'
 
 class Homesick < Thor
@@ -227,6 +228,16 @@ class Homesick < Thor
     end
   end
 
+  desc "destroy CASTLE", "Delete all symlinks and remove the cloned repository"
+  def destroy(name)
+    check_castle_existance name, "destroy"
+
+    if shell.yes?("This will destroy your castle irreversible! Are you sure?")
+      unlink(name)
+      rm_rf repos_dir.join(name)
+    end
+
+  end
 
   protected
 

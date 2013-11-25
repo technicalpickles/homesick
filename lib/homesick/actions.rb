@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Homesick
   module Actions
     # TODO move this to be more like thor's template, empty_directory, etc
@@ -106,6 +107,37 @@ class Homesick
       else
         say_status :conflict, "#{target} is not a symlink", :red unless options[:quiet]
       end
+    end
+
+    def rm(file)
+      say_status "rm #{file}", '', :green unless options[:quiet]
+      system "rm #{file}" if File.exists?(file)
+    end
+
+    def rm_rf(dir)
+      say_status "rm -rf #{dir}", '', :green unless options[:quiet]
+      system "rm -rf #{dir}"
+    end
+
+    def rm_link(target)
+      target = Pathname.new(target)
+
+      if target.symlink?
+        say_status :unlink, "#{target.expand_path}", :green unless options[:quiet]
+        FileUtils.rm_rf target
+      else
+        say_status :conflict, "#{target} is not a symlink", :red unless options[:quiet]
+      end
+    end
+
+    def rm(file)
+      say_status "rm #{file}", '', :green unless options[:quiet]
+      system "rm #{file}"
+    end
+
+    def rm_r(dir)
+      say_status "rm -r #{dir}", '', :green unless options[:quiet]
+      system "rm -r #{dir}"
     end
 
     def ln_s(source, destination, config = {})
