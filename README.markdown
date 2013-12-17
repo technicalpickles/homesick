@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/technicalpickles/homesick.png?branch=master)](https://travis-ci.org/technicalpickles/homesick)
 
-A person's home (directory) is their castle, so don't leave home with out it.
+Your home directory is your castle. Don't leave your dotfiles behind.
 
 Homesick is sorta like [rip](http://github.com/defunkt/rip), but for dotfiles. It uses git to clone a repository containing dotfiles, and saves them in `~/.homesick`. It then allows you to symlink all the dotfiles into place with a single command.
 
