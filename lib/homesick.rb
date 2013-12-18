@@ -22,6 +22,7 @@ class Homesick < Thor
 
   desc 'clone URI', 'Clone +uri+ as a castle for homesick'
   def clone(uri)
+    which_check 'git'
     inside repos_dir do
       destination = nil
       if File.exist?(uri)
@@ -138,6 +139,7 @@ class Homesick < Thor
 
   desc 'track FILE CASTLE', 'add a file to a castle'
   def track(file, castle = DEFAULT_CASTLE_NAME)
+    which_check 'git'
     castle = Pathname.new(castle)
     file = Pathname.new(file.chomp('/'))
     check_castle_existance(castle, 'track')
@@ -181,6 +183,7 @@ class Homesick < Thor
 
   desc 'list', 'List cloned castles'
   def list
+    which_check 'git'
     inside_each_castle do |castle|
       say_status castle.relative_path_from(repos_dir).to_s, `git config remote.origin.url`.chomp, :cyan
     end
@@ -188,6 +191,7 @@ class Homesick < Thor
 
   desc 'status CASTLE', 'Shows the git status of a castle'
   def status(castle = DEFAULT_CASTLE_NAME)
+    which_check 'git'
     check_castle_existance(castle, 'status')
     inside repos_dir.join(castle) do
       git_status
@@ -196,6 +200,7 @@ class Homesick < Thor
 
   desc 'diff CASTLE', 'Shows the git diff of uncommitted changes in a castle'
   def diff(castle = DEFAULT_CASTLE_NAME)
+    which_check 'git'
     check_castle_existance(castle, 'diff')
     inside repos_dir.join(castle) do
       git_diff
@@ -210,6 +215,7 @@ class Homesick < Thor
 
   desc 'generate PATH', 'generate a homesick-ready git repo at PATH'
   def generate(castle)
+    which_check 'git'
     castle = Pathname.new(castle).expand_path
 
     github_user = `git config github.user`.chomp
@@ -281,6 +287,7 @@ class Homesick < Thor
   end
 
   def update_castle(castle)
+    which_check 'git'
     check_castle_existance(castle, 'pull')
     inside repos_dir.join(castle) do
       git_pull
@@ -290,6 +297,7 @@ class Homesick < Thor
   end
 
   def commit_castle(castle)
+    which_check 'git'
     check_castle_existance(castle, 'commit')
     inside repos_dir.join(castle) do
       git_commit_all
@@ -297,6 +305,7 @@ class Homesick < Thor
   end
 
   def push_castle(castle)
+    which_check 'git'
     check_castle_existance(castle, 'push')
     inside repos_dir.join(castle) do
       git_push
@@ -319,6 +328,7 @@ class Homesick < Thor
   end
 
   def subdir_add(castle, path)
+    which_check 'git'
     subdir_filepath = subdir_file(castle)
     File.open(subdir_filepath, 'a+') do |subdir|
       subdir.puts path unless subdir.readlines.reduce(false) do |memo, line|
@@ -332,6 +342,7 @@ class Homesick < Thor
   end
 
   def subdir_remove(castle, path)
+    which_check 'git'
     subdir_filepath = subdir_file(castle)
     if subdir_filepath.exist?
       lines = IO.readlines(subdir_filepath).delete_if { |line| line == "#{path}\n" }
