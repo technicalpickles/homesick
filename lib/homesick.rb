@@ -90,9 +90,9 @@ class Homesick < Thor
 
   end
 
-  desc 'commit CASTLE', "Commit the specified castle's changes"
-  def commit(name = DEFAULT_CASTLE_NAME)
-    commit_castle name
+  desc 'commit CASTLE MESSAGE', "Commit the specified castle's changes"
+  def commit(name = DEFAULT_CASTLE_NAME, message = nil)
+    commit_castle name, message
 
   end
 
@@ -289,10 +289,10 @@ class Homesick < Thor
     end
   end
 
-  def commit_castle(castle)
+  def commit_castle(castle, message)
     check_castle_existance(castle, 'commit')
     inside repos_dir.join(castle) do
-      git_commit_all
+      git_commit_all :message => message
     end
   end
 
@@ -397,7 +397,7 @@ class Homesick < Thor
         home_path = home_dir.join(relative_dir).join(path)
 
         yield(absolute_path, home_path)
-      end
+     end
     end
   end
 

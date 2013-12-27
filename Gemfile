@@ -15,6 +15,7 @@ group :development do
   gem "rcov", :platforms => :mri_18
   gem "simplecov", :platforms => :mri_19
   gem "test-construct"
+  gem "capture-output", "~> 1.0.0"
   if RUBY_VERSION >= '1.9.2'
     gem "rubocop"
   end
