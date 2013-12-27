@@ -341,9 +341,19 @@ describe 'homesick' do
   end
 
   describe 'status' do
+    it 'should say "nothing to commit" when there are no changes' do
+      given_castle('castle_repo')
+      text = capture_stdout { homesick.status('castle_repo') }
+      text.should =~ /nothing to commit \(create\/copy files and use "git add" to track\)$/
+    end
 
-    xit 'needs testing'
-
+    it 'should say "Changes to be committed" when there are changes' do
+      given_castle('castle_repo')
+      some_rc_file = home.file '.some_rc_file'
+      homesick.track(some_rc_file.to_s, 'castle_repo')
+      text = capture_stdout { homesick.status('castle_repo') }
+      text.should =~ /Changes to be committed:.*new file:\s*home\/.some_rc_file/m
+    end
   end
 
   describe 'diff' do
@@ -445,6 +455,16 @@ describe 'homesick' do
         tracked_file.should exist
 
         some_rc_file.readlink.should == tracked_file
+      end
+    end
+
+    describe 'commit' do
+      it 'should return true and have a commit message when the commit succeeds' do
+        given_castle('castle_repo')
+        some_rc_file = home.file '.a_random_rc_file'
+        homesick.track(some_rc_file.to_s, 'castle_repo')
+        text = capture_stdout { homesick.commit('castle_repo', 'Test message') }
+        text.should =~ /^\[master \(root-commit\) \w+\] Test message/
       end
     end
 

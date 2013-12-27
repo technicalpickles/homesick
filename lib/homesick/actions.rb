@@ -64,7 +64,11 @@ class Homesick
 
     def git_commit_all(config = {})
       say_status 'git commit all', '', :green unless options[:quiet]
-      system 'git commit -v -a' unless options[:pretend]
+      if config[:message]
+        system "git commit -a -m '#{config[:message]}'" unless options[:pretend]
+      else
+        system 'git commit -v -a' unless options[:pretend]
+      end
     end
 
     def git_add(file, config = {})
