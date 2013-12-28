@@ -90,9 +90,9 @@ class Homesick < Thor
 
   end
 
-  desc 'commit CASTLE', "Commit the specified castle's changes"
-  def commit(name = DEFAULT_CASTLE_NAME)
-    commit_castle name
+  desc 'commit CASTLE MESSAGE', "Commit the specified castle's changes"
+  def commit(name = DEFAULT_CASTLE_NAME, message = nil)
+    commit_castle name, message
 
   end
 
@@ -239,6 +239,37 @@ class Homesick < Thor
 
   end
 
+  desc "reset_file FILE CASTLE", "Discards all changes in a file, reverting it back to the git HEAD state"
+  def reset_file(file, castle = DEFAULT_CASTLE_NAME)
+    castle = Pathname.new(castle)
+    check_castle_existance castle, 'reset file'
+    file = Pathname.new(file.chomp('/'))
+    absolute_path = file.expand_path
+    relative_dir = absolute_path.relative_path_from(home_dir).dirname
+    castle_path = Pathname.new(castle_dir(castle)).join(relative_dir)
+    target = Pathname.new(castle_path.join(file.basename))
+    if target.exist?
+      inside castle_dir(castle) do
+        git_checkout_file target.basename
+      end
+    else
+      say_status 'reset_file', "File #{target.realpath} does not exist", :red
+
+      exit(1)
+    end
+  end
+
+  desc "reset_castle CASTLE", "Performs a git reset --hard HEAD on a castle"
+  def reset_castle(castle = DEFAULT_CASTLE_NAME)
+    castle = Pathname.new(castle)
+    check_castle_existance castle, 'reset castle'
+    inside repos_dir.join(castle) do
+      if shell.yes?("This will reset all uncommitted changes in your castle! Are you sure?")
+        git_reset
+      end
+    end
+  end
+
   protected
 
   def home_dir
@@ -289,10 +320,10 @@ class Homesick < Thor
     end
   end
 
-  def commit_castle(castle)
+  def commit_castle(castle, message)
     check_castle_existance(castle, 'commit')
     inside repos_dir.join(castle) do
-      git_commit_all
+      git_commit_all :message => message
     end
   end
 
@@ -397,7 +428,7 @@ class Homesick < Thor
         home_path = home_dir.join(relative_dir).join(path)
 
         yield(absolute_path, home_path)
-      end
+     end
     end
   end
 

@@ -341,9 +341,19 @@ describe 'homesick' do
   end
 
   describe 'status' do
+    it 'should say "nothing to commit" when there are no changes' do
+      given_castle('castle_repo')
+      text = capture_stdout { homesick.status('castle_repo') }
+      text.should =~ /nothing to commit \(create\/copy files and use "git add" to track\)$/
+    end
 
-    xit 'needs testing'
-
+    it 'should say "Changes to be committed" when there are changes' do
+      given_castle('castle_repo')
+      some_rc_file = home.file '.some_rc_file'
+      homesick.track(some_rc_file.to_s, 'castle_repo')
+      text = capture_stdout { homesick.status('castle_repo') }
+      text.should =~ /Changes to be committed:.*new file:\s*home\/.some_rc_file/m
+    end
   end
 
   describe 'diff' do
@@ -369,12 +379,6 @@ describe 'homesick' do
     describe '--all' do
       xit 'needs testing'
     end
-
-  end
-
-  describe 'commit' do
-
-    xit 'needs testing'
 
   end
 
@@ -448,6 +452,16 @@ describe 'homesick' do
       end
     end
 
+    describe 'commit' do
+      it 'should return a commit message when the commit succeeds' do
+        given_castle('castle_repo')
+        some_rc_file = home.file '.a_random_rc_file'
+        homesick.track(some_rc_file.to_s, 'castle_repo')
+        text = capture_stdout { homesick.commit('castle_repo', 'Test message') }
+        text.should =~ /^\[master \(root-commit\) \w+\] Test message/
+      end
+    end
+
     describe 'subdir_file' do
 
       it 'should add the nested files parent to the subdir_file' do
@@ -489,6 +503,37 @@ describe 'homesick' do
           f.each_line { |line| line.should_not == "some/nested\n" }
         end
       end
+    end
+  end
+
+  describe "reset_file" do
+    it 'should reset a given file to HEAD' do
+      given_castle('castle_repo')
+      some_rc_file = home.file '.a_random_rc_file'
+      homesick.track(some_rc_file.to_s, 'castle_repo')
+      text = capture_stdout { homesick.commit('castle_repo', 'Test message') }
+      text.should =~ /^\[master \(root-commit\) \w+\] Test message/
+      File.open(some_rc_file.to_s, 'w') { |file| file.puts "Hello world!" }
+      text = capture_stdout { homesick.reset_file(some_rc_file.to_s, 'castle_repo') }
+      File.read(some_rc_file.to_s).should eq ""
+    end
+  end
+
+  describe 'reset_castle' do
+    it 'should reset all changes to files' do
+      expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).and_return('y')
+      given_castle('castle_repo')
+      some_rc_file = home.file '.a_random_rc_file'
+      some_other_rc_file = home.file '.a_random_other_rc_file'
+      homesick.track(some_rc_file.to_s, 'castle_repo')
+      homesick.track(some_other_rc_file.to_s, 'castle_repo')
+      text = capture_stdout { homesick.commit('castle_repo', 'Some test files') }
+      text.should =~ /^\[master \(root-commit\) \w+\] Some test files/
+      File.open(some_rc_file.to_s, 'w') { |file| file.puts "Hello world!" }
+      File.open(some_other_rc_file.to_s, 'w') { |file| file.puts "Hello world!" }
+      text = capture_stdout { homesick.reset_castle('castle_repo') }
+      File.read(some_rc_file.to_s).should eq ""
+      File.read(some_other_rc_file.to_s).should eq ""
     end
   end
 
