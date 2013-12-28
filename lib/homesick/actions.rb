@@ -86,6 +86,16 @@ class Homesick
       system "git diff" unless options[:pretend]
     end
 
+    def git_reset(config = {})
+      say_status 'git reset --hard HEAD', '', :green unless options[:quiet]
+      system 'git reset --hard HEAD' unless options[:pretend]
+    end
+
+    def git_checkout_file(file, config = {})
+      say_status "git checkout -- #{file}", '', :green unless options[:quiet]
+      system "git checkout -- #{file}" unless options[:pretend]
+    end
+
     def mv(source, destination, config = {})
       source = Pathname.new(source)
       destination = Pathname.new(destination + source.basename)

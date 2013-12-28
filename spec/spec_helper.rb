@@ -44,7 +44,9 @@ RSpec.configure do |config|
       $stdout.reopen temp.path, 'w+'
       yield if block_given?
       $stdout.reopen stdout
-      temp.read
+      data = temp.read
+      temp.unlink
+      data
     end
   end
 end
