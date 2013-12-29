@@ -528,4 +528,41 @@ describe 'homesick' do
       castle.should_not be_exist
     end
   end
+
+  describe "cd" do
+    it "cd's to the root directory of the given castle" do
+      given_castle('castle_repo')
+      homesick.should_receive("inside").once.with(kind_of(Pathname)).and_yield
+      homesick.should_receive("system").once.with(ENV["SHELL"])
+      Capture.stdout { homesick.cd 'castle_repo' }
+    end
+
+    it "returns an error message when the given castle does not exist" do
+      homesick.should_receive("say_status").once.with(:error, /Could not cd castle_repo, expected \/tmp\/construct_container.* exist and contain dotfiles/, :red)
+      expect { homesick.cd "castle_repo" }.to raise_error(SystemExit)
+    end
+  end
+
+  describe "open" do
+    it "opens the system default editor in the root of the given castle" do
+      ENV.stub(:[]).and_call_original # Make sure calls to ENV use default values for most things...
+      ENV.stub(:[]).with('EDITOR').and_return('vim') # Set a default value for 'EDITOR' just in case none is set
+      given_castle 'castle_repo'
+      homesick.should_receive("inside").once.with(kind_of(Pathname)).and_yield
+      homesick.should_receive("system").once.with('vim')
+      Capture.stdout { homesick.open 'castle_repo' }
+    end
+
+    it "returns an error message when the $EDITOR environment variable is not set" do
+      ENV.stub(:[]).with('EDITOR').and_return(nil) # Set the default editor to make sure it fails.
+      homesick.should_receive("say_status").once.with(:error,"The $EDITOR environment variable must be set to use this command", :red)
+      expect { homesick.open "castle_repo" }.to raise_error(SystemExit)
+    end
+
+    it "returns an error message when the given castle does not exist" do
+      ENV.stub(:[]).with('EDITOR').and_return('vim') # Set a default just in case none is set
+      homesick.should_receive("say_status").once.with(:error, /Could not open castle_repo, expected \/tmp\/construct_container.* exist and contain dotfiles/, :red)
+      expect { homesick.open "castle_repo" }.to raise_error(SystemExit)
+    end
+  end
 end
