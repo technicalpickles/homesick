@@ -1,5 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
+require 'capture-output'
 
 describe 'homesick' do
   let(:home) { create_construct }
@@ -341,9 +342,19 @@ describe 'homesick' do
   end
 
   describe 'status' do
+    it 'should say "nothing to commit" when there are no changes' do
+      given_castle('castle_repo')
+      text = Capture.stdout { homesick.status('castle_repo') }
+      text.should =~ /nothing to commit \(create\/copy files and use "git add" to track\)$/
+    end
 
-    xit 'needs testing'
-
+    it 'should say "Changes to be committed" when there are changes' do
+      given_castle('castle_repo')
+      some_rc_file = home.file '.some_rc_file'
+      homesick.track(some_rc_file.to_s, 'castle_repo')
+      text = Capture.stdout { homesick.status('castle_repo') }
+      text.should =~ /Changes to be committed:.*new file:\s*home\/.some_rc_file/m
+    end
   end
 
   describe 'diff' do
@@ -369,12 +380,6 @@ describe 'homesick' do
     describe '--all' do
       xit 'needs testing'
     end
-
-  end
-
-  describe 'commit' do
-
-    xit 'needs testing'
 
   end
 
@@ -448,6 +453,16 @@ describe 'homesick' do
       end
     end
 
+    describe 'commit' do
+      it 'should have a commit message when the commit succeeds' do
+        given_castle('castle_repo')
+        some_rc_file = home.file '.a_random_rc_file'
+        homesick.track(some_rc_file.to_s, 'castle_repo')
+        text = Capture.stdout { homesick.commit('castle_repo', 'Test message') }
+        text.should =~ /^\[master \(root-commit\) \w+\] Test message/
+      end
+    end
+
     describe 'subdir_file' do
 
       it 'should add the nested files parent to the subdir_file' do
@@ -511,6 +526,43 @@ describe 'homesick' do
       homesick.destroy('stronghold')
 
       castle.should_not be_exist
+    end
+  end
+
+  describe "cd" do
+    it "cd's to the root directory of the given castle" do
+      given_castle('castle_repo')
+      homesick.should_receive("inside").once.with(kind_of(Pathname)).and_yield
+      homesick.should_receive("system").once.with(ENV["SHELL"])
+      Capture.stdout { homesick.cd 'castle_repo' }
+    end
+
+    it "returns an error message when the given castle does not exist" do
+      homesick.should_receive("say_status").once.with(:error, /Could not cd castle_repo, expected \/tmp\/construct_container.* exist and contain dotfiles/, :red)
+      expect { homesick.cd "castle_repo" }.to raise_error(SystemExit)
+    end
+  end
+
+  describe "open" do
+    it "opens the system default editor in the root of the given castle" do
+      ENV.stub(:[]).and_call_original # Make sure calls to ENV use default values for most things...
+      ENV.stub(:[]).with('EDITOR').and_return('vim') # Set a default value for 'EDITOR' just in case none is set
+      given_castle 'castle_repo'
+      homesick.should_receive("inside").once.with(kind_of(Pathname)).and_yield
+      homesick.should_receive("system").once.with('vim')
+      Capture.stdout { homesick.open 'castle_repo' }
+    end
+
+    it "returns an error message when the $EDITOR environment variable is not set" do
+      ENV.stub(:[]).with('EDITOR').and_return(nil) # Set the default editor to make sure it fails.
+      homesick.should_receive("say_status").once.with(:error,"The $EDITOR environment variable must be set to use this command", :red)
+      expect { homesick.open "castle_repo" }.to raise_error(SystemExit)
+    end
+
+    it "returns an error message when the given castle does not exist" do
+      ENV.stub(:[]).with('EDITOR').and_return('vim') # Set a default just in case none is set
+      homesick.should_receive("say_status").once.with(:error, /Could not open castle_repo, expected \/tmp\/construct_container.* exist and contain dotfiles/, :red)
+      expect { homesick.open "castle_repo" }.to raise_error(SystemExit)
     end
   end
 end

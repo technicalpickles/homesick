@@ -90,9 +90,9 @@ class Homesick < Thor
 
   end
 
-  desc 'commit CASTLE', "Commit the specified castle's changes"
-  def commit(name = DEFAULT_CASTLE_NAME)
-    commit_castle name
+  desc 'commit CASTLE MESSAGE', "Commit the specified castle's changes"
+  def commit(name = DEFAULT_CASTLE_NAME, message = nil)
+    commit_castle name, message
 
   end
 
@@ -239,6 +239,31 @@ class Homesick < Thor
 
   end
 
+  desc "cd CASTLE", "Open a new shell in the root of the given castle"
+  def cd(castle = DEFAULT_CASTLE_NAME)
+    check_castle_existance castle, "cd"
+    castle_dir = repos_dir.join(castle)
+    say_status "cd #{castle_dir.realpath}", "Opening a new shell in castle '#{castle}'. To return to the original one exit from the new shell.", :green
+    inside castle_dir do
+      system(ENV['SHELL'])
+    end
+  end
+
+  desc "open CASTLE", "Open your default editor in the root of the given castle"
+  def open(castle = DEFAULT_CASTLE_NAME)
+    if ! ENV['EDITOR']
+      say_status :error,"The $EDITOR environment variable must be set to use this command", :red
+
+      exit(1)
+    end
+    check_castle_existance castle, "open"
+    castle_dir = repos_dir.join(castle)
+    say_status "#{ENV['EDITOR']} #{castle_dir.realpath}", "Opening the root directory of castle '#{castle}' in editor '#{ENV['EDITOR']}'.", :green
+    inside castle_dir do
+      system(ENV['EDITOR'])
+    end
+  end
+
   protected
 
   def home_dir
@@ -289,10 +314,10 @@ class Homesick < Thor
     end
   end
 
-  def commit_castle(castle)
+  def commit_castle(castle, message)
     check_castle_existance(castle, 'commit')
     inside repos_dir.join(castle) do
-      git_commit_all
+      git_commit_all :message => message
     end
   end
 
@@ -397,7 +422,7 @@ class Homesick < Thor
         home_path = home_dir.join(relative_dir).join(path)
 
         yield(absolute_path, home_path)
-      end
+     end
     end
   end
 

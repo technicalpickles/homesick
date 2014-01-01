@@ -4,6 +4,7 @@ require 'homesick'
 require 'rspec'
 require 'rspec/autorun'
 require 'construct'
+require 'tempfile'
 
 RSpec.configure do |config|
   config.include Construct::Helpers
@@ -21,6 +22,8 @@ RSpec.configure do |config|
     castles.directory(path) do |castle|
       Dir.chdir(castle) do
         system 'git init >/dev/null 2>&1'
+        system 'git config user.email "test@test.com"'
+        system 'git config user.name "Test Name"'
         system "git remote add origin git://github.com/technicalpickles/#{name}.git >/dev/null 2>&1"
         if subdirs
           subdir_file = castle.join(Homesick::SUBDIR_FILENAME)
