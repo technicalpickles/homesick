@@ -1,3 +1,8 @@
+# 0.9.8
+ * Introduce new commands
+     * `homesick cd`
+     * `homesick open`
+
 # 0.9.4
  * Use https protocol instead of git protocol
  * Introduce new commands

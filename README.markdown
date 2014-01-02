@@ -48,6 +48,14 @@ To push your castle:
 
     homesick push CASTLE
 
+To open a terminal in the root of a castle:
+
+    homesick cd CASTLE
+
+To open your default editor in the root of a castle (the $EDITOR environment variable must be set):
+
+    homesick open CASTLE
+
 Not sure what else homesick has up its sleeve? There's always the built in help:
 
     homesick help
