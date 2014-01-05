@@ -584,7 +584,7 @@ describe 'homesick' do
     end
 
     it 'returns an error message when the given castle does not exist' do
-      homesick.should_receive('say_status').once.with(:error, /Could not cd castle_repo, expected \/tmp\/construct_container.* exist and contain dotfiles/, :red)
+      homesick.should_receive('say_status').once.with(:error, %r{Could not cd castle_repo, expected /tmp/construct_container.* exist and contain dotfiles}, :red)
       expect { homesick.cd 'castle_repo' }.to raise_error(SystemExit)
     end
   end
@@ -607,7 +607,7 @@ describe 'homesick' do
 
     it 'returns an error message when the given castle does not exist' do
       ENV.stub(:[]).with('EDITOR').and_return('vim') # Set a default just in case none is set
-      homesick.should_receive('say_status').once.with(:error, /Could not open castle_repo, expected \/tmp\/construct_container.* exist and contain dotfiles/, :red)
+      homesick.should_receive('say_status').once.with(:error, %r{Could not open castle_repo, expected /tmp/construct_container.* exist and contain dotfiles}, :red)
       expect { homesick.open 'castle_repo' }.to raise_error(SystemExit)
     end
   end

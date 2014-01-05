@@ -251,7 +251,7 @@ class Homesick < Thor
 
   desc 'open CASTLE', 'Open your default editor in the root of the given castle'
   def open(castle = DEFAULT_CASTLE_NAME)
-    if !ENV['EDITOR']
+    unless ENV['EDITOR']
       say_status :error, 'The $EDITOR environment variable must be set to use this command', :red
 
       exit(1)
@@ -427,7 +427,7 @@ class Homesick < Thor
         home_path = home_dir.join(relative_dir).join(path)
 
         yield(absolute_path, home_path)
-     end
+      end
     end
   end
 

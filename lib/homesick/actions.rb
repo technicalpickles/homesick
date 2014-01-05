@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Homesick
   module Actions
-    # TODO move this to be more like thor's template, empty_directory, etc
+    # TODO: move this to be more like thor's template, empty_directory, etc
     def git_clone(repo, config = {})
       config ||= {}
       destination = config[:destination] || File.basename(repo, '.git')

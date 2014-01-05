@@ -2,14 +2,8 @@
 # The point is for the user to remove these configuration records
 # one by one as the offences are removed from the code base.
 
-BlockAlignment:
-  Enabled: false
-
 ClassLength:
   Max: 350
-
-CommentAnnotation:
-  Enabled: false
 
 CyclomaticComplexity:
   Max: 16
@@ -20,17 +14,8 @@ Documentation:
 Eval:
   Enabled: false
 
-FavorUnlessOverNegatedIf:
-  Enabled: false
-
-IndentationWidth:
-  Enabled: false
-
 LineLength:
   Max: 174
 
 MethodLength:
   Max: 31
-
-RegexpLiteral:
-  Enabled: false
