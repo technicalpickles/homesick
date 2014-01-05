@@ -14,7 +14,7 @@ group :development do
   gem "jeweler", ">= 1.6.2"
   gem "rcov", :platforms => :mri_18
   gem "simplecov", :platforms => :mri_19
-  gem "test-construct"
+  gem "test_construct"
   gem "capture-output", "~> 1.0.0"
   if RUBY_VERSION >= '1.9.2'
     gem "rubocop"
