@@ -93,9 +93,7 @@ class Homesick
       if destination.exist?
         say_status :conflict, "#{destination} exists", :red unless options[:quiet]
 
-        if options[:force] || shell.file_collision(destination) { source }
-          system "mv '#{source}' '#{destination}'" unless options[:pretend]
-        end
+        system "mv '#{source}' '#{destination}'" if (options[:force] || shell.file_collision(destination) { source }) && !options[:pretend]
       else
         # this needs some sort of message here.
         system "mv '#{source}' '#{destination}'" unless options[:pretend]
@@ -155,9 +153,7 @@ class Homesick
         else
           say_status :conflict, "#{destination} exists and points to #{destination.readlink}", :red unless options[:quiet]
 
-          if options[:force] || shell.file_collision(destination) { source }
-            system "ln -nsf '#{source}' '#{destination}'" unless options[:pretend]
-          end
+          system "ln -nsf '#{source}' '#{destination}'" if (options[:force] || shell.file_collision(destination) { source }) && !options[:pretend]
         end
       elsif destination.exist?
         say_status :conflict, "#{destination} exists", :red unless options[:quiet]

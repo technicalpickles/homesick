@@ -31,9 +31,7 @@ class Homesick < Thor
       destination = nil
       if File.exist?(uri)
         uri = Pathname.new(uri).expand_path
-        if uri.to_s.start_with?(repos_dir.to_s)
-          raise "Castle already cloned to #{uri}"
-        end
+        raise "Castle already cloned to #{uri}" if uri.to_s.start_with?(repos_dir.to_s)
 
         destination = uri.basename
 

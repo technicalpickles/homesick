@@ -5,11 +5,8 @@
 BlockAlignment:
   Enabled: false
 
-BlockNesting:
-  Max: 4
-
 ClassLength:
-  Max: 352
+  Max: 350
 
 CommentAnnotation:
   Enabled: false
