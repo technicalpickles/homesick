@@ -17,16 +17,10 @@ CyclomaticComplexity:
 Documentation:
   Enabled: false
 
-EmptyLinesAroundBody:
-  Enabled: false
-
 Eval:
   Enabled: false
 
 FavorUnlessOverNegatedIf:
-  Enabled: false
-
-HashSyntax:
   Enabled: false
 
 IndentationWidth:
@@ -38,26 +32,5 @@ LineLength:
 MethodLength:
   Max: 31
 
-PerlBackrefs:
-  Enabled: false
-
-RedundantReturn:
-  Enabled: false
-
 RegexpLiteral:
-  Enabled: false
-
-SignalException:
-  Enabled: false
-
-SpaceAfterComma:
-  Enabled: false
-
-SpaceAfterNot:
-  Enabled: false
-
-SpaceAroundBlockBraces:
-  Enabled: false
-
-StringLiterals:
   Enabled: false

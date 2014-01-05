@@ -99,7 +99,7 @@ describe 'homesick' do
     end
 
     it 'should clone a github repo' do
-      homesick.should_receive(:git_clone).with('https://github.com/wfarr/dotfiles.git', :destination => Pathname.new('dotfiles'))
+      homesick.should_receive(:git_clone).with('https://github.com/wfarr/dotfiles.git', destination: Pathname.new('dotfiles'))
 
       homesick.clone 'wfarr/dotfiles'
     end
@@ -165,7 +165,7 @@ describe 'homesick' do
     end
 
     context 'when forced' do
-      let(:homesick) { Homesick.new [], :force => true }
+      let(:homesick) { Homesick.new [], force: true }
 
       it 'can override symlinks to directories' do
         somewhere_else = create_construct
@@ -237,7 +237,7 @@ describe 'homesick' do
       end
     end
 
-    context "when call with no castle name" do
+    context 'when call with no castle name' do
       let(:castle) { given_castle('dotfiles') }
       it 'using default castle name: "dotfiles"' do
         dotfile = castle.file('.some_dotfile')
@@ -320,7 +320,7 @@ describe 'homesick' do
       end
     end
 
-    context "when call with no castle name" do
+    context 'when call with no castle name' do
       let(:castle) { given_castle('dotfiles') }
 
       it 'using default castle name: "dotfiles"' do
@@ -484,7 +484,7 @@ describe 'homesick' do
       some_nested_dir.realpath.should == tracked_file.realpath
     end
 
-    context "when call with no castle name" do
+    context 'when call with no castle name' do
       it 'using default castle name: "dotfiles"' do
         castle = given_castle('dotfiles')
 
@@ -553,62 +553,62 @@ describe 'homesick' do
     end
   end
 
-  describe "destroy" do
-    it "removes the symlink files" do
+  describe 'destroy' do
+    it 'removes the symlink files' do
       expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).and_return('y')
-      given_castle("stronghold")
+      given_castle('stronghold')
       some_rc_file = home.file '.some_rc_file'
-      homesick.track(some_rc_file.to_s, "stronghold")
+      homesick.track(some_rc_file.to_s, 'stronghold')
       homesick.destroy('stronghold')
 
       some_rc_file.should_not be_exist
     end
 
-    it "deletes the cloned repository" do
+    it 'deletes the cloned repository' do
       expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).and_return('y')
-      castle = given_castle("stronghold")
+      castle = given_castle('stronghold')
       some_rc_file = home.file '.some_rc_file'
-      homesick.track(some_rc_file.to_s, "stronghold")
+      homesick.track(some_rc_file.to_s, 'stronghold')
       homesick.destroy('stronghold')
 
       castle.should_not be_exist
     end
   end
 
-  describe "cd" do
+  describe 'cd' do
     it "cd's to the root directory of the given castle" do
       given_castle('castle_repo')
-      homesick.should_receive("inside").once.with(kind_of(Pathname)).and_yield
-      homesick.should_receive("system").once.with(ENV["SHELL"])
+      homesick.should_receive('inside').once.with(kind_of(Pathname)).and_yield
+      homesick.should_receive('system').once.with(ENV['SHELL'])
       Capture.stdout { homesick.cd 'castle_repo' }
     end
 
-    it "returns an error message when the given castle does not exist" do
-      homesick.should_receive("say_status").once.with(:error, /Could not cd castle_repo, expected \/tmp\/construct_container.* exist and contain dotfiles/, :red)
-      expect { homesick.cd "castle_repo" }.to raise_error(SystemExit)
+    it 'returns an error message when the given castle does not exist' do
+      homesick.should_receive('say_status').once.with(:error, /Could not cd castle_repo, expected \/tmp\/construct_container.* exist and contain dotfiles/, :red)
+      expect { homesick.cd 'castle_repo' }.to raise_error(SystemExit)
     end
   end
 
-  describe "open" do
-    it "opens the system default editor in the root of the given castle" do
+  describe 'open' do
+    it 'opens the system default editor in the root of the given castle' do
       ENV.stub(:[]).and_call_original # Make sure calls to ENV use default values for most things...
       ENV.stub(:[]).with('EDITOR').and_return('vim') # Set a default value for 'EDITOR' just in case none is set
       given_castle 'castle_repo'
-      homesick.should_receive("inside").once.with(kind_of(Pathname)).and_yield
-      homesick.should_receive("system").once.with('vim')
+      homesick.should_receive('inside').once.with(kind_of(Pathname)).and_yield
+      homesick.should_receive('system').once.with('vim')
       Capture.stdout { homesick.open 'castle_repo' }
     end
 
-    it "returns an error message when the $EDITOR environment variable is not set" do
+    it 'returns an error message when the $EDITOR environment variable is not set' do
       ENV.stub(:[]).with('EDITOR').and_return(nil) # Set the default editor to make sure it fails.
-      homesick.should_receive("say_status").once.with(:error, "The $EDITOR environment variable must be set to use this command", :red)
-      expect { homesick.open "castle_repo" }.to raise_error(SystemExit)
+      homesick.should_receive('say_status').once.with(:error, 'The $EDITOR environment variable must be set to use this command', :red)
+      expect { homesick.open 'castle_repo' }.to raise_error(SystemExit)
     end
 
-    it "returns an error message when the given castle does not exist" do
+    it 'returns an error message when the given castle does not exist' do
       ENV.stub(:[]).with('EDITOR').and_return('vim') # Set a default just in case none is set
-      homesick.should_receive("say_status").once.with(:error, /Could not open castle_repo, expected \/tmp\/construct_container.* exist and contain dotfiles/, :red)
-      expect { homesick.open "castle_repo" }.to raise_error(SystemExit)
+      homesick.should_receive('say_status').once.with(:error, /Could not open castle_repo, expected \/tmp\/construct_container.* exist and contain dotfiles/, :red)
+      expect { homesick.open 'castle_repo' }.to raise_error(SystemExit)
     end
   end
 
