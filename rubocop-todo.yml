@@ -8,9 +8,6 @@ ClassLength:
 CyclomaticComplexity:
   Max: 16
 
-Documentation:
-  Enabled: false
-
 Eval:
   Enabled: false
 

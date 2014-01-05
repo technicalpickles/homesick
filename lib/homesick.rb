@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'thor'
 
+# Homesick's command line interface (with some helper methods)
 class Homesick < Thor
   autoload :Shell, 'homesick/shell'
   autoload :Actions, 'homesick/actions'
