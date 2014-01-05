@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'bundler'
+require_relative 'lib/homesick/version'
 begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
@@ -23,7 +24,7 @@ Jeweler::Tasks.new do |gem|
   gem.email = ["josh@technicalpickles.com", "info@muratayusuke.com"]
   gem.homepage = "http://github.com/technicalpickles/homesick"
   gem.authors = ["Joshua Nichols", "Yusuke Murata"]
-  gem.version = "0.9.7"
+  gem.version = Homesick::Version::STRING
   gem.license = "MIT"
   # Have dependencies? Add them to Gemfile
 

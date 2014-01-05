@@ -611,4 +611,11 @@ describe 'homesick' do
       expect { homesick.open "castle_repo" }.to raise_error(SystemExit)
     end
   end
+
+  describe 'version' do
+    it 'should print the current version of homesick' do
+      text = Capture.stdout { homesick.version }
+      text.chomp.should =~ /\d+\.\d+\.\d+/
+    end
+  end
 end
