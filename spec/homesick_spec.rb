@@ -23,6 +23,7 @@ describe 'homesick' do
 
         expect($stdout).to receive(:print)
         expect($stdin).to receive(:gets).and_return('y')
+        expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval', kind_of(Pathname))
         homesick.clone local_repo
 
         castles.join('some_repo').join('testing').should exist
@@ -55,8 +56,10 @@ describe 'homesick' do
     it 'should clone git repo like file:///path/to.git' do
       bare_repo = File.join(create_construct.to_s, 'dotfiles.git')
       system "git init --bare #{bare_repo} >/dev/null 2>&1"
-
-      homesick.clone "file://#{bare_repo}"
+      # Capture stderr to suppress message about cloning an empty repo.
+      Capture.stderr do
+        homesick.clone "file://#{bare_repo}"
+      end
       File.directory?(File.join(home.to_s, '.homesick/repos/dotfiles')).should be_true
     end
 
@@ -116,6 +119,7 @@ describe 'homesick' do
           file << "File.open(Dir.pwd + '/testing', 'w') { |f| f.print 'testing' }"
         end
 
+        expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval', kind_of(Pathname))
         homesick.rc castle
 
         castle.join('testing').should exist
@@ -133,6 +137,7 @@ describe 'homesick' do
           file << "File.open(Dir.pwd + '/testing', 'w') { |f| f.print 'testing' }"
         end
 
+        expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval skip', /not evaling.+/, :blue)
         homesick.rc castle
 
         castle.join('testing').should_not exist
