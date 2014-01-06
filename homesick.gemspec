@@ -42,15 +42,22 @@ Gem::Specification.new do |spec|
   spec.rubygems_version = "1.8.23"
   spec.summary = "A man's home is his castle. Never leave your dotfiles behind."
 
+  # Add dependencies required to use your gem here.
   spec.add_runtime_dependency "thor", ">= 0.14.0"
 
+  # Add dependencies to develop your gem here.
+  # Include everything needed to run rake, tests, features, etc.
   spec.add_development_dependency "bundler", "~> 1.5"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
+  spec.add_development_dependency "guard"
+  spec.add_development_dependency "guard-rspec"
+  spec.add_development_dependency "rb-readline", "~> 0.5.0"
   spec.add_development_dependency "jeweler", ">= 1.6.2"
-  spec.add_development_dependency "rcov", ">= 0"
-  spec.add_development_dependency "simplecov", ">= 0"
+  spec.add_development_dependency "rcov", ">= 0" # TODO: Use this on Ruby 1.8 only
+  spec.add_development_dependency "simplecov", ">= 0" # TODO: Use this on Ruby 1.9+ only
   spec.add_development_dependency "test-construct", ">= 0"
-  spec.add_development_dependency "rubocop", ">= 0"
+  spec.add_development_dependency "capture-output", "~> 1.0.0"
+  spec.add_development_dependency "rubocop", ">= 0" # TODO: Use this on Ruby 1.9.2+ only
 end
 
