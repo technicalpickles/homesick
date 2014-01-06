@@ -42,37 +42,15 @@ Gem::Specification.new do |spec|
   spec.rubygems_version = "1.8.23"
   spec.summary = "A man's home is his castle. Never leave your dotfiles behind."
 
-  if spec.respond_to? :specification_version then
-    spec.specification_version = 3
+  spec.add_runtime_dependency(%q<thor>, [">= 0.14.0"])
 
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      spec.add_runtime_dependency(%q<thor>, [">= 0.14.0"])
-      spec.add_development_dependency(%q<rake>, [">= 0.8.7"])
-      spec.add_development_dependency(%q<rspec>, ["~> 2.10"])
-      spec.add_development_dependency(%q<jeweler>, [">= 1.6.2"])
-      spec.add_development_dependency(%q<rcov>, [">= 0"])
-      spec.add_development_dependency(%q<simplecov>, [">= 0"])
-      spec.add_development_dependency(%q<test-construct>, [">= 0"])
-      spec.add_development_dependency(%q<rubocop>, [">= 0"])
-    else
-      spec.add_dependency(%q<thor>, [">= 0.14.0"])
-      spec.add_dependency(%q<rake>, [">= 0.8.7"])
-      spec.add_dependency(%q<rspec>, ["~> 2.10"])
-      spec.add_dependency(%q<jeweler>, [">= 1.6.2"])
-      spec.add_dependency(%q<rcov>, [">= 0"])
-      spec.add_dependency(%q<simplecov>, [">= 0"])
-      spec.add_dependency(%q<test-construct>, [">= 0"])
-      spec.add_dependency(%q<rubocop>, [">= 0"])
-    end
-  else
-    spec.add_dependency(%q<thor>, [">= 0.14.0"])
-    spec.add_dependency(%q<rake>, [">= 0.8.7"])
-    spec.add_dependency(%q<rspec>, ["~> 2.10"])
-    spec.add_dependency(%q<jeweler>, [">= 1.6.2"])
-    spec.add_dependency(%q<rcov>, [">= 0"])
-    spec.add_dependency(%q<simplecov>, [">= 0"])
-    spec.add_dependency(%q<test-construct>, [">= 0"])
-    spec.add_dependency(%q<rubocop>, [">= 0"])
-  end
+  spec.add_development_dependency(%q<bundler>, ["~> 1.5"])
+  spec.add_development_dependency(%q<rake>, [">= 0.8.7"])
+  spec.add_development_dependency(%q<rspec>, ["~> 2.10"])
+  spec.add_development_dependency(%q<jeweler>, [">= 1.6.2"])
+  spec.add_development_dependency(%q<rcov>, [">= 0"])
+  spec.add_development_dependency(%q<simplecov>, [">= 0"])
+  spec.add_development_dependency(%q<test-construct>, [">= 0"])
+  spec.add_development_dependency(%q<rubocop>, [">= 0"])
 end
 
