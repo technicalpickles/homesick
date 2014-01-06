@@ -2,7 +2,7 @@
 require 'spec_helper'
 require 'capture-output'
 
-describe 'homesick' do
+describe Homesick do
   let(:home) { create_construct }
   after { home.destroy! }
 
