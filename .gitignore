@@ -1,17 +1,17 @@
-# rcov generated
-coverage
-
-# rdoc generated
-rdoc
-
-# yard generated
-doc
-.yardoc
-
-# jeweler generated
-pkg
-
+*.gem
+*.rbc
 .bundle
-
+.config
+.yardoc
 Gemfile.lock
-vendor/
+InstalledFiles
+_yardoc
+coverage
+doc/
+lib/bundler/man
+pkg
+rdoc
+spec/reports
+test/tmp
+test/version_tmp
+tmp
