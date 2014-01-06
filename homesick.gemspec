@@ -1,8 +1,11 @@
-# -*- encoding: utf-8 -*-
+# coding: utf-8
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'homesick'
 
 Gem::Specification.new do |spec|
   spec.name          = "homesick"
-  spec.version       = "0.9.8"
+  spec.version       = Homesick::VERSION
   spec.authors       = ["Joshua Nichols", "Yusuke Murata"]
   spec.email         = ["josh@technicalpickles.com", "info@muratayusuke.com"]
   spec.summary       = "Your home directory is your castle. Don't leave your dotfiles behind."
