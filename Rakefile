@@ -1,46 +1,7 @@
-require 'rubygems'
-require 'bundler'
-begin
-  Bundler.setup(:default, :development)
-rescue Bundler::BundlerError => e
-  $stderr.puts e.message
-  $stderr.puts "Run `bundle install` to install missing gems"
-  exit e.status_code
-end
-require 'rake'
+require "bundler/gem_tasks"
+require "rspec/core/rake_task"
 
-# Load Homesick so we can get its version number
-lib = File.expand_path('../lib', __FILE__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'homesick'
-
-require 'jeweler'
-Jeweler::Tasks.new do |gem|
-  gem.name = "homesick"
-  gem.summary = %Q{Your home directory is your castle. Don't leave your dotfiles behind.}
-  gem.description = %Q{
-    Your home directory is your castle. Don't leave your dotfiles behind.
-    
-
-    Homesick is sorta like rip, but for dotfiles. It uses git to clone a repository containing dotfiles, and saves them in ~/.homesick. It then allows you to symlink all the dotfiles into place with a single command. 
-
-  }
-  gem.email = ["josh@technicalpickles.com", "info@muratayusuke.com"]
-  gem.homepage = "http://github.com/technicalpickles/homesick"
-  gem.authors = ["Joshua Nichols", "Yusuke Murata"]
-  gem.version = Homesick::VERSION
-  gem.license = "MIT"
-  # Have dependencies? Add them to Gemfile
-
-  # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-end
-Jeweler::GemcutterTasks.new
-
-
-require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new(:spec) do |spec|
-  spec.pattern = FileList['spec/**/*_spec.rb']
-end
+RSpec::Core::RakeTask.new(:spec)
 
 RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.pattern = 'spec/**/*_spec.rb'
