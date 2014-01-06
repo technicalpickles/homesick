@@ -42,15 +42,15 @@ Gem::Specification.new do |spec|
   spec.rubygems_version = "1.8.23"
   spec.summary = "A man's home is his castle. Never leave your dotfiles behind."
 
-  spec.add_runtime_dependency(%q<thor>, [">= 0.14.0"])
+  spec.add_runtime_dependency "thor", ">= 0.14.0"
 
-  spec.add_development_dependency(%q<bundler>, ["~> 1.5"])
-  spec.add_development_dependency(%q<rake>, [">= 0.8.7"])
-  spec.add_development_dependency(%q<rspec>, ["~> 2.10"])
-  spec.add_development_dependency(%q<jeweler>, [">= 1.6.2"])
-  spec.add_development_dependency(%q<rcov>, [">= 0"])
-  spec.add_development_dependency(%q<simplecov>, [">= 0"])
-  spec.add_development_dependency(%q<test-construct>, [">= 0"])
-  spec.add_development_dependency(%q<rubocop>, [">= 0"])
+  spec.add_development_dependency "bundler", "~> 1.5"
+  spec.add_development_dependency "rake", ">= 0.8.7"
+  spec.add_development_dependency "rspec", "~> 2.10"
+  spec.add_development_dependency "jeweler", ">= 1.6.2"
+  spec.add_development_dependency "rcov", ">= 0"
+  spec.add_development_dependency "simplecov", ">= 0"
+  spec.add_development_dependency "test-construct", ">= 0"
+  spec.add_development_dependency "rubocop", ">= 0"
 end
 
