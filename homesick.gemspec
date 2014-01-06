@@ -14,18 +14,18 @@ Gem::Specification.new do |spec|
   spec.email = ["josh@technicalpickles.com", "info@muratayusuke.com"]
   spec.executables = ["homesick"]
   spec.extra_rdoc_files = [
-    "ChangeLog.markdown",
-    "LICENSE",
-    "README.markdown"
+    "ChangeLog.md",
+    "LICENSE.txt",
+    "README.md"
   ]
   spec.files = [
     ".document",
     ".rspec",
     ".travis.yml",
-    "ChangeLog.markdown",
+    "ChangeLog.md",
     "Gemfile",
-    "LICENSE",
-    "README.markdown",
+    "LICENSE.txt",
+    "README.md",
     "Rakefile",
     "bin/homesick",
     "homesick.gemspec",
@@ -33,7 +33,6 @@ Gem::Specification.new do |spec|
     "lib/homesick/actions.rb",
     "lib/homesick/shell.rb",
     "spec/homesick_spec.rb",
-    "spec/spec.opts",
     "spec/spec_helper.rb"
   ]
   spec.homepage = "http://github.com/technicalpickles/homesick"
