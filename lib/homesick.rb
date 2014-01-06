@@ -10,6 +10,8 @@ class Homesick < Thor
 
   add_runtime_options!
 
+  VERSION = '0.9.7'
+
   GITHUB_NAME_REPO_PATTERN = /\A([A-Za-z0-9_-]+\/[A-Za-z0-9_-]+)\Z/
   SUBDIR_FILENAME = '.homesick_subdir'
 

@@ -9,6 +9,11 @@ rescue Bundler::BundlerError => e
 end
 require 'rake'
 
+# Load Homesick so we can get its version number
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'homesick'
+
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   gem.name = "homesick"
@@ -23,7 +28,7 @@ Jeweler::Tasks.new do |gem|
   gem.email = ["josh@technicalpickles.com", "info@muratayusuke.com"]
   gem.homepage = "http://github.com/technicalpickles/homesick"
   gem.authors = ["Joshua Nichols", "Yusuke Murata"]
-  gem.version = "0.9.7"
+  gem.version = Homesick::VERSION
   gem.license = "MIT"
   # Have dependencies? Add them to Gemfile
 
