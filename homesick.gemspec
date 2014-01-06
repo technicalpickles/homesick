@@ -12,29 +12,14 @@ Gem::Specification.new do |spec|
   spec.date = "2013-12-31"
   spec.description = "\n    A man's home (directory) is his castle, so don't leave home with out it.\n\n    Homesick is sorta like rip, but for dotfiles. It uses git to clone a repository containing dotfiles, and saves them in ~/.homesick. It then allows you to symlink all the dotfiles into place with a single command. \n\n  "
   spec.email = ["josh@technicalpickles.com", "info@muratayusuke.com"]
-  spec.executables = ["homesick"]
+  spec.executables = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.extra_rdoc_files = [
     "ChangeLog.md",
     "LICENSE.txt",
     "README.md"
   ]
-  spec.files = [
-    ".document",
-    ".rspec",
-    ".travis.yml",
-    "ChangeLog.md",
-    "Gemfile",
-    "LICENSE.txt",
-    "README.md",
-    "Rakefile",
-    "bin/homesick",
-    "homesick.gemspec",
-    "lib/homesick.rb",
-    "lib/homesick/actions.rb",
-    "lib/homesick/shell.rb",
-    "spec/homesick_spec.rb",
-    "spec/spec_helper.rb"
-  ]
+  spec.files = `git ls-files`.split($/)
+  spec.test_files = spec.files.grep(%r{^(test|spec|features)/})
   spec.homepage = "http://github.com/technicalpickles/homesick"
   spec.licenses = ["MIT"]
   spec.require_paths = ["lib"]
