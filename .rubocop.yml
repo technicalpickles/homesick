@@ -10,10 +10,10 @@ ClassLength:
   Enabled: false
 
 CyclomaticComplexity:
-  Max: 16
+  Max: 9
 
 LineLength:
-  Max: 174
+  Max: 163
 
 MethodLength:
   Max: 31

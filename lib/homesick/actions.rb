@@ -16,6 +16,17 @@ class Homesick
         say_status 'git clone', "#{repo} to #{destination.expand_path}", :green unless options[:quiet]
         system "git clone -q --config push.default=upstream --recursive #{repo} #{destination}" unless options[:pretend]
       end
+
+      git_setup_submodules destination
+    end
+
+    def git_setup_submodules(path)
+      if path.join('.gitmodules').exist?
+        inside path do
+          git_submodule_init
+          git_submodule_update
+        end
+      end
     end
 
     def git_init(path = '.')

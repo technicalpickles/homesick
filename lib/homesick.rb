@@ -40,21 +40,11 @@ class Homesick < Thor
       elsif uri =~ GITHUB_NAME_REPO_PATTERN
         destination = Pathname.new(uri).basename
         git_clone "https://github.com/#{Regexp.last_match[1]}.git", destination: destination
-      elsif uri =~ /%r([^%r]*?)(\.git)?\Z/
+      elsif uri =~ /%r([^%r]*?)(\.git)?\Z/ || uri =~ /[^:]+:([^:]+)(\.git)?\Z/
         destination = Pathname.new(Regexp.last_match[1])
-        git_clone uri
-      elsif uri =~ /[^:]+:([^:]+)(\.git)?\Z/
-        destination = Pathname.new(Regexp.last_match[1])
-        git_clone uri
+        git_clone uri, destination: destination
       else
         fail "Unknown URI format: #{uri}"
-      end
-
-      if destination.join('.gitmodules').exist?
-        inside destination do
-          git_submodule_init
-          git_submodule_update
-        end
       end
 
       rc(destination)
