@@ -10,11 +10,11 @@ class Homesick
       destination = Pathname.new(destination) unless destination.kind_of?(Pathname)
       FileUtils.mkdir_p destination.dirname
 
-      if !destination.directory?
+      if destination.directory?
+        say_status :exist, destination.expand_path, :blue unless options[:quiet]
+      else
         say_status 'git clone', "#{repo} to #{destination.expand_path}", :green unless options[:quiet]
         system "git clone -q --config push.default=upstream --recursive #{repo} #{destination}" unless options[:pretend]
-      else
-        say_status :exist, destination.expand_path, :blue unless options[:quiet]
       end
     end
 
@@ -22,11 +22,11 @@ class Homesick
       path = Pathname.new(path)
 
       inside path do
-        if !path.join('.git').exist?
+        if path.join('.git').exist?
+          say_status 'git init', 'already initialized', :blue unless options[:quiet]
+        else
           say_status 'git init', '' unless options[:quiet]
           system 'git init >/dev/null' unless options[:pretend]
-        else
-          say_status 'git init', 'already initialized', :blue unless options[:quiet]
         end
       end
     end
@@ -35,11 +35,11 @@ class Homesick
       existing_remote = `git config remote.#{name}.url`.chomp
       existing_remote = nil if existing_remote == ''
 
-      if !existing_remote
+      if existing_remote
+        say_status 'git remote', "#{name} already exists", :blue unless options[:quiet]
+      else
         say_status 'git remote', "add #{name} #{url}" unless options[:quiet]
         system "git remote add #{name} #{url}" unless options[:pretend]
-      else
-        say_status 'git remote', "#{name} already exists", :blue unless options[:quiet]
       end
     end
 
