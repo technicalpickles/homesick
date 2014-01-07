@@ -27,10 +27,15 @@ With the castle cloned, you can now link its contents into your home dir:
 
     homesick symlink pickled-vim
 
-
 You can remove symlinks anytime when you don't need them anymore
 
     homesick unlink pickled-vim
+
+If you need to add further configuration steps you can add these in a file called '.homesickrc' in the root of a castle. Once you've cloned a castle with one of these files apply these steps with:
+
+    homesick rc CASTLE
+
+The contents of the .homesickrc file must be valid Ruby code as the file will be executed with Ruby's eval construct.
 
 If you're not sure what castles you have around, you can easily list them:
 
