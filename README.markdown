@@ -1,6 +1,9 @@
 # homesick
 
+[![Gem Version](https://badge.fury.io/rb/homesick.png)](http://badge.fury.io/rb/homesick)
 [![Build Status](https://travis-ci.org/technicalpickles/homesick.png?branch=master)](https://travis-ci.org/technicalpickles/homesick)
+[![Dependency Status](https://gemnasium.com/technicalpickles/homesick.png)](https://gemnasium.com/technicalpickles/homesick)
+[![Code Climate](https://codeclimate.com/github/technicalpickles/homesick.png)](https://codeclimate.com/github/technicalpickles/homesick)
 
 Your home directory is your castle. Don't leave your dotfiles behind.
 
