@@ -387,6 +387,10 @@ class Homesick < Thor
     first_p.mtime > second_p.mtime && !first_p.symlink?
   end
 
+  def collision_accepted?
+    options[:force] || shell.file_collision(destination) { source }
+  end
+
   def each_file(castle, basedir, subdirs)
     absolute_basedir = Pathname.new(basedir).expand_path
     inside basedir do

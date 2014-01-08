@@ -148,18 +148,16 @@ class Homesick
       destination = Pathname.new(destination)
       FileUtils.mkdir_p destination.dirname
 
-      if destination.symlink?
-        if destination.readlink == source
-          say_status :identical, destination.expand_path, :blue unless options[:quiet]
-        else
-          say_status :conflict, "#{destination} exists and points to #{destination.readlink}", :red unless options[:quiet]
+      if destination.symlink? && destination.readlink == source
+        say_status :identical, destination.expand_path, :blue unless options[:quiet]
+      elsif destination.symlink?
+        say_status :conflict, "#{destination} exists and points to #{destination.readlink}", :red unless options[:quiet]
 
-          system "ln -nsf '#{source}' '#{destination}'" if (options[:force] || shell.file_collision(destination) { source }) && !options[:pretend]
-        end
+        smart_system "ln -nsf '#{source}' '#{destination}'" if collision_accepted?
       elsif destination.exist?
         say_status :conflict, "#{destination} exists", :red unless options[:quiet]
 
-        if options[:force] || shell.file_collision(destination) { source }
+        if collision_accepted?
           system "rm -rf '#{destination}'" unless options[:pretend]
           system "ln -sf '#{source}' '#{destination}'" unless options[:pretend]
         end

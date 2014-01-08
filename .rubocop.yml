@@ -10,7 +10,7 @@ ClassLength:
   Enabled: false
 
 CyclomaticComplexity:
-  Max: 9
+  Max: 7
 
 LineLength:
   Max: 163
