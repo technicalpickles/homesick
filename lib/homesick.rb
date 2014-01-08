@@ -42,12 +42,12 @@ class Homesick < Thor
         git_clone "https://github.com/#{Regexp.last_match[1]}.git", destination: destination
       elsif uri =~ /%r([^%r]*?)(\.git)?\Z/ || uri =~ /[^:]+:([^:]+)(\.git)?\Z/
         destination = Pathname.new(Regexp.last_match[1])
-        git_clone uri, destination: destination
+        git_clone uri
       else
         fail "Unknown URI format: #{uri}"
       end
 
-      rc(destination)
+      setup_castle(destination)
     end
   end
 
@@ -432,5 +432,16 @@ class Homesick < Thor
     each_file(castle, basedir, subdirs) do |absolute_path, home_path|
       ln_s absolute_path, home_path
     end
+  end
+
+  def setup_castle(path)
+    if path.join('.gitmodules').exist?
+      inside path do
+        git_submodule_init
+        git_submodule_update
+      end
+    end
+
+    rc(path)
   end
 end
