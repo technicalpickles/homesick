@@ -1,3 +1,4 @@
+require 'rbconfig'
 source 'https://rubygems.org'
 
 # Add dependencies required to use your gem here.
@@ -16,6 +17,9 @@ group :development do
   gem "simplecov", :platforms => :mri_19
   gem "test-construct"
   gem "capture-output", "~> 1.0.0"
+  if RbConfig::CONFIG['host_os'] =~ /linux|freebsd|openbsd|sunos|solaris/
+    gem 'libnotify'
+  end
   if RUBY_VERSION >= '1.9.2'
     gem "rubocop"
   end
