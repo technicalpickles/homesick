@@ -156,17 +156,31 @@ class Homesick
       destination = Pathname.new(destination)
       FileUtils.mkdir_p destination.dirname
 
-      if destination.symlink? && destination.readlink == source
+      action = if destination.symlink? && destination.readlink == source
+                 :identical
+               elsif destination.symlink?
+                 :symlink_conflict
+               elsif destination.exist?
+                 :conflict
+               else
+                 :success
+               end
+
+      handle_symlink_action action, source, destination
+    end
+
+    def handle_symlink_action(action, source, destination)
+      case action
+      when :identical
         say_status :identical, destination.expand_path, :blue unless options[:quiet]
-      elsif destination.symlink?
+      when :symlink_conflict
         say_status :conflict,
                    "#{destination} exists and points to " \
                    "#{destination.readlink}",
                    :red unless options[:quiet]
 
-        smart_system "ln -nsf '#{source}' '#{destination}'" \
-          if collision_accepted?
-      elsif destination.exist?
+        system "ln -nsf '#{source}' '#{destination}'" if collision_accepted?
+      when :conflict
         say_status :conflict, "#{destination} exists", :red unless options[:quiet]
 
         if collision_accepted?
