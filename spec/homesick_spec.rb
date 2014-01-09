@@ -18,7 +18,9 @@ describe 'homesick' do
         somewhere = create_construct
         local_repo = somewhere.directory('some_repo')
         local_repo.file('.homesickrc') do |file|
-          file << "File.open(Dir.pwd + '/testing', 'w') { |f| f.print 'testing' }"
+          file << "File.open(Dir.pwd + '/testing', 'w') do
+            |f| f.print 'testing'
+          end"
         end
 
         expect($stdout).to receive(:print)
@@ -48,7 +50,8 @@ describe 'homesick' do
 
         it 'should raise an error' do
           homesick.should_not_receive(:git_clone)
-          expect { homesick.clone @existing_dir.to_s }.to raise_error(/already cloned/i)
+          expect { homesick.clone @existing_dir.to_s }.to \
+            raise_error(/already cloned/i)
         end
       end
     end
@@ -56,33 +59,39 @@ describe 'homesick' do
     it 'should clone git repo like file:///path/to.git' do
       bare_repo = File.join(create_construct.to_s, 'dotfiles.git')
       system "git init --bare #{bare_repo} >/dev/null 2>&1"
+
       # Capture stderr to suppress message about cloning an empty repo.
       Capture.stderr do
         homesick.clone "file://#{bare_repo}"
       end
-      File.directory?(File.join(home.to_s, '.homesick/repos/dotfiles')).should be_true
+      File.directory?(File.join(home.to_s, '.homesick/repos/dotfiles'))
+        .should be_true
     end
 
     it 'should clone git repo like git://host/path/to.git' do
-      homesick.should_receive(:git_clone).with('git://github.com/technicalpickles/pickled-vim.git')
+      homesick.should_receive(:git_clone)
+              .with('git://github.com/technicalpickles/pickled-vim.git')
 
       homesick.clone 'git://github.com/technicalpickles/pickled-vim.git'
     end
 
     it 'should clone git repo like git@host:path/to.git' do
-      homesick.should_receive(:git_clone).with('git@github.com:technicalpickles/pickled-vim.git')
+      homesick.should_receive(:git_clone)
+              .with('git@github.com:technicalpickles/pickled-vim.git')
 
       homesick.clone 'git@github.com:technicalpickles/pickled-vim.git'
     end
 
     it 'should clone git repo like http://host/path/to.git' do
-      homesick.should_receive(:git_clone).with('http://github.com/technicalpickles/pickled-vim.git')
+      homesick.should_receive(:git_clone)
+              .with('http://github.com/technicalpickles/pickled-vim.git')
 
       homesick.clone 'http://github.com/technicalpickles/pickled-vim.git'
     end
 
     it 'should clone git repo like http://host/path/to' do
-      homesick.should_receive(:git_clone).with('http://github.com/technicalpickles/pickled-vim')
+      homesick.should_receive(:git_clone)
+              .with('http://github.com/technicalpickles/pickled-vim')
 
       homesick.clone 'http://github.com/technicalpickles/pickled-vim'
     end
@@ -93,13 +102,16 @@ describe 'homesick' do
       homesick.clone 'gitolite:pickled-vim.git'
     end
 
-    it 'should throw an exception when trying to clone a malformed uri like malformed' do
+    it 'should throw an exception when trying to clone a malformed uri like ' \
+       'malformed' do
       homesick.should_not_receive(:git_clone)
       expect { homesick.clone 'malformed' }.to raise_error
     end
 
     it 'should clone a github repo' do
-      homesick.should_receive(:git_clone).with('https://github.com/wfarr/dotfiles.git', destination: Pathname.new('dotfiles'))
+      homesick.should_receive(:git_clone)
+              .with('https://github.com/wfarr/dotfiles.git',
+                    destination: Pathname.new('dotfiles'))
 
       homesick.clone 'wfarr/dotfiles'
     end
@@ -116,7 +128,9 @@ describe 'homesick' do
 
       it 'executes the .homesickrc' do
         castle.file('.homesickrc') do |file|
-          file << "File.open(Dir.pwd + '/testing', 'w') { |f| f.print 'testing' }"
+          file << "File.open(Dir.pwd + '/testing', 'w') do
+            |f| f.print 'testing'
+          end"
         end
 
         expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval', kind_of(Pathname))
@@ -134,7 +148,9 @@ describe 'homesick' do
 
       it 'does not execute the .homesickrc' do
         castle.file('.homesickrc') do |file|
-          file << "File.open(Dir.pwd + '/testing', 'w') { |f| f.print 'testing' }"
+          file << "File.open(Dir.pwd + '/testing', 'w') do
+            |f| f.print 'testing'
+          end"
         end
 
         expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval skip', /not evaling.+/, :blue)
@@ -219,7 +235,9 @@ describe 'homesick' do
     end
 
     context "with '.config' and '.config/someapp' in .homesick_subdir" do
-      let(:castle) { given_castle('glencairn', ['.config', '.config/someapp']) }
+      let(:castle) do
+        given_castle('glencairn', ['.config', '.config/someapp'])
+      end
       it 'can symlink under both of .config and .config/someapp' do
         config_dir = castle.directory('.config')
         config_dotfile = config_dir.file('.some_dotfile')
@@ -231,9 +249,11 @@ describe 'homesick' do
         home_config_dir = home.join('.config')
         home_someapp_dir = home_config_dir.join('someapp')
         home_config_dir.symlink?.should be == false
-        home_config_dir.join('.some_dotfile').readlink.should be == config_dotfile
+        home_config_dir.join('.some_dotfile').readlink
+                       .should be == config_dotfile
         home_someapp_dir.symlink?.should be == false
-        home_someapp_dir.join('.some_appfile').readlink.should == someapp_dotfile
+        home_someapp_dir.join('.some_appfile').readlink
+                        .should == someapp_dotfile
       end
     end
 
@@ -301,7 +321,9 @@ describe 'homesick' do
     end
 
     context "with '.config' and '.config/someapp' in .homesick_subdir" do
-      let(:castle) { given_castle('glencairn', ['.config', '.config/someapp']) }
+      let(:castle) do
+        given_castle('glencairn', ['.config', '.config/someapp'])
+      end
 
       it 'can unsymlink under both of .config and .config/someapp' do
         config_dir = castle.directory('.config')
@@ -339,8 +361,14 @@ describe 'homesick' do
       given_castle('zomg')
       given_castle('wtf/zomg')
 
-      homesick.should_receive(:say_status).with('zomg', 'git://github.com/technicalpickles/zomg.git', :cyan)
-      homesick.should_receive(:say_status).with('wtf/zomg', 'git://github.com/technicalpickles/zomg.git', :cyan)
+      homesick.should_receive(:say_status)
+              .with('zomg',
+                    'git://github.com/technicalpickles/zomg.git',
+                    :cyan)
+      homesick.should_receive(:say_status)
+              .with('wtf/zomg',
+                    'git://github.com/technicalpickles/zomg.git',
+                    :cyan)
 
       homesick.list
     end
@@ -350,7 +378,8 @@ describe 'homesick' do
     it 'should say "nothing to commit" when there are no changes' do
       given_castle('castle_repo')
       text = Capture.stdout { homesick.status('castle_repo') }
-      text.should =~ /nothing to commit \(create\/copy files and use "git add" to track\)$/
+      text.should =~ Regexp.new('nothing to commit \(create\/copy files and ' \
+                                'use "git add" to track\)$')
     end
 
     it 'should say "Changes to be committed" when there are changes' do
@@ -358,7 +387,8 @@ describe 'homesick' do
       some_rc_file = home.file '.some_rc_file'
       homesick.track(some_rc_file.to_s, 'castle_repo')
       text = Capture.stdout { homesick.status('castle_repo') }
-      text.should =~ /Changes to be committed:.*new file:\s*home\/.some_rc_file/m
+      text.should =~
+        /Changes to be committed:.*new file:\s*home\/.some_rc_file/m
     end
   end
 
@@ -504,11 +534,15 @@ describe 'homesick' do
         given_castle('castle_repo')
         some_rc_file = home.file '.a_random_rc_file'
         homesick.track(some_rc_file.to_s, 'castle_repo')
-        text = Capture.stdout { homesick.commit('castle_repo', 'Test message') }
+        text = Capture.stdout do
+          homesick.commit('castle_repo', 'Test message')
+        end
         text.should =~ /^\[master \(root-commit\) \w+\] Test message/
       end
     end
 
+    # Note that this is a test for the subdir_file related feature of track,
+    # not for the subdir_file method itself.
     describe 'subdir_file' do
 
       it 'should add the nested files parent to the subdir_file' do
@@ -537,7 +571,8 @@ describe 'homesick' do
         end
       end
 
-      it 'should remove the parent of a tracked file from the subdir_file if the parent itself is tracked' do
+      it 'should remove the parent of a tracked file from the subdir_file ' \
+         'if the parent itself is tracked' do
         castle = given_castle('castle_repo')
 
         some_nested_file = home.file('some/nested/file.txt')
@@ -555,7 +590,8 @@ describe 'homesick' do
 
   describe 'destroy' do
     it 'removes the symlink files' do
-      expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).and_return('y')
+      expect_any_instance_of(Thor::Shell::Basic).to \
+        receive(:yes?).and_return('y')
       given_castle('stronghold')
       some_rc_file = home.file '.some_rc_file'
       homesick.track(some_rc_file.to_s, 'stronghold')
@@ -565,7 +601,8 @@ describe 'homesick' do
     end
 
     it 'deletes the cloned repository' do
-      expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).and_return('y')
+      expect_any_instance_of(Thor::Shell::Basic).to \
+        receive(:yes?).and_return('y')
       castle = given_castle('stronghold')
       some_rc_file = home.file '.some_rc_file'
       homesick.track(some_rc_file.to_s, 'stronghold')
@@ -584,30 +621,47 @@ describe 'homesick' do
     end
 
     it 'returns an error message when the given castle does not exist' do
-      homesick.should_receive('say_status').once.with(:error, %r{Could not cd castle_repo, expected /tmp/construct_container.* exist and contain dotfiles}, :red)
+      homesick.should_receive('say_status').once
+              .with(:error,
+                    Regexp.new('Could not cd castle_repo, expected ' \
+                    '/tmp/construct_container.* exist and contain dotfiles'),
+                    :red)
       expect { homesick.cd 'castle_repo' }.to raise_error(SystemExit)
     end
   end
 
   describe 'open' do
     it 'opens the system default editor in the root of the given castle' do
-      ENV.stub(:[]).and_call_original # Make sure calls to ENV use default values for most things...
-      ENV.stub(:[]).with('EDITOR').and_return('vim') # Set a default value for 'EDITOR' just in case none is set
+      # Make sure calls to ENV use default values for most things...
+      ENV.stub(:[]).and_call_original
+      # Set a default value for 'EDITOR' just in case none is set
+      ENV.stub(:[]).with('EDITOR').and_return('vim')
       given_castle 'castle_repo'
       homesick.should_receive('inside').once.with(kind_of(Pathname)).and_yield
       homesick.should_receive('system').once.with('vim')
       Capture.stdout { homesick.open 'castle_repo' }
     end
 
-    it 'returns an error message when the $EDITOR environment variable is not set' do
-      ENV.stub(:[]).with('EDITOR').and_return(nil) # Set the default editor to make sure it fails.
-      homesick.should_receive('say_status').once.with(:error, 'The $EDITOR environment variable must be set to use this command', :red)
+    it 'returns an error message when the $EDITOR environment variable is ' \
+       'not set' do
+      # Set the default editor to make sure it fails.
+      ENV.stub(:[]).with('EDITOR').and_return(nil)
+      homesick.should_receive('say_status').once
+              .with(:error,
+                    'The $EDITOR environment variable must be set to use '\
+                    'this command',
+                    :red)
       expect { homesick.open 'castle_repo' }.to raise_error(SystemExit)
     end
 
     it 'returns an error message when the given castle does not exist' do
-      ENV.stub(:[]).with('EDITOR').and_return('vim') # Set a default just in case none is set
-      homesick.should_receive('say_status').once.with(:error, %r{Could not open castle_repo, expected /tmp/construct_container.* exist and contain dotfiles}, :red)
+      # Set a default just in case none is set
+      ENV.stub(:[]).with('EDITOR').and_return('vim')
+      homesick.should_receive('say_status').once
+              .with(:error,
+                    Regexp.new('Could not open castle_repo, expected ' \
+                    '/tmp/construct_container.* exist and contain dotfiles'),
+                    :red)
       expect { homesick.open 'castle_repo' }.to raise_error(SystemExit)
     end
   end

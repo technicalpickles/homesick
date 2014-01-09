@@ -7,14 +7,18 @@ class Homesick
       config ||= {}
       destination = config[:destination] || File.basename(repo, '.git')
 
-      destination = Pathname.new(destination) unless destination.kind_of?(Pathname)
+      destination = Pathname.new(destination) \
+        unless destination.kind_of?(Pathname)
       FileUtils.mkdir_p destination.dirname
 
       if destination.directory?
         say_status :exist, destination.expand_path, :blue unless options[:quiet]
       else
-        say_status 'git clone', "#{repo} to #{destination.expand_path}", :green unless options[:quiet]
-        system "git clone -q --config push.default=upstream --recursive #{repo} #{destination}" unless options[:pretend]
+        say_status 'git clone',
+                   "#{repo} to #{destination.expand_path}",
+                   :green unless options[:quiet]
+        system "git clone -q --config push.default=upstream " \
+               "--recursive #{repo} #{destination}" unless options[:pretend]
       end
     end
 
@@ -50,7 +54,8 @@ class Homesick
 
     def git_submodule_update(config = {})
       say_status 'git submodule', 'update', :green unless options[:quiet]
-      system 'git submodule --quiet update --init --recursive >/dev/null 2>&1' unless options[:pretend]
+      system 'git submodule --quiet update --init --recursive ' \
+             '>/dev/null 2>&1' unless options[:pretend]
     end
 
     def git_pull(config = {})
@@ -94,7 +99,10 @@ class Homesick
       if destination.exist?
         say_status :conflict, "#{destination} exists", :red unless options[:quiet]
 
-        system "mv '#{source}' '#{destination}'" if (options[:force] || shell.file_collision(destination) { source }) && !options[:pretend]
+        system "mv '#{source}' '#{destination}'" \
+          if (options[:force] ||
+              shell.file_collision(destination) { source }) &&
+             !options[:pretend]
       else
         # this needs some sort of message here.
         system "mv '#{source}' '#{destination}'" unless options[:pretend]
@@ -151,9 +159,13 @@ class Homesick
       if destination.symlink? && destination.readlink == source
         say_status :identical, destination.expand_path, :blue unless options[:quiet]
       elsif destination.symlink?
-        say_status :conflict, "#{destination} exists and points to #{destination.readlink}", :red unless options[:quiet]
+        say_status :conflict,
+                   "#{destination} exists and points to " \
+                   "#{destination.readlink}",
+                   :red unless options[:quiet]
 
-        smart_system "ln -nsf '#{source}' '#{destination}'" if collision_accepted?
+        smart_system "ln -nsf '#{source}' '#{destination}'" \
+          if collision_accepted?
       elsif destination.exist?
         say_status :conflict, "#{destination} exists", :red unless options[:quiet]
 
@@ -162,7 +174,9 @@ class Homesick
           system "ln -sf '#{source}' '#{destination}'" unless options[:pretend]
         end
       else
-        say_status :symlink, "#{source.expand_path} to #{destination.expand_path}", :green unless options[:quiet]
+        say_status :symlink,
+                   "#{source.expand_path} to #{destination.expand_path}",
+                   :green unless options[:quiet]
         system "ln -s '#{source}' '#{destination}'" unless options[:pretend]
       end
     end
