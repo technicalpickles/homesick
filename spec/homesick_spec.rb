@@ -12,10 +12,6 @@ describe Homesick do
 
   before { homesick.stub(:repos_dir).and_return(castles) }
 
-  it 'should have a version number' do
-    Homesick::VERSION.should_not be_nil
-  end
-
   describe 'clone' do
     context 'has a .homesickrc' do
       it 'should run the .homesickrc' do
