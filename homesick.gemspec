@@ -2,10 +2,11 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'homesick'
+require_relative 'lib/homesick/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "homesick"
-  spec.version       = Homesick::VERSION
+  spec.version       = Homesick::Version::STRING
   spec.authors       = ["Joshua Nichols", "Yusuke Murata"]
   spec.email         = ["josh@technicalpickles.com", "info@muratayusuke.com"]
   spec.summary       = "Your home directory is your castle. Don't leave your dotfiles behind."
@@ -45,4 +46,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "test-construct", ">= 0"
   spec.add_development_dependency "capture-output", "~> 1.0.0"
   spec.add_development_dependency "rubocop", ">= 0" # TODO: Use this on Ruby 1.9.2+ only
+
+  if RbConfig::CONFIG['host_os'] =~ /linux|freebsd|openbsd|sunos|solaris/
+    gem 'libnotify'
+  end
 end
