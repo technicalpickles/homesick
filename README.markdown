@@ -1,6 +1,9 @@
 # homesick
 
+[![Gem Version](https://badge.fury.io/rb/homesick.png)](http://badge.fury.io/rb/homesick)
 [![Build Status](https://travis-ci.org/technicalpickles/homesick.png?branch=master)](https://travis-ci.org/technicalpickles/homesick)
+[![Dependency Status](https://gemnasium.com/technicalpickles/homesick.png)](https://gemnasium.com/technicalpickles/homesick)
+[![Code Climate](https://codeclimate.com/github/technicalpickles/homesick.png)](https://codeclimate.com/github/technicalpickles/homesick)
 
 Your home directory is your castle. Don't leave your dotfiles behind.
 
@@ -31,11 +34,11 @@ You can remove symlinks anytime when you don't need them anymore
 
     homesick unlink pickled-vim
 
-If you need to add further configuration steps you can add these in a file called '.homesickrc' in the root of a castle. Once you've cloned a castle with one of these files apply these steps with:
+If you need to add further configuration steps you can add these in a file called '.homesickrc' in the root of a castle. Once you've cloned a castle with a .homesickrc run the configuration with:
 
     homesick rc CASTLE
 
-The contents of the .homesickrc file must be valid Ruby code as the file will be executed with Ruby's eval construct.
+The contents of the .homesickrc file must be valid Ruby code as the file will be executed with Ruby's eval construct. The .homesickrc is also passed the current homesick object during its execution and this is available within the .homesickrc file as the 'self' variable.
 
 If you're not sure what castles you have around, you can easily list them:
 

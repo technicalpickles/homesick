@@ -4,9 +4,11 @@ require 'thor'
 class Homesick < Thor
   autoload :Shell, 'homesick/shell'
   autoload :Actions, 'homesick/actions'
+  autoload :Version, 'homesick/version'
 
   include Thor::Actions
   include Homesick::Actions
+  include Homesick::Version
 
   add_runtime_options!
 
@@ -14,6 +16,9 @@ class Homesick < Thor
   SUBDIR_FILENAME = '.homesick_subdir'
 
   DEFAULT_CASTLE_NAME = 'dotfiles'
+
+  map '-v' => :version
+  map '--version' => :version
 
   def initialize(args = [], options = {}, config = {})
     super
@@ -262,6 +267,11 @@ class Homesick < Thor
     inside castle_dir do
       system(ENV['EDITOR'])
     end
+  end
+
+  desc 'version', 'Display the current version of homesick'
+  def version
+    say Homesick::Version::STRING
   end
 
   protected
