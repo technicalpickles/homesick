@@ -9,5 +9,8 @@ Eval:
 ClassLength:
   Enabled: false
 
+CyclomaticComplexity:
+  Max: 13
+
 MethodLength:
   Max: 36
