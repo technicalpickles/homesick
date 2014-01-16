@@ -68,6 +68,10 @@ Not sure what else homesick has up its sleeve? There's always the built in help:
 
     homesick help
 
+If you ever want to see what version of homesick you have type:
+
+    homesick version|-v|--version
+
 ## .homesick_subdir
 
 `homesick symlink` basically makes symlink to only first depth in `castle/home`. If you want to link nested files/directories, please use .homesick_subdir.
@@ -145,6 +149,13 @@ and castle
     |      `-- config3
     `-- .emacs.d
         `-- elisp
+
+## Supported Ruby Versions
+
+Homesick is tested on the following Ruby versions:
+
+* 1.9.3
+* 2.0.0
 
 ## Note on Patches/Pull Requests
  
