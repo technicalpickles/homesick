@@ -33,7 +33,7 @@ RSpec.configure do |config|
         if subdirs
           subdir_file = castle.join(Homesick::SUBDIR_FILENAME)
           subdirs.each do |subdir|
-            system "echo #{subdir} >> #{subdir_file}"
+            File.open(subdir_file, 'a') { |file| file.write "\n#{subdir}\n" }
           end
         end
         return castle.directory('home')
