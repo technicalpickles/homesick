@@ -25,7 +25,8 @@ describe 'homesick' do
 
         expect($stdout).to receive(:print)
         expect($stdin).to receive(:gets).and_return('y')
-        expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval', kind_of(Pathname))
+        expect_any_instance_of(Thor::Shell::Basic).to \
+          receive(:say_status).with('eval', kind_of(Pathname))
         homesick.clone local_repo
 
         castles.join('some_repo').join('testing').should exist
@@ -102,8 +103,8 @@ describe 'homesick' do
       homesick.clone 'gitolite:pickled-vim.git'
     end
 
-    it 'should throw an exception when trying to clone a malformed uri like ' \
-       'malformed' do
+    it 'should throw an exception when trying to clone a malformed uri ' \
+       'like malformed' do
       homesick.should_not_receive(:git_clone)
       expect { homesick.clone 'malformed' }.to raise_error
     end
@@ -133,7 +134,8 @@ describe 'homesick' do
           end"
         end
 
-        expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval', kind_of(Pathname))
+        expect_any_instance_of(Thor::Shell::Basic).to \
+          receive(:say_status).with('eval', kind_of(Pathname))
         homesick.rc castle
 
         castle.join('testing').should exist
@@ -153,7 +155,8 @@ describe 'homesick' do
           end"
         end
 
-        expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval skip', /not evaling.+/, :blue)
+        expect_any_instance_of(Thor::Shell::Basic).to \
+          receive(:say_status).with('eval skip', /not evaling.+/, :blue)
         homesick.rc castle
 
         castle.join('testing').should_not exist
@@ -397,7 +400,9 @@ describe 'homesick' do
       given_castle('castle_repo')
       some_rc_file = home.file '.some_rc_file'
       homesick.track(some_rc_file.to_s, 'castle_repo')
-      Capture.stdout { homesick.commit 'castle_repo', 'Adding a file to the test' }
+      Capture.stdout do
+        homesick.commit 'castle_repo', 'Adding a file to the test'
+      end
       text = Capture.stdout { homesick.diff('castle_repo') }
       text.should eq('')
     end
@@ -406,9 +411,11 @@ describe 'homesick' do
       given_castle('castle_repo')
       some_rc_file = home.file '.some_rc_file'
       homesick.track(some_rc_file.to_s, 'castle_repo')
-      Capture.stdout { homesick.commit 'castle_repo', 'Adding a file to the test' }
+      Capture.stdout do
+        homesick.commit 'castle_repo', 'Adding a file to the test'
+      end
       File.open(some_rc_file.to_s, 'w') do |file|
-        file.puts "Some test text"
+        file.puts 'Some test text'
       end
       text = Capture.stdout { homesick.diff('castle_repo') }
       text.should =~ /diff --git.+Some test text$/m
@@ -426,17 +433,24 @@ describe 'homesick' do
   end
 
   describe 'pull' do
-    it 'should perform a pull, submodule init and update when the given castle exists' do
+    it 'should perform a pull, submodule init and update when the given ' \
+       'castle exists' do
       given_castle('castle_repo')
       homesick.stub(:system).once.with('git pull --quiet')
       homesick.stub(:system).once.with('git submodule --quiet init')
-      homesick.stub(:system).once.with('git submodule --quiet update --init --recursive >/dev/null 2>&1')
+      homesick.stub(:system).once.with('git submodule --quiet update ' \
+                                       '--init --recursive >/dev/null 2>&1')
       homesick.pull 'castle_repo'
     end
 
-    it 'should print an error message when trying to pull a non-existant castle' do
-      homesick.should_receive("say_status").once.with(:error, /Could not pull castle_repo, expected \/tmp\/construct_container.* exist and contain dotfiles/, :red)
-      expect { homesick.pull "castle_repo" }.to raise_error(SystemExit)
+    it 'should print an error message when trying to pull a non-existant ' \
+       'castle' do
+      homesick.should_receive('say_status').once
+        .with(:error,
+              Regexp.new('Could not pull castle_repo, expected ' \
+              '/tmp/construct_container.* exist and contain dotfiles'),
+              :red)
+      expect { homesick.pull 'castle_repo' }.to raise_error(SystemExit)
     end
 
     describe '--all' do
@@ -444,9 +458,14 @@ describe 'homesick' do
         given_castle('castle_repo')
         given_castle('glencairn')
         homesick.stub(:system).exactly(2).times.with('git pull --quiet')
-        homesick.stub(:system).exactly(2).times.with('git submodule --quiet init')
-        homesick.stub(:system).exactly(2).times.with('git submodule --quiet update --init --recursive >/dev/null 2>&1')
-        Capture.stdout { Capture.stderr { homesick.invoke 'pull', [], all: true } }
+        homesick.stub(:system).exactly(2).times
+          .with('git submodule --quiet init')
+        homesick.stub(:system).exactly(2).times
+          .with('git submodule --quiet update --init --recursive ' \
+                '>/dev/null 2>&1')
+        Capture.stdout do
+          Capture.stderr { homesick.invoke 'pull', [], all: true }
+        end
       end
     end
 
@@ -459,9 +478,14 @@ describe 'homesick' do
       homesick.push 'castle_repo'
     end
 
-    it 'should print an error message when trying to push a non-existant castle' do
-      homesick.should_receive("say_status").once.with(:error, /Could not push castle_repo, expected \/tmp\/construct_container.* exist and contain dotfiles/, :red)
-      expect { homesick.push "castle_repo" }.to raise_error(SystemExit)
+    it 'should print an error message when trying to push a non-existant '\
+       'castle' do
+      homesick.should_receive('say_status').once
+              .with(:error,
+                    Regexp.new('Could not push castle_repo, expected ' \
+                    '/tmp/construct_container.* exist and contain dotfiles'),
+                    :red)
+      expect { homesick.push 'castle_repo' }.to raise_error(SystemExit)
     end
   end
 
