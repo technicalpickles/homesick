@@ -2,7 +2,7 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'homesick'
-require_relative 'lib/homesick/version'
+require './lib/homesick/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "homesick"
