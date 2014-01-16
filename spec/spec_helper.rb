@@ -1,9 +1,9 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'homesick'
-require 'construct'
+require 'test_construct'
 
 RSpec.configure do |config|
-  config.include Construct::Helpers
+  config.include TestConstruct::Helpers
 
   config.before { ENV['HOME'] = home.to_s }
 

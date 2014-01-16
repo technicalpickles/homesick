@@ -23,6 +23,7 @@ describe Homesick do
 
         expect($stdout).to receive(:print)
         expect($stdin).to receive(:gets).and_return('y')
+        expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval', kind_of(Pathname))
         homesick.clone local_repo
 
         castles.join('some_repo').join('testing').should exist
@@ -55,8 +56,10 @@ describe Homesick do
     it 'should clone git repo like file:///path/to.git' do
       bare_repo = File.join(create_construct.to_s, 'dotfiles.git')
       system "git init --bare #{bare_repo} >/dev/null 2>&1"
-
-      homesick.clone "file://#{bare_repo}"
+      # Capture stderr to suppress message about cloning an empty repo.
+      Capture.stderr do
+        homesick.clone "file://#{bare_repo}"
+      end
       File.directory?(File.join(home.to_s, '.homesick/repos/dotfiles')).should be_true
     end
 
@@ -116,6 +119,7 @@ describe Homesick do
           file << "File.open(Dir.pwd + '/testing', 'w') { |f| f.print 'testing' }"
         end
 
+        expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval', kind_of(Pathname))
         homesick.rc castle
 
         castle.join('testing').should exist
@@ -133,6 +137,7 @@ describe Homesick do
           file << "File.open(Dir.pwd + '/testing', 'w') { |f| f.print 'testing' }"
         end
 
+        expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval skip', /not evaling.+/, :blue)
         homesick.rc castle
 
         castle.join('testing').should_not exist
@@ -358,9 +363,26 @@ describe Homesick do
   end
 
   describe 'diff' do
+    it 'should output an empty message when there are no changes to commit' do
+      given_castle('castle_repo')
+      some_rc_file = home.file '.some_rc_file'
+      homesick.track(some_rc_file.to_s, 'castle_repo')
+      Capture.stdout { homesick.commit 'castle_repo', 'Adding a file to the test' }
+      text = Capture.stdout { homesick.diff('castle_repo') }
+      text.should eq('')
+    end
 
-    xit 'needs testing'
-
+    it 'should output a diff message when there are changes to commit' do
+      given_castle('castle_repo')
+      some_rc_file = home.file '.some_rc_file'
+      homesick.track(some_rc_file.to_s, 'castle_repo')
+      Capture.stdout { homesick.commit 'castle_repo', 'Adding a file to the test' }
+      File.open(some_rc_file.to_s, 'w') do |file|
+        file.puts "Some test text"
+      end
+      text = Capture.stdout { homesick.diff('castle_repo') }
+      text.should =~ /diff --git.+Some test text$/m
+    end
   end
 
   describe 'show_path' do
@@ -374,19 +396,43 @@ describe Homesick do
   end
 
   describe 'pull' do
+    it 'should perform a pull, submodule init and update when the given castle exists' do
+      given_castle('castle_repo')
+      homesick.stub(:system).once.with('git pull --quiet')
+      homesick.stub(:system).once.with('git submodule --quiet init')
+      homesick.stub(:system).once.with('git submodule --quiet update --init --recursive >/dev/null 2>&1')
+      homesick.pull 'castle_repo'
+    end
 
-    xit 'needs testing'
+    it 'should print an error message when trying to pull a non-existant castle' do
+      homesick.should_receive("say_status").once.with(:error, /Could not pull castle_repo, expected \/tmp\/construct_container.* exist and contain dotfiles/, :red)
+      expect { homesick.pull "castle_repo" }.to raise_error(SystemExit)
+    end
 
     describe '--all' do
-      xit 'needs testing'
+      it 'should pull each castle when invoked with --all' do
+        given_castle('castle_repo')
+        given_castle('glencairn')
+        homesick.stub(:system).exactly(2).times.with('git pull --quiet')
+        homesick.stub(:system).exactly(2).times.with('git submodule --quiet init')
+        homesick.stub(:system).exactly(2).times.with('git submodule --quiet update --init --recursive >/dev/null 2>&1')
+        Capture.stdout { Capture.stderr { homesick.invoke 'pull', [], all: true } }
+      end
     end
 
   end
 
   describe 'push' do
+    it 'should perform a git push on the given castle' do
+      given_castle('castle_repo')
+      homesick.stub(:system).once.with('git push')
+      homesick.push 'castle_repo'
+    end
 
-    xit 'needs testing'
-
+    it 'should print an error message when trying to push a non-existant castle' do
+      homesick.should_receive("say_status").once.with(:error, /Could not push castle_repo, expected \/tmp\/construct_container.* exist and contain dotfiles/, :red)
+      expect { homesick.push "castle_repo" }.to raise_error(SystemExit)
+    end
   end
 
   describe 'track' do
@@ -555,7 +601,7 @@ describe Homesick do
 
     it "returns an error message when the $EDITOR environment variable is not set" do
       ENV.stub(:[]).with('EDITOR').and_return(nil) # Set the default editor to make sure it fails.
-      homesick.should_receive("say_status").once.with(:error,"The $EDITOR environment variable must be set to use this command", :red)
+      homesick.should_receive("say_status").once.with(:error, "The $EDITOR environment variable must be set to use this command", :red)
       expect { homesick.open "castle_repo" }.to raise_error(SystemExit)
     end
 

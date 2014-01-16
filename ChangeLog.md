@@ -1,3 +1,7 @@
+#1.0.0
+ * Removed support for Ruby 1.8.7
+ * Added a version command
+
 # 0.9.8
  * Introduce new commands
      * `homesick cd`
