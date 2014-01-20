@@ -428,8 +428,8 @@ class Homesick < Thor
   def each_file(castle, basedir, subdirs)
     absolute_basedir = Pathname.new(basedir).expand_path
     inside basedir do
-      files = Pathname.glob('{.*,*}').reject do
-        |a| ['.', '..'].include?(a.to_s)
+      files = Pathname.glob('{.*,*}').reject do |a|
+        ['.', '..'].include?(a.to_s)
       end
       files.each do |path|
         absolute_path = path.expand_path
