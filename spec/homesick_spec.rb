@@ -18,8 +18,8 @@ describe 'homesick' do
         somewhere = create_construct
         local_repo = somewhere.directory('some_repo')
         local_repo.file('.homesickrc') do |file|
-          file << "File.open(Dir.pwd + '/testing', 'w') do
-            |f| f.print 'testing'
+          file << "File.open(Dir.pwd + '/testing', 'w') do |f|
+            f.print 'testing'
           end"
         end
 
@@ -126,8 +126,8 @@ describe 'homesick' do
 
       it 'executes the .homesickrc' do
         castle.file('.homesickrc') do |file|
-          file << "File.open(Dir.pwd + '/testing', 'w') do
-            |f| f.print 'testing'
+          file << "File.open(Dir.pwd + '/testing', 'w') do |f|
+            f.print 'testing'
           end"
         end
 
@@ -146,8 +146,8 @@ describe 'homesick' do
 
       it 'does not execute the .homesickrc' do
         castle.file('.homesickrc') do |file|
-          file << "File.open(Dir.pwd + '/testing', 'w') do
-            |f| f.print 'testing'
+          file << "File.open(Dir.pwd + '/testing', 'w') do |f|
+            f.print 'testing'
           end"
         end
 
