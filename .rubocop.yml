@@ -12,5 +12,8 @@ ClassLength:
 CyclomaticComplexity:
   Max: 13
 
+LineLength:
+  Enabled: false
+
 MethodLength:
   Max: 36

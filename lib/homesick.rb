@@ -32,8 +32,7 @@ class Homesick < Thor
       destination = nil
       if File.exist?(uri)
         uri = Pathname.new(uri).expand_path
-        fail "Castle already cloned to #{uri}" \
-          if uri.to_s.start_with?(repos_dir.to_s)
+        fail "Castle already cloned to #{uri}" if uri.to_s.start_with?(repos_dir.to_s)
 
         destination = uri.basename
 
@@ -59,17 +58,16 @@ class Homesick < Thor
       destination = Pathname.new(name)
       homesickrc = destination.join('.homesickrc').expand_path
       if homesickrc.exist?
-        proceed = shell.yes?("#{name} has a .homesickrc. Proceed with "\
-                             "evaling it? (This could be destructive)")
+        proceed = shell.yes?("#{name} has a .homesickrc. Proceed with evaling it? (This could be destructive)")
         if proceed
           shell.say_status 'eval', homesickrc
           inside destination do
             eval homesickrc.read, binding, homesickrc.expand_path.to_s
           end
         else
-          shell.say_status 'eval skip', "not evaling #{homesickrc}, " \
-                                        "#{destination} may need manual " \
-                                        "configuration", :blue
+          shell.say_status 'eval skip',
+                           "not evaling #{homesickrc}, #{destination} may need manual configuration",
+                           :blue
         end
       end
     end
@@ -122,8 +120,7 @@ class Homesick < Thor
   desc 'symlink CASTLE', 'Symlinks all dotfiles from the specified castle'
   method_option :force,
                 default: false,
-                desc: 'Overwrite existing conflicting symlinks without ' \
-                      'prompting.'
+                desc: 'Overwrite existing conflicting symlinks without prompting.'
   def symlink(name = DEFAULT_CASTLE_NAME)
     check_castle_existance(name, 'symlink')
 
@@ -164,9 +161,7 @@ class Homesick < Thor
         mv absolute_path, castle_path
       else
         shell.say_status(:track,
-                         "#{target} already exists, and is more recent " \
-                         "than #{file}. Run 'homesick SYMLINK CASTLE' " \
-                         "to create symlinks.",
+                         "#{target} already exists, and is more recent than #{file}. Run 'homesick SYMLINK CASTLE' to create symlinks.",
                          :blue) unless options[:quiet]
       end
     else
@@ -184,8 +179,7 @@ class Homesick < Thor
     end
 
     # are we tracking something nested? Add the parent dir to the manifest
-    subdir_add(castle, relative_dir) \
-      unless relative_dir.eql?(Pathname.new('.'))
+    subdir_add(castle, relative_dir) unless relative_dir.eql?(Pathname.new('.'))
   end
 
   desc 'list', 'List cloned castles'
@@ -254,8 +248,7 @@ class Homesick < Thor
     check_castle_existance castle, 'cd'
     castle_dir = repos_dir.join(castle)
     say_status "cd #{castle_dir.realpath}",
-               "Opening a new shell in castle '#{castle}'. To return to the " \
-               "original one exit from the new shell.",
+               "Opening a new shell in castle '#{castle}'. To return to the original one exit from the new shell.",
                :green
     inside castle_dir do
       system(ENV['SHELL'])
@@ -267,8 +260,7 @@ class Homesick < Thor
   def open(castle = DEFAULT_CASTLE_NAME)
     unless ENV['EDITOR']
       say_status :error,
-                 'The $EDITOR environment variable must be set to use ' \
-                 'this command',
+                 'The $EDITOR environment variable must be set to use this command',
                  :red
 
       exit(1)
@@ -276,8 +268,7 @@ class Homesick < Thor
     check_castle_existance castle, 'open'
     castle_dir = repos_dir.join(castle)
     say_status "#{ENV['EDITOR']} #{castle_dir.realpath}",
-               "Opening the root directory of castle '#{castle}' in editor " \
-               "'#{ENV['EDITOR']}'.",
+               "Opening the root directory of castle '#{castle}' in editor '#{ENV['EDITOR']}'.",
                :green
     inside castle_dir do
       system(ENV['EDITOR'])
@@ -306,8 +297,7 @@ class Homesick < Thor
   def check_castle_existance(name, action)
     unless castle_dir(name).exist?
       say_status :error,
-                 "Could not #{action} #{name}, expected " \
-                 "#{castle_dir(name)} exist and contain dotfiles",
+                 "Could not #{action} #{name}, expected #{castle_dir(name)} exist and contain dotfiles",
                  :red
 
       exit(1)
