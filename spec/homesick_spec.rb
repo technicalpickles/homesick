@@ -159,13 +159,13 @@ describe 'homesick' do
     end
   end
 
-  describe 'symlink' do
+  describe 'link' do
     let(:castle) { given_castle('glencairn') }
 
     it 'links dotfiles from a castle to the home folder' do
       dotfile = castle.file('.some_dotfile')
 
-      homesick.symlink('glencairn')
+      homesick.link('glencairn')
 
       home.join('.some_dotfile').readlink.should == dotfile
     end
@@ -173,7 +173,7 @@ describe 'homesick' do
     it 'links non-dotfiles from a castle to the home folder' do
       dotfile = castle.file('bin')
 
-      homesick.symlink('glencairn')
+      homesick.link('glencairn')
 
       home.join('bin').readlink.should == dotfile
     end
@@ -188,7 +188,7 @@ describe 'homesick' do
 
         dotdir = castle.directory('.vim')
 
-        homesick.symlink('glencairn')
+        homesick.link('glencairn')
 
         existing_dotdir_link.readlink.should == dotdir
       end
@@ -198,7 +198,7 @@ describe 'homesick' do
 
         dotdir = castle.directory('.vim')
 
-        homesick.symlink('glencairn')
+        homesick.link('glencairn')
 
         existing_dotdir.readlink.should == dotdir
       end
@@ -210,7 +210,7 @@ describe 'homesick' do
         dotdir = castle.directory('.config')
         dotfile = dotdir.file('.some_dotfile')
 
-        homesick.symlink('glencairn')
+        homesick.link('glencairn')
 
         home_dotdir = home.join('.config')
         home_dotdir.symlink?.should be == false
@@ -224,7 +224,7 @@ describe 'homesick' do
         dotdir = castle.directory('.config').directory('appA')
         dotfile = dotdir.file('.some_dotfile')
 
-        homesick.symlink('glencairn')
+        homesick.link('glencairn')
 
         home_dotdir = home.join('.config').join('appA')
         home_dotdir.symlink?.should be == false
@@ -242,7 +242,7 @@ describe 'homesick' do
         someapp_dir = config_dir.directory('someapp')
         someapp_dotfile = someapp_dir.file('.some_appfile')
 
-        homesick.symlink('glencairn')
+        homesick.link('glencairn')
 
         home_config_dir = home.join('.config')
         home_someapp_dir = home_config_dir.join('someapp')
@@ -260,7 +260,7 @@ describe 'homesick' do
       it 'using default castle name: "dotfiles"' do
         dotfile = castle.file('.some_dotfile')
 
-        homesick.symlink
+        homesick.link
 
         home.join('.some_dotfile').readlink.should == dotfile
       end
@@ -273,7 +273,7 @@ describe 'homesick' do
     it 'unlinks dotfiles in the home folder' do
       castle.file('.some_dotfile')
 
-      homesick.symlink('glencairn')
+      homesick.link('glencairn')
       homesick.unlink('glencairn')
 
       home.join('.some_dotfile').should_not exist
@@ -282,7 +282,7 @@ describe 'homesick' do
     it 'unlinks non-dotfiles from the home folder' do
       castle.file('bin')
 
-      homesick.symlink('glencairn')
+      homesick.link('glencairn')
       homesick.unlink('glencairn')
 
       home.join('bin').should_not exist
@@ -294,7 +294,7 @@ describe 'homesick' do
       it 'can unlink sub directories' do
         castle.directory('.config').file('.some_dotfile')
 
-        homesick.symlink('glencairn')
+        homesick.link('glencairn')
         homesick.unlink('glencairn')
 
         home_dotdir = home.join('.config')
@@ -309,7 +309,7 @@ describe 'homesick' do
       it 'can unsymlink in nested sub directory' do
         castle.directory('.config').directory('appA').file('.some_dotfile')
 
-        homesick.symlink('glencairn')
+        homesick.link('glencairn')
         homesick.unlink('glencairn')
 
         home_dotdir = home.join('.config').join('appA')
@@ -328,7 +328,7 @@ describe 'homesick' do
         config_dir.file('.some_dotfile')
         config_dir.directory('someapp').file('.some_appfile')
 
-        homesick.symlink('glencairn')
+        homesick.link('glencairn')
         homesick.unlink('glencairn')
 
         home_config_dir = home.join('.config')
@@ -346,7 +346,7 @@ describe 'homesick' do
       it 'using default castle name: "dotfiles"' do
         castle.file('.some_dotfile')
 
-        homesick.symlink
+        homesick.link
         homesick.unlink
 
         home.join('.some_dotfile').should_not exist

@@ -156,6 +156,7 @@ Homesick is tested on the following Ruby versions:
 
 * 1.9.3
 * 2.0.0
+* 2.1.0
 
 ## Note on Patches/Pull Requests
  
