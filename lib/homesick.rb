@@ -19,6 +19,8 @@ class Homesick < Thor
 
   map '-v' => :version
   map '--version' => :version
+  # Retain a mapped version of the symlink command for compatibility.
+  map 'symlink' => :link
 
   def initialize(args = [], options = {}, config = {})
     super
@@ -123,9 +125,9 @@ class Homesick < Thor
     end
   end
 
-  desc 'symlink CASTLE', 'Symlinks all dotfiles from the specified castle'
+  desc 'link CASTLE', 'Symlinks all dotfiles from the specified castle'
   method_option :force, :default => false, :desc => 'Overwrite existing conflicting symlinks without prompting.'
-  def symlink(name = DEFAULT_CASTLE_NAME)
+  def link(name = DEFAULT_CASTLE_NAME)
     check_castle_existance(name, 'symlink')
 
     inside castle_dir(name) do
