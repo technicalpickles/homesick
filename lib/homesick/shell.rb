@@ -1,7 +1,6 @@
 class Homesick
   # Hack in support for diffing symlinks
   class Shell < Thor::Shell::Color
-
     def show_diff(destination, content)
       destination = Pathname.new(destination)
 
@@ -12,6 +11,5 @@ class Homesick
         super
       end
     end
-
   end
 end
