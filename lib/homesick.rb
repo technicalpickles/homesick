@@ -21,7 +21,7 @@ class Homesick < Thor
   map '-v' => :version
   map '--version' => :version
   # Retain a mapped version of the symlink command for compatibility.
-  map 'symlink' => :link
+  map symlink: :link
 
   def initialize(args = [], options = {}, config = {})
     super
