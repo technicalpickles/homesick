@@ -285,7 +285,8 @@ class Homesick < Thor
   protected
 
   def home_dir
-    @home_dir ||= Pathname.new(ENV['HOME'] || '~').expand_path
+    # Use realpath instead of expand_path to cover cases where $HOME is a symlink
+    @home_dir ||= Pathname.new(ENV['HOME'] || '~').realpath
   end
 
   def repos_dir
