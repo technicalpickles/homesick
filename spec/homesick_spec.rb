@@ -438,7 +438,7 @@ describe 'homesick' do
     it 'should print an error message when trying to pull a non-existant castle' do
       homesick.should_receive('say_status').once
         .with(:error,
-              %r{Could not pull castle_repo, expected /tmp/construct_container.* exist and contain dotfiles},
+              %r{Could not pull castle_repo, expected .* exist and contain dotfiles},
               :red)
       expect { homesick.pull 'castle_repo' }.to raise_error(SystemExit)
     end
@@ -470,7 +470,7 @@ describe 'homesick' do
     it 'should print an error message when trying to push a non-existant castle' do
       homesick.should_receive('say_status').once
               .with(:error,
-                    %r{Could not push castle_repo, expected /tmp/construct_container.* exist and contain dotfiles},
+                    %r{Could not push castle_repo, expected .* exist and contain dotfiles},
                     :red)
       expect { homesick.push 'castle_repo' }.to raise_error(SystemExit)
     end
@@ -631,7 +631,7 @@ describe 'homesick' do
     it 'returns an error message when the given castle does not exist' do
       homesick.should_receive('say_status').once
               .with(:error,
-                    %r{Could not cd castle_repo, expected /tmp/construct_container.* exist and contain dotfiles},
+                    %r{Could not cd castle_repo, expected .* exist and contain dotfiles},
                     :red)
       expect { homesick.cd 'castle_repo' }.to raise_error(SystemExit)
     end
@@ -664,7 +664,7 @@ describe 'homesick' do
       ENV.stub(:[]).with('EDITOR').and_return('vim')
       homesick.should_receive('say_status').once
               .with(:error,
-                    %r{Could not open castle_repo, expected /tmp/construct_container.* exist and contain dotfiles},
+                    %r{Could not open castle_repo, expected .* exist and contain dotfiles},
                     :red)
       expect { homesick.open 'castle_repo' }.to raise_error(SystemExit)
     end
