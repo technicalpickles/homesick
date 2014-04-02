@@ -436,7 +436,7 @@ describe 'homesick' do
     it 'prints an error message when trying to pull a non-existant castle' do
       expect(homesick).to receive('say_status').once
         .with(:error,
-              %r{Could not pull castle_repo, expected .* exist and contain dotfiles},
+              /Could not pull castle_repo, expected .* exist and contain dotfiles/,
               :red)
       expect { homesick.pull 'castle_repo' }.to raise_error(SystemExit)
     end
@@ -468,7 +468,7 @@ describe 'homesick' do
     it 'prints an error message when trying to push a non-existant castle' do
       expect(homesick).to receive('say_status').once
               .with(:error,
-                    %r{Could not push castle_repo, expected .* exist and contain dotfiles},
+                    /Could not push castle_repo, expected .* exist and contain dotfiles/,
                     :red)
       expect { homesick.push 'castle_repo' }.to raise_error(SystemExit)
     end
@@ -629,7 +629,7 @@ describe 'homesick' do
     it 'returns an error message when the given castle does not exist' do
       expect(homesick).to receive('say_status').once
               .with(:error,
-                    %r{Could not cd castle_repo, expected .* exist and contain dotfiles},
+                    /Could not cd castle_repo, expected .* exist and contain dotfiles/,
                     :red)
       expect { homesick.cd 'castle_repo' }.to raise_error(SystemExit)
     end
@@ -662,7 +662,7 @@ describe 'homesick' do
       allow(ENV).to receive(:[]).with('EDITOR').and_return('vim')
       expect(homesick).to receive('say_status').once
               .with(:error,
-                    %r{Could not open castle_repo, expected .* exist and contain dotfiles},
+                    /Could not open castle_repo, expected .* exist and contain dotfiles/,
                     :red)
       expect { homesick.open 'castle_repo' }.to raise_error(SystemExit)
     end
@@ -672,6 +672,40 @@ describe 'homesick' do
     it 'prints the current version of homesick' do
       text = Capture.stdout { homesick.version }
       expect(text.chomp).to match(/\d+\.\d+\.\d+/)
+    end
+  end
+
+  describe 'exec' do
+    it 'executes a single command with no arguments inside a given castle' do
+      given_castle 'castle_repo'
+      expect(homesick).to receive('inside').once.with(kind_of(Pathname)).and_yield
+      expect(homesick).to receive('say_status').once
+              .with(be_a(String),
+                    be_a(String),
+                    :green)
+      expect(homesick).to receive('system').once.with('ls')
+      Capture.stdout { homesick.exec 'castle_repo', 'ls' }
+    end
+
+    it 'executes a single command with arguments inside a given castle' do
+      given_castle 'castle_repo'
+      expect(homesick).to receive('inside').once.with(kind_of(Pathname)).and_yield
+      expect(homesick).to receive('say_status').once
+              .with(be_a(String),
+                    be_a(String),
+                    :green)
+      expect(homesick).to receive('system').once.with('ls -la')
+      Capture.stdout { homesick.exec 'castle_repo', 'ls', '-la' }
+    end
+
+    it 'raises an error when the method is called without a command' do
+      given_castle 'castle_repo'
+      expect(homesick).to receive('say_status').once
+              .with(:error,
+                    be_a(String),
+                    :red)
+      expect(homesick).to receive('exit').once.with(1)
+      Capture.stdout { homesick.exec 'castle_repo' }
     end
   end
 end
