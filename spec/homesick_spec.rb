@@ -14,7 +14,7 @@ describe 'homesick' do
 
   describe 'clone' do
     context 'has a .homesickrc' do
-      it 'should run the .homesickrc' do
+      it 'runs the .homesickrc' do
         somewhere = create_construct
         local_repo = somewhere.directory('some_repo')
         local_repo.file('.homesickrc') do |file|
@@ -33,7 +33,7 @@ describe 'homesick' do
     end
 
     context 'of a file' do
-      it 'should symlink existing directories' do
+      it 'symlinks existing directories' do
         somewhere = create_construct
         local_repo = somewhere.directory('wtf')
 
@@ -48,14 +48,14 @@ describe 'homesick' do
           @existing_dir = existing_castle.parent
         end
 
-        it 'should raise an error' do
+        it 'raises an error' do
           expect(homesick).not_to receive(:git_clone)
           expect { homesick.clone @existing_dir.to_s }.to raise_error(/already cloned/i)
         end
       end
     end
 
-    it 'should clone git repo like file:///path/to.git' do
+    it 'clones git repo like file:///path/to.git' do
       bare_repo = File.join(create_construct.to_s, 'dotfiles.git')
       system "git init --bare #{bare_repo} >/dev/null 2>&1"
 
@@ -67,46 +67,46 @@ describe 'homesick' do
         .to be_true
     end
 
-    it 'should clone git repo like git://host/path/to.git' do
+    it 'clones git repo like git://host/path/to.git' do
       expect(homesick).to receive(:git_clone)
               .with('git://github.com/technicalpickles/pickled-vim.git')
 
       homesick.clone 'git://github.com/technicalpickles/pickled-vim.git'
     end
 
-    it 'should clone git repo like git@host:path/to.git' do
+    it 'clones git repo like git@host:path/to.git' do
       expect(homesick).to receive(:git_clone)
               .with('git@github.com:technicalpickles/pickled-vim.git')
 
       homesick.clone 'git@github.com:technicalpickles/pickled-vim.git'
     end
 
-    it 'should clone git repo like http://host/path/to.git' do
+    it 'clones git repo like http://host/path/to.git' do
       expect(homesick).to receive(:git_clone)
               .with('http://github.com/technicalpickles/pickled-vim.git')
 
       homesick.clone 'http://github.com/technicalpickles/pickled-vim.git'
     end
 
-    it 'should clone git repo like http://host/path/to' do
+    it 'clones git repo like http://host/path/to' do
       expect(homesick).to receive(:git_clone)
               .with('http://github.com/technicalpickles/pickled-vim')
 
       homesick.clone 'http://github.com/technicalpickles/pickled-vim'
     end
 
-    it 'should clone git repo like host-alias:repos.git' do
+    it 'clones git repo like host-alias:repos.git' do
       expect(homesick).to receive(:git_clone).with('gitolite:pickled-vim.git')
 
       homesick.clone 'gitolite:pickled-vim.git'
     end
 
-    it 'should throw an exception when trying to clone a malformed uri like malformed' do
+    it 'throws an exception when trying to clone a malformed uri like malformed' do
       expect(homesick).not_to receive(:git_clone)
       expect { homesick.clone 'malformed' }.to raise_error
     end
 
-    it 'should clone a github repo' do
+    it 'clones a github repo' do
       expect(homesick).to receive(:git_clone)
               .with('https://github.com/wfarr/dotfiles.git',
                     destination: Pathname.new('dotfiles'))
@@ -355,7 +355,7 @@ describe 'homesick' do
   end
 
   describe 'list' do
-    it 'should say each castle in the castle directory' do
+    it 'says each castle in the castle directory' do
       given_castle('zomg')
       given_castle('wtf/zomg')
 
@@ -373,13 +373,13 @@ describe 'homesick' do
   end
 
   describe 'status' do
-    it 'should say "nothing to commit" when there are no changes' do
+    it 'says "nothing to commit" when there are no changes' do
       given_castle('castle_repo')
       text = Capture.stdout { homesick.status('castle_repo') }
       expect(text).to match(/nothing to commit \(create\/copy files and use "git add" to track\)$/)
     end
 
-    it 'should say "Changes to be committed" when there are changes' do
+    it 'says "Changes to be committed" when there are changes' do
       given_castle('castle_repo')
       some_rc_file = home.file '.some_rc_file'
       homesick.track(some_rc_file.to_s, 'castle_repo')
@@ -391,7 +391,7 @@ describe 'homesick' do
   end
 
   describe 'diff' do
-    it 'should output an empty message when there are no changes to commit' do
+    it 'outputs an empty message when there are no changes to commit' do
       given_castle('castle_repo')
       some_rc_file = home.file '.some_rc_file'
       homesick.track(some_rc_file.to_s, 'castle_repo')
@@ -402,7 +402,7 @@ describe 'homesick' do
       expect(text).to eq('')
     end
 
-    it 'should output a diff message when there are changes to commit' do
+    it 'outputs a diff message when there are changes to commit' do
       given_castle('castle_repo')
       some_rc_file = home.file '.some_rc_file'
       homesick.track(some_rc_file.to_s, 'castle_repo')
@@ -418,7 +418,7 @@ describe 'homesick' do
   end
 
   describe 'show_path' do
-    it 'should say the path of a castle' do
+    it 'says the path of a castle' do
       castle = given_castle('castle_repo')
 
       expect(homesick).to receive(:say).with(castle.dirname)
@@ -428,7 +428,7 @@ describe 'homesick' do
   end
 
   describe 'pull' do
-    it 'should perform a pull, submodule init and update when the given castle exists' do
+    it 'performs a pull, submodule init and update when the given castle exists' do
       given_castle('castle_repo')
       allow(homesick).to receive(:system).once.with('git pull --quiet')
       allow(homesick).to receive(:system).once.with('git submodule --quiet init')
@@ -436,7 +436,7 @@ describe 'homesick' do
       homesick.pull 'castle_repo'
     end
 
-    it 'should print an error message when trying to pull a non-existant castle' do
+    it 'prints an error message when trying to pull a non-existant castle' do
       expect(homesick).to receive('say_status').once
         .with(:error,
               %r{Could not pull castle_repo, expected .* exist and contain dotfiles},
@@ -445,7 +445,7 @@ describe 'homesick' do
     end
 
     describe '--all' do
-      it 'should pull each castle when invoked with --all' do
+      it 'pulls each castle when invoked with --all' do
         given_castle('castle_repo')
         given_castle('glencairn')
         allow(homesick).to receive(:system).exactly(2).times.with('git pull --quiet')
@@ -462,13 +462,13 @@ describe 'homesick' do
   end
 
   describe 'push' do
-    it 'should perform a git push on the given castle' do
+    it 'performs a git push on the given castle' do
       given_castle('castle_repo')
       allow(homesick).to receive(:system).once.with('git push')
       homesick.push 'castle_repo'
     end
 
-    it 'should print an error message when trying to push a non-existant castle' do
+    it 'prints an error message when trying to push a non-existant castle' do
       expect(homesick).to receive('say_status').once
               .with(:error,
                     %r{Could not push castle_repo, expected .* exist and contain dotfiles},
@@ -478,7 +478,7 @@ describe 'homesick' do
   end
 
   describe 'track' do
-    it 'should move the tracked file into the castle' do
+    it 'moves the tracked file into the castle' do
       castle = given_castle('castle_repo')
 
       some_rc_file = home.file '.some_rc_file'
@@ -491,7 +491,7 @@ describe 'homesick' do
       expect(some_rc_file.readlink).to eq(tracked_file)
     end
 
-    it 'should handle files with parens' do
+    it 'handles files with parens' do
       castle = given_castle('castle_repo')
 
       some_rc_file = home.file 'Default (Linux).sublime-keymap'
@@ -504,7 +504,7 @@ describe 'homesick' do
       expect(some_rc_file.readlink).to eq(tracked_file)
     end
 
-    it 'should track a file in nested folder structure' do
+    it 'tracks a file in nested folder structure' do
       castle = given_castle('castle_repo')
 
       some_nested_file = home.file('some/nested/file.txt')
@@ -515,7 +515,7 @@ describe 'homesick' do
       expect(some_nested_file.readlink).to eq(tracked_file)
     end
 
-    it 'should track a nested directory' do
+    it 'tracks a nested directory' do
       castle = given_castle('castle_repo')
 
       some_nested_dir = home.directory('some/nested/directory/')
@@ -542,7 +542,7 @@ describe 'homesick' do
     end
 
     describe 'commit' do
-      it 'should have a commit message when the commit succeeds' do
+      it 'has a commit message when the commit succeeds' do
         given_castle('castle_repo')
         some_rc_file = home.file '.a_random_rc_file'
         homesick.track(some_rc_file.to_s, 'castle_repo')
@@ -557,7 +557,7 @@ describe 'homesick' do
     # not for the subdir_file method itself.
     describe 'subdir_file' do
 
-      it 'should add the nested files parent to the subdir_file' do
+      it 'adds the nested files parent to the subdir_file' do
         castle = given_castle('castle_repo')
 
         some_nested_file = home.file('some/nested/file.txt')
@@ -569,7 +569,7 @@ describe 'homesick' do
         end
       end
 
-      it 'should NOT add anything if the files parent is already listed' do
+      it 'does NOT add anything if the files parent is already listed' do
         castle = given_castle('castle_repo')
 
         some_nested_file = home.file('some/nested/file.txt')
@@ -583,7 +583,7 @@ describe 'homesick' do
         end
       end
 
-      it 'should remove the parent of a tracked file from the subdir_file if the parent itself is tracked' do
+      it 'removes the parent of a tracked file from the subdir_file if the parent itself is tracked' do
         castle = given_castle('castle_repo')
 
         some_nested_file = home.file('some/nested/file.txt')
@@ -672,7 +672,7 @@ describe 'homesick' do
   end
 
   describe 'version' do
-    it 'should print the current version of homesick' do
+    it 'prints the current version of homesick' do
       text = Capture.stdout { homesick.version }
       expect(text.chomp).to match(/\d+\.\d+\.\d+/)
     end
