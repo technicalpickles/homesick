@@ -9,6 +9,8 @@ require 'tempfile'
 RSpec.configure do |config|
   config.include TestConstruct::Helpers
 
+  config.expect_with(:rspec) { |c| c.syntax = :expect }
+
   config.before { ENV['HOME'] = home.to_s }
 
   config.before { silence! }
