@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'thor'
 
+# Homesick's command line interface (with some helper methods)
 class Homesick < Thor
   autoload :Shell, 'homesick/shell'
   autoload :Actions, 'homesick/actions'
@@ -20,7 +21,7 @@ class Homesick < Thor
   map '-v' => :version
   map '--version' => :version
   # Retain a mapped version of the symlink command for compatibility.
-  map 'symlink' => :link
+  map symlink: :link
 
   def initialize(args = [], options = {}, config = {})
     super
@@ -33,34 +34,23 @@ class Homesick < Thor
       destination = nil
       if File.exist?(uri)
         uri = Pathname.new(uri).expand_path
-        if uri.to_s.start_with?(repos_dir.to_s)
-          raise "Castle already cloned to #{uri}"
-        end
+        fail "Castle already cloned to #{uri}" if uri.to_s.start_with?(repos_dir.to_s)
 
         destination = uri.basename
 
         ln_s uri, destination
       elsif uri =~ GITHUB_NAME_REPO_PATTERN
         destination = Pathname.new(uri).basename
-        git_clone "https://github.com/#{$1}.git", :destination => destination
-      elsif uri =~ /%r([^%r]*?)(\.git)?\Z/
-        destination = Pathname.new($1)
-        git_clone uri
-      elsif uri =~ /[^:]+:([^:]+)(\.git)?\Z/
-        destination = Pathname.new($1)
+        git_clone "https://github.com/#{Regexp.last_match[1]}.git",
+                  destination: destination
+      elsif uri =~ /%r([^%r]*?)(\.git)?\Z/ || uri =~ /[^:]+:([^:]+)(\.git)?\Z/
+        destination = Pathname.new(Regexp.last_match[1])
         git_clone uri
       else
-        raise "Unknown URI format: #{uri}"
+        fail "Unknown URI format: #{uri}"
       end
 
-      if destination.join('.gitmodules').exist?
-        inside destination do
-          git_submodule_init
-          git_submodule_update
-        end
-      end
-
-      rc(destination)
+      setup_castle(destination)
     end
   end
 
@@ -77,14 +67,20 @@ class Homesick < Thor
             eval homesickrc.read, binding, homesickrc.expand_path.to_s
           end
         else
-          shell.say_status 'eval skip', "not evaling #{homesickrc}, #{destination} may need manual configuration", :blue
+          shell.say_status 'eval skip',
+                           "not evaling #{homesickrc}, #{destination} may need manual configuration",
+                           :blue
         end
       end
     end
   end
 
   desc 'pull CASTLE', 'Update the specified castle'
-  method_option :all, :type => :boolean, :default => false, :required => false, :desc => 'Update all cloned castles'
+  method_option :all,
+                type: :boolean,
+                default: false,
+                required: false,
+                desc: 'Update all cloned castles'
   def pull(name = DEFAULT_CASTLE_NAME)
     if options[:all]
       inside_each_castle do |castle|
@@ -94,13 +90,11 @@ class Homesick < Thor
     else
       update_castle name
     end
-
   end
 
   desc 'commit CASTLE MESSAGE', "Commit the specified castle's changes"
   def commit(name = DEFAULT_CASTLE_NAME, message = nil)
     commit_castle name, message
-
   end
 
   desc 'push CASTLE', 'Push the specified castle'
@@ -126,7 +120,9 @@ class Homesick < Thor
   end
 
   desc 'link CASTLE', 'Symlinks all dotfiles from the specified castle'
-  method_option :force, :default => false, :desc => 'Overwrite existing conflicting symlinks without prompting.'
+  method_option :force,
+                default: false,
+                desc: 'Overwrite existing conflicting symlinks without prompting.'
   def link(name = DEFAULT_CASTLE_NAME)
     check_castle_existance(name, 'symlink')
 
@@ -166,7 +162,9 @@ class Homesick < Thor
         target.delete
         mv absolute_path, castle_path
       else
-        shell.say_status(:track, "#{target} already exists, and is more recent than #{file}. Run 'homesick SYMLINK CASTLE' to create symlinks.", :blue) unless options[:quiet]
+        shell.say_status(:track,
+                         "#{target} already exists, and is more recent than #{file}. Run 'homesick SYMLINK CASTLE' to create symlinks.",
+                         :blue) unless options[:quiet]
       end
     else
       mv absolute_path, castle_path
@@ -189,7 +187,9 @@ class Homesick < Thor
   desc 'list', 'List cloned castles'
   def list
     inside_each_castle do |castle|
-      say_status castle.relative_path_from(repos_dir).to_s, `git config remote.origin.url`.chomp, :cyan
+      say_status castle.relative_path_from(repos_dir).to_s,
+                 `git config remote.origin.url`.chomp,
+                 :cyan
     end
   end
 
@@ -235,37 +235,43 @@ class Homesick < Thor
     end
   end
 
-  desc "destroy CASTLE", "Delete all symlinks and remove the cloned repository"
+  desc 'destroy CASTLE', 'Delete all symlinks and remove the cloned repository'
   def destroy(name)
-    check_castle_existance name, "destroy"
+    check_castle_existance name, 'destroy'
 
-    if shell.yes?("This will destroy your castle irreversible! Are you sure?")
+    if shell.yes?('This will destroy your castle irreversible! Are you sure?')
       unlink(name)
       rm_rf repos_dir.join(name)
     end
-
   end
 
-  desc "cd CASTLE", "Open a new shell in the root of the given castle"
+  desc 'cd CASTLE', 'Open a new shell in the root of the given castle'
   def cd(castle = DEFAULT_CASTLE_NAME)
-    check_castle_existance castle, "cd"
+    check_castle_existance castle, 'cd'
     castle_dir = repos_dir.join(castle)
-    say_status "cd #{castle_dir.realpath}", "Opening a new shell in castle '#{castle}'. To return to the original one exit from the new shell.", :green
+    say_status "cd #{castle_dir.realpath}",
+               "Opening a new shell in castle '#{castle}'. To return to the original one exit from the new shell.",
+               :green
     inside castle_dir do
       system(ENV['SHELL'])
     end
   end
 
-  desc "open CASTLE", "Open your default editor in the root of the given castle"
+  desc 'open CASTLE',
+       'Open your default editor in the root of the given castle'
   def open(castle = DEFAULT_CASTLE_NAME)
-    if ! ENV['EDITOR']
-      say_status :error,"The $EDITOR environment variable must be set to use this command", :red
+    unless ENV['EDITOR']
+      say_status :error,
+                 'The $EDITOR environment variable must be set to use this command',
+                 :red
 
       exit(1)
     end
-    check_castle_existance castle, "open"
+    check_castle_existance castle, 'open'
     castle_dir = repos_dir.join(castle)
-    say_status "#{ENV['EDITOR']} #{castle_dir.realpath}", "Opening the root directory of castle '#{castle}' in editor '#{ENV['EDITOR']}'.", :green
+    say_status "#{ENV['EDITOR']} #{castle_dir.realpath}",
+               "Opening the root directory of castle '#{castle}' in editor '#{ENV['EDITOR']}'.",
+               :green
     inside castle_dir do
       system(ENV['EDITOR'])
     end
@@ -292,7 +298,9 @@ class Homesick < Thor
 
   def check_castle_existance(name, action)
     unless castle_dir(name).exist?
-      say_status :error, "Could not #{action} #{name}, expected #{castle_dir(name)} exist and contain dotfiles", :red
+      say_status :error,
+                 "Could not #{action} #{name}, expected #{castle_dir(name)} exist and contain dotfiles",
+                 :red
 
       exit(1)
     end
@@ -301,7 +309,7 @@ class Homesick < Thor
   def all_castles
     dirs = Pathname.glob("#{repos_dir}/**/.git", File::FNM_DOTMATCH)
     # reject paths that lie inside another castle, like git submodules
-    return dirs.reject do |dir|
+    dirs.reject do |dir|
       dirs.any? do |other|
         dir != other && dir.fnmatch(other.parent.join('*').to_s)
       end
@@ -329,7 +337,7 @@ class Homesick < Thor
   def commit_castle(castle, message)
     check_castle_existance(castle, 'commit')
     inside repos_dir.join(castle) do
-      git_commit_all :message => message
+      git_commit_all message: message
     end
   end
 
@@ -371,7 +379,9 @@ class Homesick < Thor
   def subdir_remove(castle, path)
     subdir_filepath = subdir_file(castle)
     if subdir_filepath.exist?
-      lines = IO.readlines(subdir_filepath).delete_if { |line| line == "#{path}\n" }
+      lines = IO.readlines(subdir_filepath).delete_if do |line|
+        line == "#{path}\n"
+      end
       File.open(subdir_filepath, 'w') { |manfile| manfile.puts lines }
     end
 
@@ -403,10 +413,16 @@ class Homesick < Thor
     first_p.mtime > second_p.mtime && !first_p.symlink?
   end
 
+  def collision_accepted?
+    options[:force] || shell.file_collision(destination) { source }
+  end
+
   def each_file(castle, basedir, subdirs)
     absolute_basedir = Pathname.new(basedir).expand_path
     inside basedir do
-      files = Pathname.glob('{.*,*}').reject{ |a| ['.', '..'].include?(a.to_s) }
+      files = Pathname.glob('{.*,*}').reject do |a|
+        ['.', '..'].include?(a.to_s)
+      end
       files.each do |path|
         absolute_path = path.expand_path
         castle_home = castle_dir(castle)
@@ -434,7 +450,7 @@ class Homesick < Thor
         home_path = home_dir.join(relative_dir).join(path)
 
         yield(absolute_path, home_path)
-     end
+      end
     end
   end
 
@@ -448,5 +464,16 @@ class Homesick < Thor
     each_file(castle, basedir, subdirs) do |absolute_path, home_path|
       ln_s absolute_path, home_path
     end
+  end
+
+  def setup_castle(path)
+    if path.join('.gitmodules').exist?
+      inside path do
+        git_submodule_init
+        git_submodule_update
+      end
+    end
+
+    rc(path)
   end
 end

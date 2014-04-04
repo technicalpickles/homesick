@@ -1,0 +1,19 @@
+# TODO: Eval is required for the .homesickrc feature. This should eventually be
+# removed if the feature is implemented in a more secure way.
+Eval:
+  Enabled: false
+
+# TODO: The following settings disable reports about issues that can be fixed
+# through refactoring. Remove these as offenses are removed from the code base.
+
+ClassLength:
+  Enabled: false
+
+CyclomaticComplexity:
+  Max: 13
+
+LineLength:
+  Enabled: false
+
+MethodLength:
+  Max: 36
