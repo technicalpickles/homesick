@@ -14,7 +14,7 @@ RSpec.configure do |config|
   config.before { silence! }
 
   def silence!
-    homesick.stub(:say_status)
+    allow(homesick).to receive(:say_status)
   end
 
   def given_castle(path, subdirs = [])
