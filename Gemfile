@@ -13,8 +13,7 @@ group :development do
   gem "guard-rspec"
   gem "rb-readline", "~> 0.5.0"
   gem "jeweler", ">= 1.6.2"
-  gem "rcov", :platforms => :mri_18
-  gem "simplecov", :platforms => :mri_19
+  gem "simplecov"
   gem "test_construct"
   gem "capture-output", "~> 1.0.0"
   if RbConfig::CONFIG['host_os'] =~ /linux|freebsd|openbsd|sunos|solaris/
