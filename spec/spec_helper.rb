@@ -9,12 +9,14 @@ require 'tempfile'
 RSpec.configure do |config|
   config.include TestConstruct::Helpers
 
+  config.expect_with(:rspec) { |c| c.syntax = :expect }
+
   config.before { ENV['HOME'] = home.to_s }
 
   config.before { silence! }
 
   def silence!
-    homesick.stub(:say_status)
+    allow(homesick).to receive(:say_status)
   end
 
   def given_castle(path, subdirs = [])
