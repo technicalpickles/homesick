@@ -23,8 +23,7 @@ describe 'homesick' do
           end"
         end
 
-        expect($stdout).to receive(:print)
-        expect($stdin).to receive(:gets).and_return('y')
+        expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).with(be_a(String)).and_return(true)
         expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval', kind_of(Pathname))
         homesick.clone local_repo
 
@@ -120,8 +119,7 @@ describe 'homesick' do
 
     context 'when told to do so' do
       before do
-        expect($stdout).to receive(:print)
-        expect($stdin).to receive(:gets).and_return('y')
+        expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).with(be_a(String)).and_return(true)
       end
 
       it 'executes the .homesickrc' do
@@ -140,8 +138,7 @@ describe 'homesick' do
 
     context 'when told not to do so' do
       before do
-        expect($stdout).to receive(:print)
-        expect($stdin).to receive(:gets).and_return('n')
+        expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).with(be_a(String)).and_return(false)
       end
 
       it 'does not execute the .homesickrc' do
