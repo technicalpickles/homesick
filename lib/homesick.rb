@@ -277,6 +277,25 @@ class Homesick < Thor
     end
   end
 
+  desc 'exec CASTLE COMMAND',
+       'Execute a single shell command inside the root of a castle'
+  def exec(castle, *args)
+    check_castle_existance castle, 'exec'
+    unless args.count > 0
+      say_status :error,
+                 'You must pass a shell command to execute',
+                 :red
+      exit(1)
+    end
+    full_command = args.join(' ')
+    say_status "exec '#{full_command}'",
+               "Executing command '#{full_command}' in castle '#{castle}'",
+               :green
+    inside repos_dir.join(castle) do
+      system(full_command)
+    end
+  end
+
   desc 'version', 'Display the current version of homesick'
   def version
     say Homesick::Version::STRING
