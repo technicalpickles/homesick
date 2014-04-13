@@ -64,6 +64,14 @@ To open your default editor in the root of a castle (the $EDITOR environment var
 
     homesick open CASTLE
 
+To execute a shell command inside the root directory of a given castle:
+
+    homesick exec CASTLE COMMAND
+
+To execute a shell command inside the root directory of every cloned castle:
+
+    homesick exec_all COMMAND
+
 Not sure what else homesick has up its sleeve? There's always the built in help:
 
     homesick help
