@@ -660,7 +660,7 @@ describe 'homesick' do
     it 'returns an error message when the given castle does not exist' do
       # Set a default just in case none is set
       allow(ENV).to receive(:[]).with('EDITOR').and_return('vim')
-      expect(homesick).to receive('say_status').once
+      allow(homesick).to receive('say_status').once
               .with(:error,
                     /Could not open castle_repo, expected .* exist and contain dotfiles/,
                     :red)
@@ -676,36 +676,112 @@ describe 'homesick' do
   end
 
   describe 'exec' do
-    it 'executes a single command with no arguments inside a given castle' do
+    before do
       given_castle 'castle_repo'
-      expect(homesick).to receive('inside').once.with(kind_of(Pathname)).and_yield
-      expect(homesick).to receive('say_status').once
+    end
+    it 'executes a single command with no arguments inside a given castle' do
+      allow(homesick).to receive('inside').once.with(kind_of(Pathname)).and_yield
+      allow(homesick).to receive('say_status').once
               .with(be_a(String),
                     be_a(String),
                     :green)
-      expect(homesick).to receive('system').once.with('ls')
+      allow(homesick).to receive('system').once.with('ls')
       Capture.stdout { homesick.exec 'castle_repo', 'ls' }
     end
 
     it 'executes a single command with arguments inside a given castle' do
-      given_castle 'castle_repo'
-      expect(homesick).to receive('inside').once.with(kind_of(Pathname)).and_yield
-      expect(homesick).to receive('say_status').once
+      allow(homesick).to receive('inside').once.with(kind_of(Pathname)).and_yield
+      allow(homesick).to receive('say_status').once
               .with(be_a(String),
                     be_a(String),
                     :green)
-      expect(homesick).to receive('system').once.with('ls -la')
+      allow(homesick).to receive('system').once.with('ls -la')
       Capture.stdout { homesick.exec 'castle_repo', 'ls', '-la' }
     end
 
     it 'raises an error when the method is called without a command' do
-      given_castle 'castle_repo'
-      expect(homesick).to receive('say_status').once
+      allow(homesick).to receive('say_status').once
               .with(:error,
                     be_a(String),
                     :red)
-      expect(homesick).to receive('exit').once.with(1)
+      allow(homesick).to receive('exit').once.with(1)
       Capture.stdout { homesick.exec 'castle_repo' }
+    end
+
+    context 'pretend' do
+      it 'does not execute a command when the pretend option is passed' do
+        allow(homesick).to receive('say_status').once
+              .with(be_a(String),
+                    match(/.*Would execute.*/),
+                    :green)
+        expect(homesick).to receive('system').never
+        Capture.stdout { homesick.invoke 'exec', %w(castle_repo ls -la), pretend: true }
+      end
+    end
+
+    context 'quiet' do
+      it 'does not print status information when quiet is passed' do
+        expect(homesick).to receive('say_status').never
+        allow(homesick).to receive('system').once
+                .with('ls -la')
+        Capture.stdout { homesick.invoke 'exec', %w(castle_repo ls -la), quiet: true }
+      end
+    end
+  end
+
+  describe 'exec_all' do
+    before do
+      given_castle 'castle_repo'
+      given_castle 'another_castle_repo'
+    end
+
+    it 'executes a command without arguments inside the root of each cloned castle' do
+      allow(homesick).to receive('inside_each_castle').exactly(:twice).and_yield('castle_repo').and_yield('another_castle_repo')
+      allow(homesick).to receive('say_status').at_least(:once)
+              .with(be_a(String),
+                    be_a(String),
+                    :green)
+      allow(homesick).to receive('system').at_least(:once).with('ls')
+      Capture.stdout { homesick.exec_all 'ls' }
+    end
+
+    it 'executes a command with arguments inside the root of each cloned castle' do
+      allow(homesick).to receive('inside_each_castle').exactly(:twice).and_yield('castle_repo').and_yield('another_castle_repo')
+      allow(homesick).to receive('say_status').at_least(:once)
+              .with(be_a(String),
+                    be_a(String),
+                    :green)
+      allow(homesick).to receive('system').at_least(:once).with('ls -la')
+      Capture.stdout { homesick.exec_all 'ls', '-la' }
+    end
+
+    it 'raises an error when the method is called without a command' do
+      allow(homesick).to receive('say_status').once
+              .with(:error,
+                    be_a(String),
+                    :red)
+      allow(homesick).to receive('exit').once.with(1)
+      Capture.stdout { homesick.exec_all }
+    end
+
+    context 'pretend' do
+      it 'does not execute a command when the pretend option is passed' do
+        allow(homesick).to receive('say_status').at_least(:once)
+              .with(be_a(String),
+                    match(/.*Would execute.*/),
+                    :green)
+        expect(homesick).to receive('system').never
+        Capture.stdout { homesick.invoke 'exec_all', %w(ls -la), pretend: true }
+      end
+    end
+
+    context 'quiet' do
+      it 'does not print status information when quiet is passed' do
+        expect(homesick).to receive('say_status').never
+        allow(homesick).to receive('system').at_least(:once)
+                .with('ls -la')
+        Capture.stdout { homesick.invoke 'exec_all', %w(ls -la), quiet: true }
+      end
     end
   end
 end
