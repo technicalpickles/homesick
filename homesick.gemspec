@@ -41,9 +41,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "guard"
   spec.add_development_dependency "guard-rspec"
   spec.add_development_dependency "rb-readline", "~> 0.5.0"
-  #spec.add_development_dependency "rcov", ">= 0" # TODO: Use this on Ruby 1.8 only
-  spec.add_development_dependency "simplecov", ">= 0" # TODO: Use this on Ruby 1.9+ only
-  spec.add_development_dependency "test_construct", ">= 0"
+  spec.add_development_dependency "simplecov"
+  spec.add_development_dependency "test_construct"
   spec.add_development_dependency "capture-output", "~> 1.0.0"
   if RbConfig::CONFIG['host_os'] =~ /linux|freebsd|openbsd|sunos|solaris/
     spec.add_development_dependency 'libnotify'

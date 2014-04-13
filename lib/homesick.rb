@@ -277,6 +277,63 @@ class Homesick < Thor
     end
   end
 
+  desc 'exec CASTLE COMMAND',
+       'Execute a single shell command inside the root of a castle'
+  method_option :pretend,
+                type: :boolean,
+                default: false,
+                required: false,
+                desc: 'Perform a dry run of the command'
+  method_option :quiet,
+                type: :boolean,
+                default: false,
+                required: false,
+                desc: 'Run a command without any output from Homesick'
+  def exec(castle, *args)
+    check_castle_existance castle, 'exec'
+    unless args.count > 0
+      say_status :error,
+                 'You must pass a shell command to execute',
+                 :red
+      exit(1)
+    end
+    full_command = args.join(' ')
+    say_status "exec '#{full_command}'",
+               "#{options[:pretend] ? 'Would execute' : 'Executing command'} '#{full_command}' in castle '#{castle}'",
+               :green unless options[:quiet]
+    inside repos_dir.join(castle) do
+      system(full_command) unless options[:pretend]
+    end
+  end
+
+  desc 'exec_all COMMAND',
+       'Execute a single shell command inside the root of every cloned castle'
+  method_option :pretend,
+                type: :boolean,
+                default: false,
+                required: false,
+                desc: 'Perform a dry run of the command'
+  method_option :quiet,
+                type: :boolean,
+                default: false,
+                required: false,
+                desc: 'Run a command without any output from Homesick'
+  def exec_all(*args)
+    unless args.count > 0
+      say_status :error,
+                 'You must pass a shell command to execute',
+                 :red
+      exit(1)
+    end
+    full_command = args.join(' ')
+    inside_each_castle do |castle|
+      say_status "exec '#{full_command}'",
+                 "#{options[:pretend] ? 'Would execute' : 'Executing command'} '#{full_command}' in castle '#{castle}'",
+                 :green unless options[:quiet]
+      system(full_command) unless options[:pretend]
+    end
+  end
+
   desc 'version', 'Display the current version of homesick'
   def version
     say Homesick::Version::STRING
@@ -367,7 +424,7 @@ class Homesick < Thor
     subdir_filepath = subdir_file(castle)
     File.open(subdir_filepath, 'a+') do |subdir|
       subdir.puts path unless subdir.readlines.reduce(false) do |memo, line|
-        line.eql?("#{path.to_s}\n") || memo
+        line.eql?("#{path}\n") || memo
       end
     end
 
