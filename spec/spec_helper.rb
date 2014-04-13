@@ -1,13 +1,9 @@
 require 'simplecov'
 SimpleCov.start
 
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'homesick'
-require 'rspec'
-require 'rspec/autorun'
 require 'test_construct'
-require 'tempfile'
 
 RSpec.configure do |config|
   config.include TestConstruct::Helpers
