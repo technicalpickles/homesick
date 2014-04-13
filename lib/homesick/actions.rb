@@ -96,16 +96,16 @@ class Homesick
       if destination.exist?
         say_status :conflict, "#{destination} exists", :red unless options[:quiet]
 
-        system "mv '#{source}' '#{destination}'" if (options[:force] || shell.file_collision(destination) { source }) && !options[:pretend]
+        FileUtils.mv source, destination if (options[:force] || shell.file_collision(destination) { source }) && !options[:pretend]
       else
         # this needs some sort of message here.
-        system "mv '#{source}' '#{destination}'" unless options[:pretend]
+        FileUtils.mv source, destination unless options[:pretend]
       end
     end
 
     def rm_rf(dir)
       say_status "rm -rf #{dir}", '', :green unless options[:quiet]
-      system "rm -rf #{dir}"
+      FileUtils.rm_r dir, force: true
     end
 
     def rm_link(target)
@@ -121,12 +121,12 @@ class Homesick
 
     def rm(file)
       say_status "rm #{file}", '', :green unless options[:quiet]
-      system "rm #{file}" if File.exists?(file)
+      FileUtils.rm file, force: true
     end
 
     def rm_r(dir)
       say_status "rm -r #{dir}", '', :green unless options[:quiet]
-      system "rm -r #{dir}"
+      FileUtils.rm_r dir
     end
 
     def ln_s(source, destination, config = {})
@@ -156,19 +156,20 @@ class Homesick
                    "#{destination} exists and points to #{destination.readlink}",
                    :red unless options[:quiet]
 
-        system "ln -nsf '#{source}' '#{destination}'" if collision_accepted?
+        FileUtils.rm destination
+        FileUtils.ln_s source, destination, force: true unless options[:pretend]
       when :conflict
         say_status :conflict, "#{destination} exists", :red unless options[:quiet]
 
         if collision_accepted?
-          system "rm -rf '#{destination}'" unless options[:pretend]
-          system "ln -sf '#{source}' '#{destination}'" unless options[:pretend]
+          FileUtils.rm_r destination, force: true unless options[:pretend]
+          FileUtils.ln_s source, destination, force: true unless options[:pretend]
         end
       else
         say_status :symlink,
                    "#{source.expand_path} to #{destination.expand_path}",
                    :green unless options[:quiet]
-        system "ln -s '#{source}' '#{destination}'" unless options[:pretend]
+        FileUtils.ln_s source, destination unless options[:pretend]
       end
     end
   end
