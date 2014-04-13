@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/technicalpickles/homesick.png?branch=master)](https://travis-ci.org/technicalpickles/homesick)
 [![Dependency Status](https://gemnasium.com/technicalpickles/homesick.png)](https://gemnasium.com/technicalpickles/homesick)
 [![Code Climate](https://codeclimate.com/github/technicalpickles/homesick.png)](https://codeclimate.com/github/technicalpickles/homesick)
+[![Gitter chat](https://badges.gitter.im/technicalpickles/homesick.png)](https://gitter.im/technicalpickles/homesick)
 
 Your home directory is your castle. Don't leave your dotfiles behind.
 
