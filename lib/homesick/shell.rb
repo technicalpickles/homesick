@@ -1,3 +1,5 @@
+require 'thor'
+
 module Homesick
   # Hack in support for diffing symlinks
   class Shell < Thor::Shell::Color
