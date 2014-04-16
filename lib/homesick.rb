@@ -1,13 +1,12 @@
 # -*- encoding : utf-8 -*-
+require 'homesick/shell'
+require 'homesick/actions'
+require 'homesick/version'
+require 'homesick/utils'
+require 'homesick/cli'
 
 # Homesick's top-level module
 module Homesick
-  autoload :Shell, 'homesick/shell'
-  autoload :Actions, 'homesick/actions'
-  autoload :Version, 'homesick/version'
-  autoload :Utils, 'homesick/utils'
-  autoload :CLI, 'homesick/cli'
-
   GITHUB_NAME_REPO_PATTERN = /\A([A-Za-z0-9_-]+\/[A-Za-z0-9_-]+)\Z/
   SUBDIR_FILENAME = '.homesick_subdir'
 
