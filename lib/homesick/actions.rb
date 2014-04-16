@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 module Homesick
-  # Git-related and file-related helper methods for the Homesick class
+  # Git-related and file-related helper methods for Homesick
   module Actions
     # TODO: move this to be more like thor's template, empty_directory, etc
     def git_clone(repo, config = {})
