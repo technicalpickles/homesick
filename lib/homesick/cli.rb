@@ -5,7 +5,8 @@ module Homesick
   # Homesick's command line interface
   class CLI < Thor
     include Thor::Actions
-    include Homesick::Actions
+    include Homesick::FileActions
+    include Homesick::GitActions
     include Homesick::Version
     include Homesick::Utils
 

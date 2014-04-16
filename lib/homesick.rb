@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'homesick/shell'
-require 'homesick/actions'
+require 'homesick/file_actions'
+require 'homesick/git_actions'
 require 'homesick/version'
 require 'homesick/utils'
 require 'homesick/cli'
