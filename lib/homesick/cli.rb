@@ -56,14 +56,14 @@ module Homesick
         if homesickrc.exist?
           proceed = shell.yes?("#{name} has a .homesickrc. Proceed with evaling it? (This could be destructive)")
           if proceed
-            shell.say_status 'eval', homesickrc
+            say_status 'eval', homesickrc
             inside destination do
               eval homesickrc.read, binding, homesickrc.expand_path.to_s
             end
           else
-            shell.say_status 'eval skip',
-                             "not evaling #{homesickrc}, #{destination} may need manual configuration",
-                             :blue
+            say_status 'eval skip',
+                       "not evaling #{homesickrc}, #{destination} may need manual configuration",
+                       :blue
           end
         end
       end
@@ -78,7 +78,7 @@ module Homesick
     def pull(name = DEFAULT_CASTLE_NAME)
       if options[:all]
         inside_each_castle do |castle|
-          shell.say castle.to_s.gsub(repos_dir.to_s + '/', '') + ':'
+          say castle.to_s.gsub(repos_dir.to_s + '/', '') + ':'
           update_castle castle
         end
       else
@@ -156,9 +156,9 @@ module Homesick
           target.delete
           mv absolute_path, castle_path
         else
-          shell.say_status(:track,
-                           "#{target} already exists, and is more recent than #{file}. Run 'homesick SYMLINK CASTLE' to create symlinks.",
-                           :blue) unless options[:quiet]
+          say_status(:track,
+                     "#{target} already exists, and is more recent than #{file}. Run 'homesick SYMLINK CASTLE' to create symlinks.",
+                     :blue)
         end
       else
         mv absolute_path, castle_path
@@ -294,9 +294,9 @@ module Homesick
       full_command = args.join(' ')
       say_status "exec '#{full_command}'",
                  "#{options[:pretend] ? 'Would execute' : 'Executing command'} '#{full_command}' in castle '#{castle}'",
-                 :green unless options[:quiet]
+                 :green
       inside repos_dir.join(castle) do
-        system(full_command) unless options[:pretend]
+        system(full_command)
       end
     end
 
@@ -323,8 +323,8 @@ module Homesick
       inside_each_castle do |castle|
         say_status "exec '#{full_command}'",
                    "#{options[:pretend] ? 'Would execute' : 'Executing command'} '#{full_command}' in castle '#{castle}'",
-                   :green unless options[:quiet]
-        system(full_command) unless options[:pretend]
+                   :green
+        system(full_command)
       end
     end
 

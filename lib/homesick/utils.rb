@@ -2,6 +2,22 @@
 module Homesick
   # Various utility methods that are used by Homesick
   module Utils
+    QUIETABLE = ['say_status']
+
+    PRETENDABLE = ['system']
+
+    QUIETABLE.each do |method_name|
+      define_method(method_name) do |*args|
+        super(*args) unless options[:quiet]
+      end
+    end
+
+    PRETENDABLE.each do |method_name|
+      define_method(method_name) do |*args|
+        super(*args) unless options[:pretend]
+      end
+    end
+
     protected
 
     def home_dir
