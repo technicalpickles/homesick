@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class Homesick
+module Homesick
   # Various utility methods that are used by Homesick
   module Utils
     protected

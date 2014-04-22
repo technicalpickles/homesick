@@ -2,13 +2,13 @@
 require 'spec_helper'
 require 'capture-output'
 
-describe 'homesick' do
+describe Homesick::CLI do
   let(:home) { create_construct }
   after { home.destroy! }
 
   let(:castles) { home.directory('.homesick/repos') }
 
-  let(:homesick) { Homesick.new }
+  let(:homesick) { Homesick::CLI.new }
 
   before { allow(homesick).to receive(:repos_dir).and_return(castles) }
 
@@ -176,7 +176,7 @@ describe 'homesick' do
     end
 
     context 'when forced' do
-      let(:homesick) { Homesick.new [], force: true }
+      let(:homesick) { Homesick::CLI.new [], force: true }
 
       it 'can override symlinks to directories' do
         somewhere_else = create_construct
