@@ -75,7 +75,7 @@ module Homesick
         when :conflict
           say_status :conflict, "#{destination} exists", :red unless options[:quiet]
 
-          if collision_accepted?
+          if collision_accepted?(destination)
             FileUtils.rm_r destination, force: true unless options[:pretend]
             FileUtils.ln_s source, destination, force: true unless options[:pretend]
           end
