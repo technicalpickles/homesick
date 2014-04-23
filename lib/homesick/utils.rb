@@ -132,7 +132,8 @@ module Homesick
       first_p.mtime > second_p.mtime && !first_p.symlink?
     end
 
-    def collision_accepted?
+    def collision_accepted?(destination)
+      fail "Argument must be an instance of Pathname, #{destination.class.name} given" unless destination.instance_of?(Pathname)
       options[:force] || shell.file_collision(destination) { source }
     end
 
