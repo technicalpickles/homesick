@@ -273,16 +273,6 @@ module Homesick
 
     desc 'exec CASTLE COMMAND',
          'Execute a single shell command inside the root of a castle'
-    method_option :pretend,
-                  type: :boolean,
-                  default: false,
-                  required: false,
-                  desc: 'Perform a dry run of the command'
-    method_option :quiet,
-                  type: :boolean,
-                  default: false,
-                  required: false,
-                  desc: 'Run a command without any output from Homesick'
     def exec(castle, *args)
       check_castle_existance castle, 'exec'
       unless args.count > 0
@@ -302,16 +292,6 @@ module Homesick
 
     desc 'exec_all COMMAND',
          'Execute a single shell command inside the root of every cloned castle'
-    method_option :pretend,
-                  type: :boolean,
-                  default: false,
-                  required: false,
-                  desc: 'Perform a dry run of the command'
-    method_option :quiet,
-                  type: :boolean,
-                  default: false,
-                  required: false,
-                  desc: 'Run a command without any output from Homesick'
     def exec_all(*args)
       unless args.count > 0
         say_status :error,
