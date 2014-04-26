@@ -24,7 +24,7 @@ describe Homesick::CLI do
         end
 
         expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).with(be_a(String)).and_return(true)
-        expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval', kind_of(Pathname))
+        expect(homesick).to receive(:say_status).with('eval', kind_of(Pathname))
         homesick.clone local_repo
 
         expect(castles.join('some_repo').join('testing')).to exist
@@ -129,7 +129,7 @@ describe Homesick::CLI do
           end"
         end
 
-        expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval', kind_of(Pathname))
+        expect(homesick).to receive(:say_status).with('eval', kind_of(Pathname))
         homesick.rc castle
 
         expect(castle.join('testing')).to exist
@@ -148,7 +148,7 @@ describe Homesick::CLI do
           end"
         end
 
-        expect_any_instance_of(Thor::Shell::Basic).to receive(:say_status).with('eval skip', /not evaling.+/, :blue)
+        expect(homesick).to receive(:say_status).with('eval skip', /not evaling.+/, :blue)
         homesick.rc castle
 
         expect(castle.join('testing')).not_to exist
