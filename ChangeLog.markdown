@@ -1,3 +1,7 @@
+#1.1.0
+ * Added exec and exec_all commands to run commands inside one or all clones castles.
+ * Code refactoring.
+
 #1.0.0
  * Removed support for Ruby 1.8.7
  * Added a version command
