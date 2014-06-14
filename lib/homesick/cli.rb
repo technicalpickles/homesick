@@ -19,7 +19,19 @@ module Homesick
 
     def initialize(args = [], options = {}, config = {})
       super
-      self.shell = Homesick::Shell.new
+      self.shell = Thor::Shell::Color.new
+      # Hack in support for diffing symlinks
+      class << shell
+        def show_diff(destination, content)
+          destination = Pathname.new(destination)
+          if destination.symlink?
+            say "- #{destination.readlink}", :red, true
+            say "+ #{content.expand_path}", :green, true
+          else
+            super
+          end
+        end
+      end
     end
 
     desc 'clone URI', 'Clone +uri+ as a castle for homesick'
