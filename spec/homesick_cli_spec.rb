@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 require 'capture-output'
+require 'pathname'
 
 describe Homesick::CLI do
   let(:home) { create_construct }
@@ -11,6 +12,18 @@ describe Homesick::CLI do
   let(:homesick) { Homesick::CLI.new }
 
   before { allow(homesick).to receive(:repos_dir).and_return(castles) }
+
+  describe 'smoke test' do
+    context 'when running bin/homesick' do
+      before do
+        bin_path = Pathname.new(__FILE__).parent.parent
+        @output = `#{bin_path.expand_path}/bin/homesick`
+      end
+      it 'should output some text when bin/homesick is called' do
+        expect(@output.length).to be > 0
+      end
+    end
+  end
 
   describe 'clone' do
     context 'has a .homesickrc' do
