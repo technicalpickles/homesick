@@ -1,11 +1,11 @@
 # homesick
 
-[![Gem Version](https://badge.fury.io/rb/homesick.png)](http://badge.fury.io/rb/homesick)
-[![Build Status](https://travis-ci.org/technicalpickles/homesick.png?branch=master)](https://travis-ci.org/technicalpickles/homesick)
-[![Dependency Status](https://gemnasium.com/technicalpickles/homesick.png)](https://gemnasium.com/technicalpickles/homesick)
+[![Gem Version](https://badge.fury.io/rb/homesick.svg)](http://badge.fury.io/rb/homesick)
+[![Build Status](https://travis-ci.org/technicalpickles/homesick.svg?branch=master)](https://travis-ci.org/technicalpickles/homesick)
+[![Dependency Status](https://gemnasium.com/technicalpickles/homesick.svg)](https://gemnasium.com/technicalpickles/homesick)
 [![Coverage Status](https://coveralls.io/repos/technicalpickles/homesick/badge.png)](https://coveralls.io/r/technicalpickles/homesick)
-[![Code Climate](https://codeclimate.com/github/technicalpickles/homesick.png)](https://codeclimate.com/github/technicalpickles/homesick)
-[![Gitter chat](https://badges.gitter.im/technicalpickles/homesick.png)](https://gitter.im/technicalpickles/homesick)
+[![Code Climate](https://codeclimate.com/github/technicalpickles/homesick.svg)](https://codeclimate.com/github/technicalpickles/homesick)
+[![Gitter chat](https://badges.gitter.im/technicalpickles/homesick.svg)](https://gitter.im/technicalpickles/homesick)
 
 Your home directory is your castle. Don't leave your dotfiles behind.
 
