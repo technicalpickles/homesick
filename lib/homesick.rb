@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'homesick/shell'
 require 'homesick/actions/file_actions'
 require 'homesick/actions/git_actions'
 require 'homesick/version'
