@@ -81,34 +81,39 @@ describe Homesick::CLI do
 
     it 'clones git repo like git://host/path/to.git' do
       expect(homesick).to receive(:git_clone)
-              .with('git://github.com/technicalpickles/pickled-vim.git')
+              .with('git://github.com/technicalpickles/pickled-vim.git',
+                    destination: Pathname.new('pickled-vim'))
 
       homesick.clone 'git://github.com/technicalpickles/pickled-vim.git'
     end
 
     it 'clones git repo like git@host:path/to.git' do
       expect(homesick).to receive(:git_clone)
-              .with('git@github.com:technicalpickles/pickled-vim.git')
+              .with('git@github.com:technicalpickles/pickled-vim.git',
+                    destination: Pathname.new('pickled-vim'))
 
       homesick.clone 'git@github.com:technicalpickles/pickled-vim.git'
     end
 
     it 'clones git repo like http://host/path/to.git' do
       expect(homesick).to receive(:git_clone)
-              .with('http://github.com/technicalpickles/pickled-vim.git')
+              .with('http://github.com/technicalpickles/pickled-vim.git',
+                    destination: Pathname.new('pickled-vim'))
 
       homesick.clone 'http://github.com/technicalpickles/pickled-vim.git'
     end
 
     it 'clones git repo like http://host/path/to' do
       expect(homesick).to receive(:git_clone)
-              .with('http://github.com/technicalpickles/pickled-vim')
+              .with('http://github.com/technicalpickles/pickled-vim',
+                    destination: Pathname.new('pickled-vim'))
 
       homesick.clone 'http://github.com/technicalpickles/pickled-vim'
     end
 
     it 'clones git repo like host-alias:repos.git' do
-      expect(homesick).to receive(:git_clone).with('gitolite:pickled-vim.git')
+      expect(homesick).to receive(:git_clone).with('gitolite:pickled-vim.git',
+                                                   destination: Pathname.new('pickled-vim'))
 
       homesick.clone 'gitolite:pickled-vim.git'
     end
