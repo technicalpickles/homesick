@@ -21,7 +21,7 @@ module Homesick
     protected
 
     def home_dir
-      @home_dir ||= Pathname.new(ENV['HOME'] || '~').expand_path
+      @home_dir ||= Pathname.new(ENV['HOME'] || '~').realpath
     end
 
     def repos_dir
