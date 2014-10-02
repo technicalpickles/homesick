@@ -76,7 +76,7 @@ describe Homesick::CLI do
         homesick.clone "file://#{bare_repo}"
       end
       expect(File.directory?(File.join(home.to_s, '.homesick/repos/dotfiles')))
-        .to be_true
+        .to be_truthy
     end
 
     it 'clones git repo like git://host/path/to.git' do

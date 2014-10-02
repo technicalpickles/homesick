@@ -8,7 +8,7 @@ gem "thor", ">= 0.14.0"
 # Include everything needed to run rake, tests, features, etc.
 group :development do
   gem "rake", ">= 0.8.7"
-  gem "rspec", "~> 2.10"
+  gem "rspec", "~> 3.1.0"
   gem "guard"
   gem "guard-rspec"
   gem "rb-readline", "~> 0.5.0"
