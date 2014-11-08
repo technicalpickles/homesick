@@ -19,8 +19,13 @@ module Homesick
 
     def initialize(args = [], options = {}, config = {})
       super
-      self.shell = Thor::Shell::Color.new
+      # Check if git is installed
+      unless `git --version`.size > 0
+        say_status :error, 'Git must be installed to use Homesick', :red
+        exit(1)
+      end
       # Hack in support for diffing symlinks
+      self.shell = Thor::Shell::Color.new
       class << shell
         def show_diff(destination, content)
           destination = Pathname.new(destination)

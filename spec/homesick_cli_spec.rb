@@ -13,7 +13,7 @@ describe Homesick::CLI do
 
   before { allow(homesick).to receive(:repos_dir).and_return(castles) }
 
-  describe 'smoke test' do
+  describe 'smoke tests' do
     context 'when running bin/homesick' do
       before do
         bin_path = Pathname.new(__FILE__).parent.parent
@@ -21,6 +21,17 @@ describe Homesick::CLI do
       end
       it 'should output some text when bin/homesick is called' do
         expect(@output.length).to be > 0
+      end
+    end
+
+    context 'when git is not installed' do
+      before do
+        # The following line suppresses Thor warnings about overriding methods.
+        allow($stdout).to receive(:write).at_least(:once)
+        expect_any_instance_of(Homesick::CLI).to receive(:`).and_return('')
+      end
+      it 'should raise an exception when Git is not installed' do
+        Capture.stdout{ expect{Homesick::CLI.new}.to raise_error SystemExit }
       end
     end
   end
