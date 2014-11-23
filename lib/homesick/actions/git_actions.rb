@@ -3,6 +3,12 @@ module Homesick
   module Actions
     # Git-related helper methods for Homesick
     module GitActions
+      # Information on the minimum git version required for Homesick
+      MAJOR = 2
+      MINOR = 0
+      PATCH = 0
+      STRING = [MAJOR, MINOR, PATCH].compact.join('.')
+
       # TODO: move this to be more like thor's template, empty_directory, etc
       def git_clone(repo, config = {})
         config ||= {}

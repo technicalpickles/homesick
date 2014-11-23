@@ -24,6 +24,19 @@ describe Homesick::CLI do
       end
     end
 
+    context 'when git is installed' do
+      before do
+        # The following line suppresses Thor warnings about overriding methods.
+        allow($stdout).to receive(:write).at_least(:once)
+        expect_any_instance_of(Homesick::CLI).to receive(:`).and_return(Homesick::Actions::GitActions::STRING)
+      end
+      it 'should not raise an exception when Git is installed' do
+        output = Capture.stdout{ expect{Homesick::CLI.new}.not_to raise_error }
+        expect(output.chomp).not_to match(/#{Regexp.escape(Homesick::Actions::GitActions::STRING)}/)
+      end
+
+    end
+
     context 'when git is not installed' do
       before do
         # The following line suppresses Thor warnings about overriding methods.
@@ -31,7 +44,8 @@ describe Homesick::CLI do
         expect_any_instance_of(Homesick::CLI).to receive(:`).and_return('')
       end
       it 'should raise an exception when Git is not installed' do
-        Capture.stdout{ expect{Homesick::CLI.new}.to raise_error SystemExit }
+        output = Capture.stdout{ expect{Homesick::CLI.new}.to raise_error SystemExit }
+        expect(output.chomp).to match(/#{Regexp.escape(Homesick::Actions::GitActions::STRING)}/)
       end
     end
   end
@@ -695,7 +709,7 @@ describe Homesick::CLI do
   describe 'version' do
     it 'prints the current version of homesick' do
       text = Capture.stdout { homesick.version }
-      expect(text.chomp).to match(/\d+\.\d+\.\d+/)
+      expect(text.chomp).to match(/#{Regexp.escape(Homesick::Version::STRING)}/)
     end
   end
 

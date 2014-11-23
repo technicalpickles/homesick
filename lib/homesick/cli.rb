@@ -20,8 +20,8 @@ module Homesick
     def initialize(args = [], options = {}, config = {})
       super
       # Check if git is installed
-      unless `git --version`.size > 0
-        say_status :error, 'Git must be installed to use Homesick', :red
+      unless `git --version` =~ GIT_VERSION_PATTERN
+        say_status :error, "Git version >= #{Homesick::Actions::GitActions::STRING} must be installed to use Homesick", :red
         exit(1)
       end
       # Hack in support for diffing symlinks
