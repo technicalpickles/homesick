@@ -20,7 +20,7 @@ module Homesick
     def initialize(args = [], options = {}, config = {})
       super
       # Check if git is installed
-      unless `git --version` =~ GIT_VERSION_PATTERN
+      unless version_check
         say_status :error, "Git version >= #{Homesick::Actions::GitActions::STRING} must be installed to use Homesick", :red
         exit(1)
       end
