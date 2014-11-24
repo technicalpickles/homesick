@@ -11,7 +11,7 @@ module Homesick
       }
       STRING = MIN_VERSION.values.join('.')
 
-      def version_check
+      def git_version_correct?
         info = `git --version`.scan(/(\d+)\.(\d+)\.(\d+)/).flatten.map(&:to_i)
         return false unless info.count == 3
         current_version = Hash[ [:major, :minor, :patch].zip(info) ]
