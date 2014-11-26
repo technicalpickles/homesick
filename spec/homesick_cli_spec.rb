@@ -24,28 +24,23 @@ describe Homesick::CLI do
       end
     end
 
-    context 'when git is installed' do
-      before do
-        # The following line suppresses Thor warnings about overriding methods.
-        allow($stdout).to receive(:write).at_least(:once)
-        expect_any_instance_of(Homesick::Actions::GitActions).to receive(:`).and_return("git version #{Homesick::Actions::GitActions::STRING}")
-      end
-      it 'should not raise an exception' do
-        output = Capture.stdout{ expect{Homesick::CLI.new}.not_to raise_error }
-        expect(output.chomp).not_to include(Homesick::Actions::GitActions::STRING)
-      end
-
-    end
-
     context 'when git is not installed' do
       before do
-        # The following line suppresses Thor warnings about overriding methods.
-        allow($stdout).to receive(:write).at_least(:once)
         expect_any_instance_of(Homesick::Actions::GitActions).to receive(:`).and_return("git version 1.0.0")
       end
       it 'should raise an exception when' do
         output = Capture.stdout{ expect{Homesick::CLI.new}.to raise_error SystemExit }
         expect(output.chomp).to include(Homesick::Actions::GitActions::STRING)
+      end
+    end
+
+    context 'when git is installed' do
+      before do
+        expect_any_instance_of(Homesick::Actions::GitActions).to receive(:`).at_least(:once).and_return("git version #{Homesick::Actions::GitActions::STRING}")
+      end
+      it 'should not raise an exception' do
+        output = Capture.stdout{ expect{Homesick::CLI.new}.not_to raise_error }
+        expect(output.chomp).not_to include(Homesick::Actions::GitActions::STRING)
       end
     end
   end
