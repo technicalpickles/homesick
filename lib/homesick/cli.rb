@@ -61,12 +61,15 @@ module Homesick
     end
 
     desc 'rc CASTLE', 'Run the .homesickrc for the specified castle'
+    method_option :force,
+                  default: false,
+                  desc: 'Evaluate .homesickrc without prompting.'
     def rc(name = DEFAULT_CASTLE_NAME)
       inside repos_dir do
         destination = Pathname.new(name)
         homesickrc = destination.join('.homesickrc').expand_path
         if homesickrc.exist?
-          proceed = shell.yes?("#{name} has a .homesickrc. Proceed with evaling it? (This could be destructive)")
+          proceed = options[:force] || shell.yes?("#{name} has a .homesickrc. Proceed with evaling it? (This could be destructive)")
           if proceed
             say_status 'eval', homesickrc
             inside destination do
