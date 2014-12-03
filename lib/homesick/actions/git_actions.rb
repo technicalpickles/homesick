@@ -3,6 +3,25 @@ module Homesick
   module Actions
     # Git-related helper methods for Homesick
     module GitActions
+      # Information on the minimum git version required for Homesick
+      MIN_VERSION = {
+        major: 1,
+        minor: 8,
+        patch: 0
+      }
+      STRING = MIN_VERSION.values.join('.')
+
+      def git_version_correct?
+        info = `git --version`.scan(/(\d+)\.(\d+)\.(\d+)/).flatten.map(&:to_i)
+        return false unless info.count == 3
+        current_version = Hash[ [:major, :minor, :patch].zip(info) ]
+        return true if current_version.eql?(MIN_VERSION)
+        current_version.each do |k,v|
+          return true if v > MIN_VERSION[k]
+        end
+        false
+      end
+
       # TODO: move this to be more like thor's template, empty_directory, etc
       def git_clone(repo, config = {})
         config ||= {}

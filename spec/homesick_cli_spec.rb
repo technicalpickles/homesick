@@ -13,7 +13,7 @@ describe Homesick::CLI do
 
   before { allow(homesick).to receive(:repos_dir).and_return(castles) }
 
-  describe 'smoke test' do
+  describe 'smoke tests' do
     context 'when running bin/homesick' do
       before do
         bin_path = Pathname.new(__FILE__).parent.parent
@@ -21,6 +21,26 @@ describe Homesick::CLI do
       end
       it 'should output some text when bin/homesick is called' do
         expect(@output.length).to be > 0
+      end
+    end
+
+    context 'when git is not installed' do
+      before do
+        expect_any_instance_of(Homesick::Actions::GitActions).to receive(:`).and_return("git version 1.0.0")
+      end
+      it 'should raise an exception when' do
+        output = Capture.stdout{ expect{Homesick::CLI.new}.to raise_error SystemExit }
+        expect(output.chomp).to include(Homesick::Actions::GitActions::STRING)
+      end
+    end
+
+    context 'when git is installed' do
+      before do
+        expect_any_instance_of(Homesick::Actions::GitActions).to receive(:`).at_least(:once).and_return("git version #{Homesick::Actions::GitActions::STRING}")
+      end
+      it 'should not raise an exception' do
+        output = Capture.stdout{ expect{Homesick::CLI.new}.not_to raise_error }
+        expect(output.chomp).not_to include(Homesick::Actions::GitActions::STRING)
       end
     end
   end
@@ -684,7 +704,7 @@ describe Homesick::CLI do
   describe 'version' do
     it 'prints the current version of homesick' do
       text = Capture.stdout { homesick.version }
-      expect(text.chomp).to match(/\d+\.\d+\.\d+/)
+      expect(text.chomp).to match(/#{Regexp.escape(Homesick::Version::STRING)}/)
     end
   end
 
