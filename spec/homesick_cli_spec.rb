@@ -169,6 +169,26 @@ describe Homesick::CLI do
       end
     end
 
+    context 'when options[:force] == true' do
+      let(:homesick) { Homesick::CLI.new [], force: true }
+      before do
+        expect_any_instance_of(Thor::Shell::Basic).to_not receive(:yes?)
+      end
+
+      it 'executes the .homesickrc' do
+        castle.file('.homesickrc') do |file|
+          file << "File.open(Dir.pwd + '/testing', 'w') do |f|
+            f.print 'testing'
+          end"
+        end
+
+        expect(homesick).to receive(:say_status).with('eval', kind_of(Pathname))
+        homesick.rc castle
+
+        expect(castle.join('testing')).to exist
+      end
+    end
+
     context 'when told not to do so' do
       before do
         expect_any_instance_of(Thor::Shell::Basic).to receive(:yes?).with(be_a(String)).and_return(false)
