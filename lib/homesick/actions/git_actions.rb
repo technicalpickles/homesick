@@ -16,9 +16,9 @@ module Homesick
         return false unless info.count == 3
         current_version = Hash[ [:major, :minor, :patch].zip(info) ]
         return true if current_version.eql?(MIN_VERSION)
-        current_version.each do |k,v|
-          return true if v > MIN_VERSION[k]
-        end
+        return true if current_version[:major] > MIN_VERSION[:major]
+        return true if current_version[:major] == MIN_VERSION[:major] && current_version[:minor] > MIN_VERSION[:minor]
+        return true if current_version[:major] == MIN_VERSION[:major] && current_version[:minor] == MIN_VERSION[:minor] && current_version[:patch] >= MIN_VERSION[:patch]
         false
       end
 

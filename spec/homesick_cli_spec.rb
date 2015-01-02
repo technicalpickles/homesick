@@ -24,17 +24,17 @@ describe Homesick::CLI do
       end
     end
 
-    context 'when git is not installed' do
+    context 'when a git version that doesn\'t meet the minimum required is installed' do
       before do
-        expect_any_instance_of(Homesick::Actions::GitActions).to receive(:`).and_return("git version 1.0.0")
+        expect_any_instance_of(Homesick::Actions::GitActions).to receive(:`).and_return("git version 1.7.6")
       end
-      it 'should raise an exception when' do
+      it 'should raise an exception' do
         output = Capture.stdout{ expect{Homesick::CLI.new}.to raise_error SystemExit }
         expect(output.chomp).to include(Homesick::Actions::GitActions::STRING)
       end
     end
 
-    context 'when git is installed' do
+    context 'when a git version that is the same as the minimum required is installed' do
       before do
         expect_any_instance_of(Homesick::Actions::GitActions).to receive(:`).at_least(:once).and_return("git version #{Homesick::Actions::GitActions::STRING}")
       end
@@ -42,6 +42,17 @@ describe Homesick::CLI do
         output = Capture.stdout{ expect{Homesick::CLI.new}.not_to raise_error }
         expect(output.chomp).not_to include(Homesick::Actions::GitActions::STRING)
       end
+    end
+
+    context 'when a git version that is greater than the minimum required is installed' do
+      before do
+        expect_any_instance_of(Homesick::Actions::GitActions).to receive(:`).at_least(:once).and_return("git version 3.9.8")
+      end
+      it 'should not raise an exception' do
+        output = Capture.stdout{ expect{Homesick::CLI.new}.not_to raise_error }
+        expect(output.chomp).not_to include(Homesick::Actions::GitActions::STRING)
+      end
+
     end
   end
 
