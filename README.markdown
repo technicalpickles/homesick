@@ -40,7 +40,7 @@ If you need to add further configuration steps you can add these in a file calle
 
     homesick rc CASTLE
 
-The contents of the .homesickrc file must be valid Ruby code as the file will be executed with Ruby's eval construct. The .homesickrc is also passed the current homesick object during its execution and this is available within the .homesickrc file as the 'self' variable.
+The contents of the .homesickrc file must be valid Ruby code as the file will be executed with Ruby's eval construct. The .homesickrc is also passed the current homesick object during its execution and this is available within the .homesickrc file as the 'self' variable. As the rc operation can be destructive the command normally asks for confirmation before proceeding. You can bypass this by passing the '--force' option, for example `homesick rc --force CASTLE`.
 
 If you're not sure what castles you have around, you can easily list them:
 

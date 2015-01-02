@@ -13,7 +13,6 @@ group :development do
   gem "guard-rspec"
   gem "rb-readline", "~> 0.5.0"
   gem "jeweler", ">= 1.6.2"
-  #gem "simplecov"
   gem 'coveralls', require: false
   gem "test_construct"
   gem "capture-output", "~> 1.0.0"

@@ -1,3 +1,8 @@
+#1.1.2
+ * Added '--force' option to the rc command to bypass confirmation checks when running a .homesickrc file
+ * Added a check to make sure that a minimum of Git 1.8.0 is installed. This stops Homesick failing silently if Git is not installed.
+ * Code refactoring and fixes.
+
 #1.1.0
  * Added exec and exec_all commands to run commands inside one or all clones castles.
  * Code refactoring.
