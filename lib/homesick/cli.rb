@@ -111,6 +111,11 @@ module Homesick
       commit_castle name, message
     end
 
+    desc 'fetch CASTLE', 'Fetch refs from the specified castle'
+    def fetch(name = DEFAULT_CASTLE_NAME)
+      fetch_castle name
+    end
+
     desc 'push CASTLE', 'Push the specified castle'
     def push(name = DEFAULT_CASTLE_NAME)
       push_castle name

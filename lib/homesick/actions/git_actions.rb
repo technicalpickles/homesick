@@ -80,6 +80,11 @@ module Homesick
         system 'git pull --quiet'
       end
 
+      def git_fetch(config = {})
+        say_status 'git fetch', '', :green
+        system 'git fetch'
+      end
+
       def git_push(config = {})
         say_status 'git push', '', :green
         system 'git push'
