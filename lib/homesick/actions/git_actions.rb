@@ -88,7 +88,7 @@ module Homesick
       def git_commit_all(config = {})
         say_status 'git commit all', '', :green
         if config[:message]
-          system "git commit -a -m '#{config[:message]}'"
+          system %Q(git commit -a -m "#{config[:message]}")
         else
           system 'git commit -v -a'
         end
