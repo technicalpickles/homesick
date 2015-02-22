@@ -1,4 +1,6 @@
 # -*- encoding : utf-8 -*-
+require 'pathname'
+
 module Homesick
   # Various utility methods that are used by Homesick
   module Utils
