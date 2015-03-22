@@ -55,8 +55,8 @@ module Homesick
           git_clone "https://github.com/#{Regexp.last_match[1]}.git",
                     destination: destination
         elsif uri =~ /%r([^%r]*?)(\.git)?\Z/ || uri =~ /[^:]+:([^:]+)(\.git)?\Z/
-          destination = Pathname.new(Regexp.last_match[1])
-          git_clone uri
+          destination = Pathname.new(Regexp.last_match[1].gsub(/\.git$/,'')).basename
+          git_clone uri, destination: destination
         else
           fail "Unknown URI format: #{uri}"
         end
