@@ -39,23 +39,24 @@ module Homesick
       end
     end
 
-    desc 'clone URI', 'Clone +uri+ as a castle for homesick'
-    def clone(uri)
+    desc 'clone URI CASTLE_NAME', 'Clone +uri+ as a castle with name CASTLE_NAME for homesick'
+    def clone(uri, destination=nil)
+      destination = Pathname.new(destination) unless destination.nil?
+
       inside repos_dir do
-        destination = nil
         if File.exist?(uri)
           uri = Pathname.new(uri).expand_path
           fail "Castle already cloned to #{uri}" if uri.to_s.start_with?(repos_dir.to_s)
 
-          destination = uri.basename
+          destination = uri.basename if destination.nil?
 
           ln_s uri, destination
         elsif uri =~ GITHUB_NAME_REPO_PATTERN
-          destination = Pathname.new(uri).basename
+          destination = Pathname.new(uri).basename if destination.nil?
           git_clone "https://github.com/#{Regexp.last_match[1]}.git",
                     destination: destination
         elsif uri =~ /%r([^%r]*?)(\.git)?\Z/ || uri =~ /[^:]+:([^:]+)(\.git)?\Z/
-          destination = Pathname.new(Regexp.last_match[1].gsub(/\.git$/,'')).basename
+          destination = Pathname.new(Regexp.last_match[1].gsub(/\.git$/,'')).basename if destination.nil?
           git_clone uri, destination: destination
         else
           fail "Unknown URI format: #{uri}"
