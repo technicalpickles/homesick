@@ -283,11 +283,11 @@ module Homesick
       end
       check_castle_existance castle, 'open'
       castle_dir = repos_dir.join(castle)
-      say_status "#{ENV['EDITOR']} #{castle_dir.realpath}",
+      say_status "#{castle_dir.realpath}: #{ENV['EDITOR']} .",
                  "Opening the root directory of castle '#{castle}' in editor '#{ENV['EDITOR']}'.",
                  :green
       inside castle_dir do
-        system(ENV['EDITOR'])
+        system("#{ENV['EDITOR']} .")
       end
     end
 

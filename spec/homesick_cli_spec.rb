@@ -712,7 +712,7 @@ describe Homesick::CLI do
       allow(ENV).to receive(:[]).with('EDITOR').and_return('vim')
       given_castle 'castle_repo'
       expect(homesick).to receive('inside').once.with(kind_of(Pathname)).and_yield
-      expect(homesick).to receive('system').once.with('vim')
+      expect(homesick).to receive('system').once.with('vim .')
       Capture.stdout { homesick.open 'castle_repo' }
     end
 
