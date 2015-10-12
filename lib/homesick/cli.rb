@@ -25,17 +25,12 @@ module Homesick
         exit(1)
       end
       # Hack in support for diffing symlinks
-      self.shell = Thor::Shell::Color.new
-      class << shell
-        def show_diff(destination, content)
-          destination = Pathname.new(destination)
-          if destination.symlink?
-            say "- #{destination.readlink}", :red, true
-            say "+ #{content.expand_path}", :green, true
-          else
-            super
-          end
-        end
+      shell_metaclass = class << shell; self; end
+      shell_metaclass.send(:define_method, :show_diff) do |destination, content|
+        destination = Pathname.new(destination)
+        return super unless destination.symlink?
+        say "- #{destination.readlink}", :red, true
+        say "+ #{content.expand_path}", :green, true
       end
     end
 
@@ -55,7 +50,7 @@ module Homesick
           git_clone "https://github.com/#{Regexp.last_match[1]}.git",
                     destination: destination
         elsif uri =~ /%r([^%r]*?)(\.git)?\Z/ || uri =~ /[^:]+:([^:]+)(\.git)?\Z/
-          destination = Pathname.new(Regexp.last_match[1].gsub(/\.git$/,'')).basename
+          destination = Pathname.new(Regexp.last_match[1].gsub(/\.git$/, '')).basename
           git_clone uri, destination: destination
         else
           fail "Unknown URI format: #{uri}"
@@ -73,18 +68,12 @@ module Homesick
       inside repos_dir do
         destination = Pathname.new(name)
         homesickrc = destination.join('.homesickrc').expand_path
-        if homesickrc.exist?
-          proceed = options[:force] || shell.yes?("#{name} has a .homesickrc. Proceed with evaling it? (This could be destructive)")
-          if proceed
-            say_status 'eval', homesickrc
-            inside destination do
-              eval homesickrc.read, binding, homesickrc.expand_path.to_s
-            end
-          else
-            say_status 'eval skip',
-                       "not evaling #{homesickrc}, #{destination} may need manual configuration",
-                       :blue
-          end
+        return unless homesickrc.exist?
+        proceed = options[:force] || shell.yes?("#{name} has a .homesickrc. Proceed with evaling it? (This could be destructive)")
+        return say_status 'eval skip', "not evaling #{homesickrc}, #{destination} may need manual configuration", :blue unless proceed
+        say_status 'eval', homesickrc
+        inside destination do
+          eval homesickrc.read, binding, homesickrc.expand_path.to_s
         end
       end
     end
@@ -252,11 +241,10 @@ module Homesick
     desc 'destroy CASTLE', 'Delete all symlinks and remove the cloned repository'
     def destroy(name)
       check_castle_existance name, 'destroy'
+      return unless shell.yes?('This will destroy your castle irreversible! Are you sure?')
 
-      if shell.yes?('This will destroy your castle irreversible! Are you sure?')
-        unlink(name)
-        rm_rf repos_dir.join(name)
-      end
+      unlink(name)
+      rm_rf repos_dir.join(name)
     end
 
     desc 'cd CASTLE', 'Open a new shell in the root of the given castle'
