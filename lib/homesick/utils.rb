@@ -35,12 +35,11 @@ module Homesick
     end
 
     def check_castle_existance(name, action)
-      unless castle_dir(name).exist?
-        say_status :error,
-                   "Could not #{action} #{name}, expected #{castle_dir(name)} exist and contain dotfiles",
-                   :red
-        exit(1)
-      end
+      return if castle_dir(name).exist?
+      say_status :error,
+                 "Could not #{action} #{name}, expected #{castle_dir(name)} exist and contain dotfiles",
+                 :red
+      exit(1)
     end
 
     def all_castles
@@ -53,7 +52,7 @@ module Homesick
       end
     end
 
-    def inside_each_castle(&block)
+    def inside_each_castle
       all_castles.each do |git_dir|
         castle = git_dir.dirname
         Dir.chdir castle do # so we can call git config from the right contxt
@@ -130,7 +129,6 @@ module Homesick
     def move_dir_contents(target, dir_path)
       child_files = dir_path.children
       child_files.each do |child|
-
         target_path = target.join(child.basename)
         if target_path.exist?
           if more_recent?(child, target_path) && target.file?
@@ -193,7 +191,7 @@ module Homesick
     end
 
     def unsymlink_each(castle, basedir, subdirs)
-      each_file(castle, basedir, subdirs) do |absolute_path, home_path|
+      each_file(castle, basedir, subdirs) do |_absolute_path, home_path|
         rm_link home_path
       end
     end

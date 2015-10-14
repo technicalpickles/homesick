@@ -3,16 +3,14 @@ module Homesick
   module Actions
     # File-related helper methods for Homesick
     module FileActions
-      def mv(source, destination, config = {})
+      def mv(source, destination)
         source = Pathname.new(source)
         destination = Pathname.new(destination + source.basename)
-
-        if destination.exist?
+        case
+        when destination.exist? && (options[:force] || shell.file_collision(destination) { source })
           say_status :conflict, "#{destination} exists", :red
-
-          FileUtils.mv source, destination if (options[:force] || shell.file_collision(destination) { source }) && !options[:pretend]
+          FileUtils.mv source, destination unless options[:pretend]
         else
-          # this needs some sort of message here.
           FileUtils.mv source, destination unless options[:pretend]
         end
       end
@@ -43,7 +41,7 @@ module Homesick
         FileUtils.rm_r dir
       end
 
-      def ln_s(source, destination, config = {})
+      def ln_s(source, destination)
         source = Pathname.new(source)
         destination = Pathname.new(destination)
         FileUtils.mkdir_p destination.dirname

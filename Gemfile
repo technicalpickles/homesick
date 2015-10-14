@@ -19,6 +19,9 @@ group :development do
   if RbConfig::CONFIG['host_os'] =~ /linux|freebsd|openbsd|sunos|solaris/
     gem 'libnotify'
   end
+  if RbConfig::CONFIG['host_os'] =~ /darwin|mac os/
+    gem 'terminal-notifier-guard', '~> 1.6.1'
+  end
   if RUBY_VERSION >= '1.9.2'
     gem "rubocop"
   end

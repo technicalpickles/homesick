@@ -26,10 +26,10 @@ describe Homesick::CLI do
 
     context 'when a git version that doesn\'t meet the minimum required is installed' do
       before do
-        expect_any_instance_of(Homesick::Actions::GitActions).to receive(:`).and_return("git version 1.7.6")
+        expect_any_instance_of(Homesick::Actions::GitActions).to receive(:`).and_return('git version 1.7.6')
       end
       it 'should raise an exception' do
-        output = Capture.stdout{ expect{Homesick::CLI.new}.to raise_error SystemExit }
+        output = Capture.stdout { expect { Homesick::CLI.new }.to raise_error SystemExit }
         expect(output.chomp).to include(Homesick::Actions::GitActions::STRING)
       end
     end
@@ -39,20 +39,19 @@ describe Homesick::CLI do
         expect_any_instance_of(Homesick::Actions::GitActions).to receive(:`).at_least(:once).and_return("git version #{Homesick::Actions::GitActions::STRING}")
       end
       it 'should not raise an exception' do
-        output = Capture.stdout{ expect{Homesick::CLI.new}.not_to raise_error }
+        output = Capture.stdout { expect { Homesick::CLI.new }.not_to raise_error }
         expect(output.chomp).not_to include(Homesick::Actions::GitActions::STRING)
       end
     end
 
     context 'when a git version that is greater than the minimum required is installed' do
       before do
-        expect_any_instance_of(Homesick::Actions::GitActions).to receive(:`).at_least(:once).and_return("git version 3.9.8")
+        expect_any_instance_of(Homesick::Actions::GitActions).to receive(:`).at_least(:once).and_return('git version 3.9.8')
       end
       it 'should not raise an exception' do
-        output = Capture.stdout{ expect{Homesick::CLI.new}.not_to raise_error }
+        output = Capture.stdout { expect { Homesick::CLI.new }.not_to raise_error }
         expect(output.chomp).not_to include(Homesick::Actions::GitActions::STRING)
       end
-
     end
   end
 
@@ -112,32 +111,28 @@ describe Homesick::CLI do
 
     it 'clones git repo like git://host/path/to.git' do
       expect(homesick).to receive(:git_clone)
-              .with('git://github.com/technicalpickles/pickled-vim.git',
-                    destination: Pathname.new('pickled-vim'))
+        .with('git://github.com/technicalpickles/pickled-vim.git', destination: Pathname.new('pickled-vim'))
 
       homesick.clone 'git://github.com/technicalpickles/pickled-vim.git'
     end
 
     it 'clones git repo like git@host:path/to.git' do
       expect(homesick).to receive(:git_clone)
-              .with('git@github.com:technicalpickles/pickled-vim.git',
-                    destination: Pathname.new('pickled-vim'))
+        .with('git@github.com:technicalpickles/pickled-vim.git', destination: Pathname.new('pickled-vim'))
 
       homesick.clone 'git@github.com:technicalpickles/pickled-vim.git'
     end
 
     it 'clones git repo like http://host/path/to.git' do
       expect(homesick).to receive(:git_clone)
-              .with('http://github.com/technicalpickles/pickled-vim.git',
-                    destination: Pathname.new('pickled-vim'))
+        .with('http://github.com/technicalpickles/pickled-vim.git', destination: Pathname.new('pickled-vim'))
 
       homesick.clone 'http://github.com/technicalpickles/pickled-vim.git'
     end
 
     it 'clones git repo like http://host/path/to' do
       expect(homesick).to receive(:git_clone)
-              .with('http://github.com/technicalpickles/pickled-vim',
-                    destination: Pathname.new('pickled-vim'))
+        .with('http://github.com/technicalpickles/pickled-vim', destination: Pathname.new('pickled-vim'))
 
       homesick.clone 'http://github.com/technicalpickles/pickled-vim'
     end
@@ -156,8 +151,7 @@ describe Homesick::CLI do
 
     it 'clones a github repo' do
       expect(homesick).to receive(:git_clone)
-              .with('https://github.com/wfarr/dotfiles.git',
-                    destination: Pathname.new('dotfiles'))
+        .with('https://github.com/wfarr/dotfiles.git', destination: Pathname.new('dotfiles'))
 
       homesick.clone 'wfarr/dotfiles'
     end
@@ -225,7 +219,7 @@ describe Homesick::CLI do
     end
   end
 
-  describe 'link' do
+  describe 'link_castle' do
     let(:castle) { given_castle('glencairn') }
 
     it 'links dotfiles from a castle to the home folder' do
@@ -313,11 +307,9 @@ describe Homesick::CLI do
         home_config_dir = home.join('.config')
         home_someapp_dir = home_config_dir.join('someapp')
         expect(home_config_dir.symlink?).to eq(false)
-        expect(home_config_dir.join('.some_dotfile').readlink)
-                       .to eq(config_dotfile)
+        expect(home_config_dir.join('.some_dotfile').readlink).to eq(config_dotfile)
         expect(home_someapp_dir.symlink?).to eq(false)
-        expect(home_someapp_dir.join('.some_appfile').readlink)
-                        .to eq(someapp_dotfile)
+        expect(home_someapp_dir.join('.some_appfile').readlink).to eq(someapp_dotfile)
       end
     end
 
@@ -426,13 +418,9 @@ describe Homesick::CLI do
       given_castle('wtf/zomg')
 
       expect(homesick).to receive(:say_status)
-              .with('zomg',
-                    'git://github.com/technicalpickles/zomg.git',
-                    :cyan)
+        .with('zomg', 'git://github.com/technicalpickles/zomg.git', :cyan)
       expect(homesick).to receive(:say_status)
-              .with('wtf/zomg',
-                    'git://github.com/technicalpickles/zomg.git',
-                    :cyan)
+        .with('wtf/zomg', 'git://github.com/technicalpickles/zomg.git', :cyan)
 
       homesick.list
     end
@@ -442,7 +430,7 @@ describe Homesick::CLI do
     it 'says "nothing to commit" when there are no changes' do
       given_castle('castle_repo')
       text = Capture.stdout { homesick.status('castle_repo') }
-      expect(text).to match(/nothing to commit \(create\/copy files and use "git add" to track\)$/)
+      expect(text).to match(%r{nothing to commit \(create/copy files and use "git add" to track\)$})
     end
 
     it 'says "Changes to be committed" when there are changes' do
@@ -450,9 +438,7 @@ describe Homesick::CLI do
       some_rc_file = home.file '.some_rc_file'
       homesick.track(some_rc_file.to_s, 'castle_repo')
       text = Capture.stdout { homesick.status('castle_repo') }
-      expect(text).to match(
-        /Changes to be committed:.*new file:\s*home\/.some_rc_file/m
-      )
+      expect(text).to match(%r{Changes to be committed:.*new file:\s*home\/.some_rc_file}m)
     end
   end
 
@@ -524,7 +510,6 @@ describe Homesick::CLI do
         end
       end
     end
-
   end
 
   describe 'push' do
@@ -536,9 +521,7 @@ describe Homesick::CLI do
 
     it 'prints an error message when trying to push a non-existant castle' do
       expect(homesick).to receive('say_status').once
-              .with(:error,
-                    /Could not push castle_repo, expected .* exist and contain dotfiles/,
-                    :red)
+        .with(:error, /Could not push castle_repo, expected .* exist and contain dotfiles/, :red)
       expect { homesick.push 'castle_repo' }.to raise_error(SystemExit)
     end
   end
@@ -622,7 +605,6 @@ describe Homesick::CLI do
     # Note that this is a test for the subdir_file related feature of track,
     # not for the subdir_file method itself.
     describe 'subdir_file' do
-
       it 'adds the nested files parent to the subdir_file' do
         castle = given_castle('castle_repo')
 
@@ -697,9 +679,7 @@ describe Homesick::CLI do
 
     it 'returns an error message when the given castle does not exist' do
       expect(homesick).to receive('say_status').once
-              .with(:error,
-                    /Could not cd castle_repo, expected .* exist and contain dotfiles/,
-                    :red)
+        .with(:error, /Could not cd castle_repo, expected .* exist and contain dotfiles/, :red)
       expect { homesick.cd 'castle_repo' }.to raise_error(SystemExit)
     end
   end
@@ -720,9 +700,7 @@ describe Homesick::CLI do
       # Set the default editor to make sure it fails.
       allow(ENV).to receive(:[]).with('EDITOR').and_return(nil)
       expect(homesick).to receive('say_status').once
-              .with(:error,
-                    'The $EDITOR environment variable must be set to use this command',
-                    :red)
+        .with(:error, 'The $EDITOR environment variable must be set to use this command', :red)
       expect { homesick.open 'castle_repo' }.to raise_error(SystemExit)
     end
 
@@ -730,9 +708,7 @@ describe Homesick::CLI do
       # Set a default just in case none is set
       allow(ENV).to receive(:[]).with('EDITOR').and_return('vim')
       allow(homesick).to receive('say_status').once
-              .with(:error,
-                    /Could not open castle_repo, expected .* exist and contain dotfiles/,
-                    :red)
+        .with(:error, /Could not open castle_repo, expected .* exist and contain dotfiles/, :red)
       expect { homesick.open 'castle_repo' }.to raise_error(SystemExit)
     end
   end
@@ -751,9 +727,7 @@ describe Homesick::CLI do
     it 'executes a single command with no arguments inside a given castle' do
       allow(homesick).to receive('inside').once.with(kind_of(Pathname)).and_yield
       allow(homesick).to receive('say_status').once
-              .with(be_a(String),
-                    be_a(String),
-                    :green)
+        .with(be_a(String), be_a(String), :green)
       allow(homesick).to receive('system').once.with('ls')
       Capture.stdout { homesick.exec 'castle_repo', 'ls' }
     end
@@ -761,18 +735,14 @@ describe Homesick::CLI do
     it 'executes a single command with arguments inside a given castle' do
       allow(homesick).to receive('inside').once.with(kind_of(Pathname)).and_yield
       allow(homesick).to receive('say_status').once
-              .with(be_a(String),
-                    be_a(String),
-                    :green)
+        .with(be_a(String), be_a(String), :green)
       allow(homesick).to receive('system').once.with('ls -la')
       Capture.stdout { homesick.exec 'castle_repo', 'ls', '-la' }
     end
 
     it 'raises an error when the method is called without a command' do
       allow(homesick).to receive('say_status').once
-              .with(:error,
-                    be_a(String),
-                    :red)
+        .with(:error, be_a(String), :red)
       allow(homesick).to receive('exit').once.with(1)
       Capture.stdout { homesick.exec 'castle_repo' }
     end
@@ -780,9 +750,7 @@ describe Homesick::CLI do
     context 'pretend' do
       it 'does not execute a command when the pretend option is passed' do
         allow(homesick).to receive('say_status').once
-              .with(be_a(String),
-                    match(/.*Would execute.*/),
-                    :green)
+          .with(be_a(String), match(/.*Would execute.*/), :green)
         expect(homesick).to receive('system').never
         Capture.stdout { homesick.invoke 'exec', %w(castle_repo ls -la), pretend: true }
       end
@@ -792,7 +760,7 @@ describe Homesick::CLI do
       it 'does not print status information when quiet is passed' do
         expect(homesick).to receive('say_status').never
         allow(homesick).to receive('system').once
-                .with('ls -la')
+          .with('ls -la')
         Capture.stdout { homesick.invoke 'exec', %w(castle_repo ls -la), quiet: true }
       end
     end
@@ -807,9 +775,7 @@ describe Homesick::CLI do
     it 'executes a command without arguments inside the root of each cloned castle' do
       allow(homesick).to receive('inside_each_castle').exactly(:twice).and_yield('castle_repo').and_yield('another_castle_repo')
       allow(homesick).to receive('say_status').at_least(:once)
-              .with(be_a(String),
-                    be_a(String),
-                    :green)
+        .with(be_a(String), be_a(String), :green)
       allow(homesick).to receive('system').at_least(:once).with('ls')
       Capture.stdout { homesick.exec_all 'ls' }
     end
@@ -817,18 +783,14 @@ describe Homesick::CLI do
     it 'executes a command with arguments inside the root of each cloned castle' do
       allow(homesick).to receive('inside_each_castle').exactly(:twice).and_yield('castle_repo').and_yield('another_castle_repo')
       allow(homesick).to receive('say_status').at_least(:once)
-              .with(be_a(String),
-                    be_a(String),
-                    :green)
+        .with(be_a(String), be_a(String), :green)
       allow(homesick).to receive('system').at_least(:once).with('ls -la')
       Capture.stdout { homesick.exec_all 'ls', '-la' }
     end
 
     it 'raises an error when the method is called without a command' do
       allow(homesick).to receive('say_status').once
-              .with(:error,
-                    be_a(String),
-                    :red)
+        .with(:error, be_a(String), :red)
       allow(homesick).to receive('exit').once.with(1)
       Capture.stdout { homesick.exec_all }
     end
@@ -836,9 +798,7 @@ describe Homesick::CLI do
     context 'pretend' do
       it 'does not execute a command when the pretend option is passed' do
         allow(homesick).to receive('say_status').at_least(:once)
-              .with(be_a(String),
-                    match(/.*Would execute.*/),
-                    :green)
+          .with(be_a(String), match(/.*Would execute.*/), :green)
         expect(homesick).to receive('system').never
         Capture.stdout { homesick.invoke 'exec_all', %w(ls -la), pretend: true }
       end
@@ -848,7 +808,7 @@ describe Homesick::CLI do
       it 'does not print status information when quiet is passed' do
         expect(homesick).to receive('say_status').never
         allow(homesick).to receive('system').at_least(:once)
-                .with('ls -la')
+          .with('ls -la')
         Capture.stdout { homesick.invoke 'exec_all', %w(ls -la), quiet: true }
       end
     end
