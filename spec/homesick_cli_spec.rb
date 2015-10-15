@@ -155,6 +155,14 @@ describe Homesick::CLI do
 
       homesick.clone 'wfarr/dotfiles'
     end
+
+    it 'accepts a destination', :focus do
+      expect(homesick).to receive(:git_clone)
+      .with('https://github.com/wfarr/dotfiles.git',
+            destination: Pathname.new('other-name'))
+
+      homesick.clone 'wfarr/dotfiles', 'other-name'
+    end
   end
 
   describe 'rc' do
