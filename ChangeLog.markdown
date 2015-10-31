@@ -4,6 +4,7 @@
  * Fixed bug when diffing edited files
  * Fixed crashing bug when attempting to diff directories
  * Ensure that messages are escaped correctly on `git commit all`
+
 #1.1.2
  * Added '--force' option to the rc command to bypass confirmation checks when running a .homesickrc file
  * Added a check to make sure that a minimum of Git 1.8.0 is installed. This stops Homesick failing silently if Git is not installed.
@@ -40,19 +41,19 @@
 
 # 0.9.1
  * Fixed small bugs: #35, #40
- 
+
 # 0.9.0
  * Introduce .homesick_subdir #39
- 
+
 # 0.8.1
- *Fixed `homesick list` bug on ruby 2.0 #37
- 
+ * Fixed `homesick list` bug on ruby 2.0 #37
+
 # 0.8.0
  * Introduce commit & push command
-  * commit changes in castle and push to remote
+ * commit changes in castle and push to remote
  * Enable recursive submodule update
  * Git add when track
- 
+
 # 0.7.0
  * Fixed double-cloning #14
  * New option for pull command: --all
