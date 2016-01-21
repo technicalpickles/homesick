@@ -150,7 +150,7 @@ module Homesick
 
     def collision_accepted?(destination, source)
       fail "Arguments must be instances of Pathname, #{destination.class.name} and #{source.class.name} given" unless destination.instance_of?(Pathname) && source.instance_of?(Pathname)
-      options[:force] || shell.file_collision(destination) { source }
+      options[:force] || shell.file_collision(destination) { File.binread(source) }
     end
 
     def each_file(castle, basedir, subdirs)
