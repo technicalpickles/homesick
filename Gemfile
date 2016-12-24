@@ -12,8 +12,6 @@ group :development do
   gem "guard"
   gem "guard-rspec"
   gem "rb-readline", "~> 0.5.0"
-  gem "jeweler", ">= 1.6.2"
-  gem 'coveralls', require: false
   gem "test_construct"
   gem "capture-output", "~> 1.0.0"
   if RbConfig::CONFIG['host_os'] =~ /linux|freebsd|openbsd|sunos|solaris/
@@ -22,7 +20,13 @@ group :development do
   if RbConfig::CONFIG['host_os'] =~ /darwin|mac os/
     gem 'terminal-notifier-guard', '~> 1.6.1'
   end
-  if RUBY_VERSION >= '1.9.2'
-    gem "rubocop"
+  gem "coveralls", require: false
+  gem "rubocop"
+  if RUBY_VERSION < '2.3.0'
+    gem "rack", "< 2"
+    gem "listen", "< 3"
+    gem "jeweler", ">= 1.6.2", "< 2.2"
+  else
+    gem "jeweler", ">= 1.6.2"
   end
 end

@@ -66,6 +66,7 @@ module Homesick
 
     desc 'rc CASTLE', 'Run the .homesickrc for the specified castle'
     method_option :force,
+                  type: :boolean,
                   default: false,
                   desc: 'Evaluate .homesickrc without prompting.'
     def rc(name = DEFAULT_CASTLE_NAME)
@@ -128,6 +129,7 @@ module Homesick
 
     desc 'link CASTLE', 'Symlinks all dotfiles from the specified castle'
     method_option :force,
+                  type: :boolean,
                   default: false,
                   desc: 'Overwrite existing conflicting symlinks without prompting.'
     def link(name = DEFAULT_CASTLE_NAME)
