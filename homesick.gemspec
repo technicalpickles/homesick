@@ -54,7 +54,7 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<thor>, [">= 0.14.0"])
       s.add_development_dependency(%q<rake>, [">= 0.8.7"])
-      s.add_development_dependency(%q<rspec>, ["~> 3.1.0"])
+      s.add_development_dependency(%q<rspec>, ["~> 3.5.0"])
       s.add_development_dependency(%q<guard>, [">= 0"])
       s.add_development_dependency(%q<guard-rspec>, [">= 0"])
       s.add_development_dependency(%q<rb-readline>, ["~> 0.5.0"])
@@ -66,7 +66,7 @@ Gem::Specification.new do |s|
     else
       s.add_dependency(%q<thor>, [">= 0.14.0"])
       s.add_dependency(%q<rake>, [">= 0.8.7"])
-      s.add_dependency(%q<rspec>, ["~> 3.1.0"])
+      s.add_dependency(%q<rspec>, ["~> 3.5.0"])
       s.add_dependency(%q<guard>, [">= 0"])
       s.add_dependency(%q<guard-rspec>, [">= 0"])
       s.add_dependency(%q<rb-readline>, ["~> 0.5.0"])
@@ -79,7 +79,7 @@ Gem::Specification.new do |s|
   else
     s.add_dependency(%q<thor>, [">= 0.14.0"])
     s.add_dependency(%q<rake>, [">= 0.8.7"])
-    s.add_dependency(%q<rspec>, ["~> 3.1.0"])
+    s.add_dependency(%q<rspec>, ["~> 3.5.0"])
     s.add_dependency(%q<guard>, [">= 0"])
     s.add_dependency(%q<guard-rspec>, [">= 0"])
     s.add_dependency(%q<rb-readline>, ["~> 0.5.0"])
@@ -90,4 +90,3 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rubocop>, [">= 0"])
   end
 end
-

@@ -146,7 +146,7 @@ describe Homesick::CLI do
 
     it 'throws an exception when trying to clone a malformed uri like malformed' do
       expect(homesick).not_to receive(:git_clone)
-      expect { homesick.clone 'malformed' }.to raise_error
+      expect { homesick.clone 'malformed' }.to raise_error(RuntimeError)
     end
 
     it 'clones a github repo' do
