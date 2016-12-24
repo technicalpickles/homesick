@@ -20,20 +20,8 @@ group :development do
   if RbConfig::CONFIG['host_os'] =~ /darwin|mac os/
     gem 'terminal-notifier-guard', '~> 1.6.1'
   end
-  if RUBY_VERSION < '2.0.0'
-    gem "addressable", "< 2.5"
-    gem "json", "< 2"
-    gem "coveralls", "< 0.8.6", require: false
-    gem "tins", "< 1.3.5"
-    gem "term-ansicolor", "< 1.3.2"
-    gem "rubocop", "< 0.42"
-  else
-    gem "coveralls", require: false
-    gem "rubocop"
-  end
-  if RUBY_VERSION < '2.1.0'
-    gem "rdoc", "< 5"
-  end
+  gem "coveralls", require: false
+  gem "rubocop"
   if RUBY_VERSION < '2.3.0'
     gem "rack", "< 2"
     gem "listen", "< 3"
