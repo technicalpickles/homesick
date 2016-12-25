@@ -42,7 +42,7 @@ module Homesick
       end
 
       def ln_s(source, destination)
-        source = Pathname.new(source)
+        source = Pathname.new(source).realpath        
         destination = Pathname.new(destination)
         FileUtils.mkdir_p destination.dirname
 
