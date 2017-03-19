@@ -18,7 +18,7 @@ group :development do
     gem 'libnotify'
   end
   if RbConfig::CONFIG['host_os'] =~ /darwin|mac os/
-    gem 'terminal-notifier-guard', '~> 1.6.1'
+    gem 'terminal-notifier-guard', '~> 1.7.0'
   end
   gem "coveralls", require: false
   gem "rubocop"
