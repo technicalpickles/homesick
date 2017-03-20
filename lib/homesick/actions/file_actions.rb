@@ -63,18 +63,14 @@ module Homesick
         case action
         when :identical
           say_status :identical, destination.expand_path, :blue
-        when :symlink_conflict
-          say_status :conflict,
-                     "#{destination} exists and points to #{destination.readlink}",
-                     :red
-
-          if collision_accepted?(destination, source)
-            FileUtils.rm destination
-            FileUtils.ln_s source, destination, force: true unless options[:pretend]
+        when :symlink_conflict, :conflict
+          if action == :conflict
+            say_status :conflict, "#{destination} exists", :red
+          else
+            say_status :conflict,
+                      "#{destination} exists and points to #{destination.readlink}",
+                      :red
           end
-        when :conflict
-          say_status :conflict, "#{destination} exists", :red
-
           if collision_accepted?(destination, source)
             FileUtils.rm_r destination, force: true unless options[:pretend]
             FileUtils.ln_s source, destination, force: true unless options[:pretend]
