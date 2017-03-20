@@ -4,9 +4,9 @@ require 'pathname'
 module Homesick
   # Various utility methods that are used by Homesick
   module Utils
-    QUIETABLE = ['say_status']
+    QUIETABLE = [:say_status]
 
-    PRETENDABLE = ['system']
+    PRETENDABLE = [:system]
 
     QUIETABLE.each do |method_name|
       define_method(method_name) do |*args|
