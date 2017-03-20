@@ -68,8 +68,10 @@ module Homesick
                      "#{destination} exists and points to #{destination.readlink}",
                      :red
 
-          FileUtils.rm destination
-          FileUtils.ln_s source, destination, force: true unless options[:pretend]
+          if collision_accepted?(destination, source)
+            FileUtils.rm destination
+            FileUtils.ln_s source, destination, force: true unless options[:pretend]
+          end
         when :conflict
           say_status :conflict, "#{destination} exists", :red
 
