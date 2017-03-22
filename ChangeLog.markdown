@@ -1,5 +1,11 @@
+#1.1.4
+ * Make sure symlink conflicts are explicitly communicated to a user and symlinks are not silently overwritten
+ * Use real paths of symlinks when linking a castle into home
+ * Fix a problem when in a diff when asking a user to resolve a conflict
+ * Some code refactoring and fixes
+
 #1.1.3
- * Allow a destinaton to be passed when cloning a castle
+ * Allow a destination to be passed when cloning a castle
  * Make sure `homesick edit` opens default editor in the root of the given castle
  * Fixed bug when diffing edited files
  * Fixed crashing bug when attempting to diff directories
