@@ -1,29 +1,29 @@
-#1.1.5
+# 1.1.5
  * Fixed problem with version number being incorrect.
 
-#1.1.4
+# 1.1.4
  * Make sure symlink conflicts are explicitly communicated to a user and symlinks are not silently overwritten
  * Use real paths of symlinks when linking a castle into home
  * Fix a problem when in a diff when asking a user to resolve a conflict
  * Some code refactoring and fixes
 
-#1.1.3
+# 1.1.3
  * Allow a destination to be passed when cloning a castle
  * Make sure `homesick edit` opens default editor in the root of the given castle
  * Fixed bug when diffing edited files
  * Fixed crashing bug when attempting to diff directories
  * Ensure that messages are escaped correctly on `git commit all`
 
-#1.1.2
+# 1.1.2
  * Added '--force' option to the rc command to bypass confirmation checks when running a .homesickrc file
  * Added a check to make sure that a minimum of Git 1.8.0 is installed. This stops Homesick failing silently if Git is not installed.
  * Code refactoring and fixes.
 
-#1.1.0
+# 1.1.0
  * Added exec and exec_all commands to run commands inside one or all clones castles.
  * Code refactoring.
 
-#1.0.0
+# 1.0.0
  * Removed support for Ruby 1.8.7
  * Added a version command
 
