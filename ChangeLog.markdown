@@ -1,3 +1,6 @@
+#1.1.5
+ * Fixed problem with version number being incorrect.
+
 #1.1.4
  * Make sure symlink conflicts are explicitly communicated to a user and symlinks are not silently overwritten
  * Use real paths of symlinks when linking a castle into home
