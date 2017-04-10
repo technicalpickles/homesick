@@ -25,38 +25,37 @@ module Homesick
         exit(1)
       end
       # Hack in support for diffing symlinks
-      self.shell = Thor::Shell::Color.new
-      class << shell
-        def show_diff(destination, content)
-          destination = Pathname.new(destination)
-          if destination.symlink?
-            say "- #{destination.readlink}", :red, true
-            say "+ #{content.expand_path}", :green, true
-          else
-            super
-          end
-        end
+      # Also adds support for checking if destination or content is a directory
+      shell_metaclass = class << shell; self; end
+      shell_metaclass.send(:define_method, :show_diff) do |destination, content|
+        destination = Pathname.new(destination)
+        content = Pathname.new(content)
+        return 'Unable to create diff: destination or content is a directory' if destination.directory? || content.directory?
+        return super(destination, content) unless destination.symlink?
+        say "- #{destination.readlink}", :red, true
+        say "+ #{content.expand_path}", :green, true
       end
     end
 
-    desc 'clone URI', 'Clone +uri+ as a castle for homesick'
-    def clone(uri)
+    desc 'clone URI CASTLE_NAME', 'Clone +uri+ as a castle with name CASTLE_NAME for homesick'
+    def clone(uri, destination=nil)
+      destination = Pathname.new(destination) unless destination.nil?
+
       inside repos_dir do
-        destination = nil
         if File.exist?(uri)
           uri = Pathname.new(uri).expand_path
           fail "Castle already cloned to #{uri}" if uri.to_s.start_with?(repos_dir.to_s)
 
-          destination = uri.basename
+          destination = uri.basename if destination.nil?
 
           ln_s uri, destination
         elsif uri =~ GITHUB_NAME_REPO_PATTERN
-          destination = Pathname.new(uri).basename
+          destination = Pathname.new(uri).basename if destination.nil?
           git_clone "https://github.com/#{Regexp.last_match[1]}.git",
                     destination: destination
         elsif uri =~ /%r([^%r]*?)(\.git)?\Z/ || uri =~ /[^:]+:([^:]+)(\.git)?\Z/
-          destination = Pathname.new(Regexp.last_match[1])
-          git_clone uri
+          destination = Pathname.new(Regexp.last_match[1].gsub(/\.git$/, '')).basename if destination.nil?
+          git_clone uri, destination: destination
         else
           fail "Unknown URI format: #{uri}"
         end
@@ -67,24 +66,19 @@ module Homesick
 
     desc 'rc CASTLE', 'Run the .homesickrc for the specified castle'
     method_option :force,
+                  type: :boolean,
                   default: false,
                   desc: 'Evaluate .homesickrc without prompting.'
     def rc(name = DEFAULT_CASTLE_NAME)
       inside repos_dir do
         destination = Pathname.new(name)
         homesickrc = destination.join('.homesickrc').expand_path
-        if homesickrc.exist?
-          proceed = options[:force] || shell.yes?("#{name} has a .homesickrc. Proceed with evaling it? (This could be destructive)")
-          if proceed
-            say_status 'eval', homesickrc
-            inside destination do
-              eval homesickrc.read, binding, homesickrc.expand_path.to_s
-            end
-          else
-            say_status 'eval skip',
-                       "not evaling #{homesickrc}, #{destination} may need manual configuration",
-                       :blue
-          end
+        return unless homesickrc.exist?
+        proceed = options[:force] || shell.yes?("#{name} has a .homesickrc. Proceed with evaling it? (This could be destructive)")
+        return say_status 'eval skip', "not evaling #{homesickrc}, #{destination} may need manual configuration", :blue unless proceed
+        say_status 'eval', homesickrc
+        inside destination do
+          eval homesickrc.read, binding, homesickrc.expand_path.to_s
         end
       end
     end
@@ -140,6 +134,7 @@ module Homesick
 
     desc 'link CASTLE', 'Symlinks all dotfiles from the specified castle'
     method_option :force,
+                  type: :boolean,
                   default: false,
                   desc: 'Overwrite existing conflicting symlinks without prompting.'
     def link(name = DEFAULT_CASTLE_NAME)
@@ -257,11 +252,10 @@ module Homesick
     desc 'destroy CASTLE', 'Delete all symlinks and remove the cloned repository'
     def destroy(name)
       check_castle_existance name, 'destroy'
+      return unless shell.yes?('This will destroy your castle irreversible! Are you sure?')
 
-      if shell.yes?('This will destroy your castle irreversible! Are you sure?')
-        unlink(name)
-        rm_rf repos_dir.join(name)
-      end
+      unlink(name)
+      rm_rf repos_dir.join(name)
     end
 
     desc 'cd CASTLE', 'Open a new shell in the root of the given castle'
@@ -288,11 +282,11 @@ module Homesick
       end
       check_castle_existance castle, 'open'
       castle_dir = repos_dir.join(castle)
-      say_status "#{ENV['EDITOR']} #{castle_dir.realpath}",
+      say_status "#{castle_dir.realpath}: #{ENV['EDITOR']} .",
                  "Opening the root directory of castle '#{castle}' in editor '#{ENV['EDITOR']}'.",
                  :green
       inside castle_dir do
-        system(ENV['EDITOR'])
+        system("#{ENV['EDITOR']} .")
       end
     end
 

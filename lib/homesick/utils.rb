@@ -1,10 +1,12 @@
 # -*- encoding : utf-8 -*-
+require 'pathname'
+
 module Homesick
   # Various utility methods that are used by Homesick
   module Utils
-    QUIETABLE = ['say_status']
+    QUIETABLE = [:say_status]
 
-    PRETENDABLE = ['system']
+    PRETENDABLE = [:system]
 
     QUIETABLE.each do |method_name|
       define_method(method_name) do |*args|
@@ -33,12 +35,11 @@ module Homesick
     end
 
     def check_castle_existance(name, action)
-      unless castle_dir(name).exist?
-        say_status :error,
-                   "Could not #{action} #{name}, expected #{castle_dir(name)} exist and contain dotfiles",
-                   :red
-        exit(1)
-      end
+      return if castle_dir(name).exist?
+      say_status :error,
+                 "Could not #{action} #{name}, expected #{castle_dir(name)} exist and contain dotfiles",
+                 :red
+      exit(1)
     end
 
     def all_castles
@@ -51,7 +52,7 @@ module Homesick
       end
     end
 
-    def inside_each_castle(&block)
+    def inside_each_castle
       all_castles.each do |git_dir|
         castle = git_dir.dirname
         Dir.chdir castle do # so we can call git config from the right contxt
@@ -135,7 +136,6 @@ module Homesick
     def move_dir_contents(target, dir_path)
       child_files = dir_path.children
       child_files.each do |child|
-
         target_path = target.join(child.basename)
         if target_path.exist?
           if more_recent?(child, target_path) && target.file?
@@ -155,9 +155,9 @@ module Homesick
       first_p.mtime > second_p.mtime && !first_p.symlink?
     end
 
-    def collision_accepted?(destination)
-      fail "Argument must be an instance of Pathname, #{destination.class.name} given" unless destination.instance_of?(Pathname)
-      options[:force] || shell.file_collision(destination) { source }
+    def collision_accepted?(destination, source)
+      fail "Arguments must be instances of Pathname, #{destination.class.name} and #{source.class.name} given" unless destination.instance_of?(Pathname) && source.instance_of?(Pathname)
+      options[:force] || shell.file_collision(destination) { File.binread(source) }
     end
 
     def each_file(castle, basedir, subdirs)
@@ -198,7 +198,7 @@ module Homesick
     end
 
     def unsymlink_each(castle, basedir, subdirs)
-      each_file(castle, basedir, subdirs) do |absolute_path, home_path|
+      each_file(castle, basedir, subdirs) do |_absolute_path, home_path|
         rm_link home_path
       end
     end
