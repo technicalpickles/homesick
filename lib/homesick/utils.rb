@@ -77,6 +77,13 @@ module Homesick
       end
     end
 
+    def fetch_castle(castle)
+      check_castle_existance(castle, 'fetch')
+      inside repos_dir.join(castle) do
+        git_fetch
+      end
+    end
+
     def push_castle(castle)
       check_castle_existance(castle, 'push')
       inside repos_dir.join(castle) do
