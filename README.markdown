@@ -30,7 +30,7 @@ Alternatively, if it's on github, there's a slightly shorter way:
 
 With the castle cloned, you can now link its contents into your home dir:
 
-    homesick symlink pickled-vim
+    homesick link pickled-vim
 
 You can remove symlinks anytime when you don't need them anymore
 
@@ -84,7 +84,7 @@ If you ever want to see what version of homesick you have type:
 
 ## .homesick_subdir
 
-`homesick symlink` basically makes symlink to only first depth in `castle/home`. If you want to link nested files/directories, please use .homesick_subdir.
+`homesick link` basically makes symlink to only first depth in `castle/home`. If you want to link nested files/directories, please use .homesick_subdir.
 
 For example, when you have castle like this:
 
@@ -114,7 +114,7 @@ castle/.homesick_subdir
 
     .config
 
-and run `homesick symlink CASTLE`. The result is:
+and run `homesick link CASTLE`. The result is:
 
     ~
     |-- .config
