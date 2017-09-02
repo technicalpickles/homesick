@@ -37,7 +37,7 @@ module Homesick
     def check_castle_existance(name, action)
       return if castle_dir(name).exist?
       say_status :error,
-                 "Could not #{action} #{name}, expected #{castle_dir(name)} exist and contain dotfiles",
+                 "Could not #{action} #{name}, expected #{castle_dir(name)} to exist and contain dotfiles",
                  :red
       exit(1)
     end
