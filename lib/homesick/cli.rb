@@ -31,7 +31,7 @@ module Homesick
         destination = Pathname.new(destination)
         source = Pathname.new(source)
         return 'Unable to create diff: destination or content is a directory' if destination.directory? || source.directory?
-        return super(destination, source) unless destination.symlink?
+        return super(destination, File.binread(source)) unless destination.symlink?
         say "- #{destination.readlink}", :red, true
         say "+ #{source.expand_path}", :green, true
       end
