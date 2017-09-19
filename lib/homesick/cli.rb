@@ -27,13 +27,13 @@ module Homesick
       # Hack in support for diffing symlinks
       # Also adds support for checking if destination or content is a directory
       shell_metaclass = class << shell; self; end
-      shell_metaclass.send(:define_method, :show_diff) do |destination, content|
+      shell_metaclass.send(:define_method, :show_diff) do |destination, source|
         destination = Pathname.new(destination)
-        content = Pathname.new(content)
-        return 'Unable to create diff: destination or content is a directory' if destination.directory? || content.directory?
-        return super(destination, content) unless destination.symlink?
+        source = Pathname.new(source)
+        return 'Unable to create diff: destination or content is a directory' if destination.directory? || source.directory?
+        return super(destination, source) unless destination.symlink?
         say "- #{destination.readlink}", :red, true
-        say "+ #{content.expand_path}", :green, true
+        say "+ #{source.expand_path}", :green, true
       end
     end
 
