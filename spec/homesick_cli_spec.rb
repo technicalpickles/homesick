@@ -331,6 +331,40 @@ describe Homesick::CLI do
         expect(home.join('.some_dotfile').readlink).to eq(dotfile)
       end
     end
+
+    context 'when call and some files conflict' do
+      it 'shows differences for conflicting text files' do
+        contents = {:castle => 'castle has new content', :home => 'home already has content'}
+
+        dotfile = castle.file('text')
+        File.open(dotfile.to_s, 'w') do |f|
+          f.write contents[:castle]
+        end
+        File.open(home.join('text').to_s, 'w') do |f|
+          f.write contents[:home]
+        end
+        message = Capture.stdout { homesick.shell.show_diff(home.join('text'), dotfile) }
+        expect(message.b).to match(/- ?#{contents[:home]}\n.*\+ ?#{contents[:castle]}$/m)
+      end
+      it 'shows message or differences for conflicting binary files' do
+        # content which contains NULL character, without any parentheses, braces, ...
+        contents = {:castle => (0..255).step(30).map{|e| e.chr}.join(), :home => (0..255).step(30).reverse_each.map{|e| e.chr}.join()}
+
+        dotfile = castle.file('binary')
+        File.open(dotfile.to_s, 'w') do |f|
+          f.write contents[:castle]
+        end
+        File.open(home.join('binary').to_s, 'w') do |f|
+          f.write contents[:home]
+        end
+        message = Capture.stdout { homesick.shell.show_diff(home.join('binary'), dotfile) }
+        if homesick.shell.is_a?(Thor::Shell::Color)
+          expect(message.b).to match(/- ?#{contents[:home]}\n.*\+ ?#{contents[:castle]}$/m)
+        elsif homesick.shell.is_a?(Thor::Shell::Basic)
+          expect(message.b).to match(/^Binary files .+ differ$/)
+        end
+      end
+    end
   end
 
   describe 'unlink' do
