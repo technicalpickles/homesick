@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+require 'fileutils'
 require 'thor'
 
 module Homesick
