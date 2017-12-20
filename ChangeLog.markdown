@@ -1,3 +1,8 @@
+#1.1.6
+ * Makesure the FileUtils is imported correctly to avoid a potential error
+ * Fixes an issue where comparing a diff would not use the content of the new file
+ * Small documentation fixes
+
 # 1.1.5
  * Fixed problem with version number being incorrect.
 
