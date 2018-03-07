@@ -739,6 +739,8 @@ describe Homesick::CLI do
     end
 
     it 'returns an error message when the $EDITOR environment variable is not set' do
+      # Return empty ENV, the test does not call it anyway
+      allow(ENV).to receive(:[]).and_return(nil)
       # Set the default editor to make sure it fails.
       allow(ENV).to receive(:[]).with('EDITOR').and_return(nil)
       expect(homesick).to receive('say_status').once
@@ -747,6 +749,8 @@ describe Homesick::CLI do
     end
 
     it 'returns an error message when the given castle does not exist' do
+      # Return empty ENV, the test does not call it anyway
+      allow(ENV).to receive(:[]).and_return(nil)
       # Set a default just in case none is set
       allow(ENV).to receive(:[]).with('EDITOR').and_return('vim')
       allow(homesick).to receive('say_status').once
