@@ -31,6 +31,6 @@ group :development do
 
   install_if -> { this_ruby < ruby_230 } do
     gem 'listen', '< 3'
-    gem 'rack', '< 2'
+    gem 'rack', '~> 2.0.6'
   end
 end
