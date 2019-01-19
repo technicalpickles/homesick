@@ -2,6 +2,8 @@ module Homesick
   module Actions
     # File-related helper methods for Homesick
     module FileActions
+      protected
+
       def mv(source, destination)
         source = Pathname.new(source)
         destination = Pathname.new(destination + source.basename)
