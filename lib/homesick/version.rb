@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 module Homesick
   # A representation of Homesick's version number in constants, including a
   # String of the entire version number

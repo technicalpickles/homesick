@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 require 'fileutils'
 require 'thor'
 
@@ -33,19 +32,20 @@ module Homesick
         source = Pathname.new(source)
         return 'Unable to create diff: destination or content is a directory' if destination.directory? || source.directory?
         return super(destination, File.binread(source)) unless destination.symlink?
+
         say "- #{destination.readlink}", :red, true
         say "+ #{source.expand_path}", :green, true
       end
     end
 
     desc 'clone URI CASTLE_NAME', 'Clone +uri+ as a castle with name CASTLE_NAME for homesick'
-    def clone(uri, destination=nil)
+    def clone(uri, destination = nil)
       destination = Pathname.new(destination) unless destination.nil?
 
       inside repos_dir do
         if File.exist?(uri)
           uri = Pathname.new(uri).expand_path
-          fail "Castle already cloned to #{uri}" if uri.to_s.start_with?(repos_dir.to_s)
+          raise "Castle already cloned to #{uri}" if uri.to_s.start_with?(repos_dir.to_s)
 
           destination = uri.basename if destination.nil?
 
@@ -58,7 +58,7 @@ module Homesick
           destination = Pathname.new(Regexp.last_match[1].gsub(/\.git$/, '')).basename if destination.nil?
           git_clone uri, destination: destination
         else
-          fail "Unknown URI format: #{uri}"
+          raise "Unknown URI format: #{uri}"
         end
 
         setup_castle(destination)
@@ -75,8 +75,10 @@ module Homesick
         destination = Pathname.new(name)
         homesickrc = destination.join('.homesickrc').expand_path
         return unless homesickrc.exist?
+
         proceed = options[:force] || shell.yes?("#{name} has a .homesickrc. Proceed with evaling it? (This could be destructive)")
         return say_status 'eval skip', "not evaling #{homesickrc}, #{destination} may need manual configuration", :blue unless proceed
+
         say_status 'eval', homesickrc
         inside destination do
           eval homesickrc.read, binding, homesickrc.expand_path.to_s

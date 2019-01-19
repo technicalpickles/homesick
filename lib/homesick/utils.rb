@@ -1,12 +1,11 @@
-# -*- encoding : utf-8 -*-
 require 'pathname'
 
 module Homesick
   # Various utility methods that are used by Homesick
   module Utils
-    QUIETABLE = [:say_status]
+    QUIETABLE = [:say_status].freeze
 
-    PRETENDABLE = [:system]
+    PRETENDABLE = [:system].freeze
 
     QUIETABLE.each do |method_name|
       define_method(method_name) do |*args|
@@ -36,6 +35,7 @@ module Homesick
 
     def check_castle_existance(name, action)
       return if castle_dir(name).exist?
+
       say_status :error,
                  "Could not #{action} #{name}, expected #{castle_dir(name)} to exist and contain dotfiles",
                  :red
@@ -149,7 +149,8 @@ module Homesick
     end
 
     def collision_accepted?(destination, source)
-      fail "Arguments must be instances of Pathname, #{destination.class.name} and #{source.class.name} given" unless destination.instance_of?(Pathname) && source.instance_of?(Pathname)
+      raise "Arguments must be instances of Pathname, #{destination.class.name} and #{source.class.name} given" unless destination.instance_of?(Pathname) && source.instance_of?(Pathname)
+
       options[:force] || shell.file_collision(destination) { source }
     end
 

@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 module Homesick
   module Actions
     # Git-related helper methods for Homesick
@@ -8,18 +7,20 @@ module Homesick
         major: 1,
         minor: 8,
         patch: 0
-      }
+      }.freeze
       STRING = MIN_VERSION.values.join('.')
 
       def git_version_correct?
         info = `git --version`.scan(/(\d+)\.(\d+)\.(\d+)/).flatten.map(&:to_i)
         return false unless info.count == 3
-        current_version = Hash[[:major, :minor, :patch].zip(info)]
-        return true if current_version.eql?(MIN_VERSION)
-        return true if current_version[:major] > MIN_VERSION[:major]
-        return true if current_version[:major] == MIN_VERSION[:major] && current_version[:minor] > MIN_VERSION[:minor]
-        return true if current_version[:major] == MIN_VERSION[:major] && current_version[:minor] == MIN_VERSION[:minor] && current_version[:patch] >= MIN_VERSION[:patch]
-        false
+
+        current_version = Hash[%i[major minor patch].zip(info)]
+        major_equals = current_version.eql?(MIN_VERSION)
+        major_greater = current_version[:major] > MIN_VERSION[:major]
+        minor_greater = current_version[:major] == MIN_VERSION[:major] && current_version[:minor] > MIN_VERSION[:minor]
+        patch_greater = current_version[:major] == MIN_VERSION[:major] && current_version[:minor] == MIN_VERSION[:minor] && current_version[:patch] >= MIN_VERSION[:patch]
+
+        major_equals || major_greater || minor_greater || patch_greater
       end
 
       # TODO: move this to be more like thor's template, empty_directory, etc

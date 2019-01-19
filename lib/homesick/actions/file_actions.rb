@@ -5,9 +5,7 @@ module Homesick
       def mv(source, destination)
         source = Pathname.new(source)
         destination = Pathname.new(destination + source.basename)
-        if destination.exist? && (options[:force] || shell.file_collision(destination) { source })
-          say_status :conflict, "#{destination} exists", :red
-        end
+        say_status :conflict, "#{destination} exists", :red if destination.exist? && (options[:force] || shell.file_collision(destination) { source })
         FileUtils.mv source, destination unless options[:pretend]
       end
 
@@ -42,41 +40,36 @@ module Homesick
         destination = Pathname.new(destination)
         FileUtils.mkdir_p destination.dirname
 
-        action = if destination.symlink? && destination.readlink == source
-                   :identical
-                 elsif destination.symlink?
-                   :symlink_conflict
-                 elsif destination.exist?
-                   :conflict
-                 else
-                   :success
-                 end
+        action = :success
+        action = :identical if destination.symlink? && destination.readlink == source
+        action = :symlink_conflict if destination.symlink?
+        action = :conflict if destination.exist?
 
         handle_symlink_action action, source, destination
       end
 
       def handle_symlink_action(action, source, destination)
-        case action
-        when :identical
+        if action == :identical
           say_status :identical, destination.expand_path, :blue
-        when :symlink_conflict, :conflict
-          if action == :conflict
-            say_status :conflict, "#{destination} exists", :red
-          else
-            say_status :conflict,
-                       "#{destination} exists and points to #{destination.readlink}",
-                       :red
-          end
+          return
+        end
+        message = generate_symlink_message action, source, destination
+        if %i[symlink_conflict conflict].include?(action)
+          say_status :conflict, message, :red
           if collision_accepted?(destination, source)
             FileUtils.rm_r destination, force: true unless options[:pretend]
-            FileUtils.ln_s source, destination, force: true unless options[:pretend]
           end
         else
-          say_status :symlink,
-                     "#{source.expand_path} to #{destination.expand_path}",
-                     :green
-          FileUtils.ln_s source, destination unless options[:pretend]
+          say_status :symlink, message, :green
         end
+        FileUtils.ln_s source, destination, force: true unless options[:pretend]
+      end
+
+      def generate_symlink_message(action, source, destination)
+        message = "#{source.expand_path} to #{destination.expand_path}"
+        message = "#{destination} exists and points to #{destination.readlink}" if action == :symlink_conflict
+        message = "#{destination} exists" if action == :conflict
+        message
       end
     end
   end
