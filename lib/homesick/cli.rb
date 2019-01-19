@@ -136,11 +136,12 @@ module Homesick
     def link(name = DEFAULT_CASTLE_NAME)
       check_castle_existance(name, 'symlink')
 
-      inside castle_dir(name) do
+      castle_path = castle_dir(name)
+      inside castle_path do
         subdirs = subdirs(name)
 
         # link files
-        symlink_each(name, castle_dir(name), subdirs)
+        symlink_each(name, castle_path, subdirs)
 
         # link files in subdirs
         subdirs.each do |subdir|

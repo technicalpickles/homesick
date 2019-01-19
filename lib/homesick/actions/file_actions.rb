@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 module Homesick
   module Actions
     # File-related helper methods for Homesick
@@ -6,13 +5,10 @@ module Homesick
       def mv(source, destination)
         source = Pathname.new(source)
         destination = Pathname.new(destination + source.basename)
-        case
-        when destination.exist? && (options[:force] || shell.file_collision(destination) { source })
+        if destination.exist? && (options[:force] || shell.file_collision(destination) { source })
           say_status :conflict, "#{destination} exists", :red
-          FileUtils.mv source, destination unless options[:pretend]
-        else
-          FileUtils.mv source, destination unless options[:pretend]
         end
+        FileUtils.mv source, destination unless options[:pretend]
       end
 
       def rm_rf(dir)
@@ -24,7 +20,7 @@ module Homesick
         target = Pathname.new(target)
 
         if target.symlink?
-          say_status :unlink, "#{target.expand_path}", :green
+          say_status :unlink, target.expand_path.to_s, :green
           FileUtils.rm_rf target
         else
           say_status :conflict, "#{target} is not a symlink", :red
@@ -42,7 +38,7 @@ module Homesick
       end
 
       def ln_s(source, destination)
-        source = Pathname.new(source).realpath        
+        source = Pathname.new(source).realpath
         destination = Pathname.new(destination)
         FileUtils.mkdir_p destination.dirname
 
@@ -68,8 +64,8 @@ module Homesick
             say_status :conflict, "#{destination} exists", :red
           else
             say_status :conflict,
-                      "#{destination} exists and points to #{destination.readlink}",
-                      :red
+                       "#{destination} exists and points to #{destination.readlink}",
+                       :red
           end
           if collision_accepted?(destination, source)
             FileUtils.rm_r destination, force: true unless options[:pretend]
