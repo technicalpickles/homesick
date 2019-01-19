@@ -154,43 +154,6 @@ module Homesick
       options[:force] || shell.file_collision(destination) { source }
     end
 
-    def each_file(castle, basedir, subdirs)
-      absolute_basedir = Pathname.new(basedir).expand_path
-      inside basedir do
-        files = Pathname.glob('{.*,*}').reject do |a|
-          ['.', '..'].include?(a.to_s)
-        end
-        files.each do |path|
-          absolute_path = path.expand_path
-          castle_home = castle_dir(castle)
-
-          # make ignore dirs
-          ignore_dirs = []
-          subdirs.each do |subdir|
-            # ignore all parent of each line in subdir file
-            Pathname.new(subdir).ascend do |p|
-              ignore_dirs.push(p)
-            end
-          end
-
-          # ignore dirs written in subdir file
-          matched = false
-          ignore_dirs.uniq.each do |ignore_dir|
-            if absolute_path == castle_home.join(ignore_dir)
-              matched = true
-              break
-            end
-          end
-          next if matched
-
-          relative_dir = absolute_basedir.relative_path_from(castle_home)
-          home_path = home_dir.join(relative_dir).join(path)
-
-          yield(absolute_path, home_path)
-        end
-      end
-    end
-
     def unsymlink_each(castle, basedir, subdirs)
       each_file(castle, basedir, subdirs) do |_absolute_path, home_path|
         rm_link home_path
@@ -212,6 +175,42 @@ module Homesick
       end
 
       rc(path)
+    end
+
+    def each_file(castle, basedir, subdirs)
+      absolute_basedir = Pathname.new(basedir).expand_path
+      castle_home = castle_dir(castle)
+      inside basedir do |destination_root|
+        FileUtils.cd(destination_root) unless destination_root == FileUtils.pwd
+        files = Pathname.glob('*', File::FNM_DOTMATCH)
+                        .reject { |a| ['.', '..'].include?(a.to_s) }
+                        .reject { |path| matches_ignored_dir? castle_home, path.expand_path, subdirs }
+        files.each do |path|
+          absolute_path = path.expand_path
+
+          relative_dir = absolute_basedir.relative_path_from(castle_home)
+          home_path = home_dir.join(relative_dir).join(path)
+
+          yield(absolute_path, home_path)
+        end
+      end
+    end
+
+    def matches_ignored_dir?(castle_home, absolute_path, subdirs)
+      # make ignore dirs
+      ignore_dirs = []
+      subdirs.each do |subdir|
+        # ignore all parent of each line in subdir file
+        Pathname.new(subdir).ascend do |p|
+          ignore_dirs.push(p)
+        end
+      end
+
+      # ignore dirs written in subdir file
+      ignore_dirs.uniq.each do |ignore_dir|
+        return true if absolute_path == castle_home.join(ignore_dir)
+      end
+      false
     end
   end
 end
