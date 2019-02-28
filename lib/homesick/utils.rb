@@ -9,8 +9,12 @@ module Homesick
       @home_dir ||= Pathname.new(ENV['HOME'] || '~').realpath
     end
 
+    def xdg_data_dir
+      @xdg_data_dir ||= Pathname.new(ENV['XDG_DATA_HOME'] || home_dir.join('.local', 'share')).realpath
+    end
+
     def repos_dir
-      @repos_dir ||= home_dir.join('.homesick', 'repos').expand_path
+      @repos_dir ||= xdg_data_dir.join('homesick', 'repos').expand_path
     end
 
     def castle_dir(name)
