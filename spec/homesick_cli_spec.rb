@@ -6,7 +6,7 @@ describe Homesick::CLI do
   let(:home) { create_construct }
   after { home.destroy! }
 
-  let(:castles) { home.directory('.homesick/repos') }
+  let(:castles) { home.directory('.local/share/homesick/repos') }
 
   let(:homesick) { Homesick::CLI.new }
 
@@ -104,7 +104,7 @@ describe Homesick::CLI do
       Capture.stderr do
         homesick.clone "file://#{bare_repo}"
       end
-      expect(File.directory?(File.join(home.to_s, '.homesick/repos/dotfiles')))
+      expect(File.directory?(File.join(home.to_s, '.local/share/homesick/repos/dotfiles')))
         .to be_truthy
     end
 
