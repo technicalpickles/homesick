@@ -11,8 +11,14 @@ module Homesick
       @home_dir ||= Pathname.new(Dir.home).realpath
     end
 
+    def data_dir
+      ENV.fetch('HOMESICKDIR', nil).then do |path|
+        path ? Pathname(path).expand_path : home_dir.join('.homesick')
+      end
+    end
+
     def repos_dir
-      @repos_dir ||= home_dir.join('.homesick', 'repos').expand_path
+      @repos_dir ||= data_dir.join('repos').expand_path
     end
 
     def castle_dir(name)
