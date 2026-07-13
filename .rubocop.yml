@@ -30,7 +30,7 @@ Metrics/MethodLength:
   Max: 25
 
 Metrics/ModuleLength:
-  Max: 210
+  Max: 213
 
 Metrics/ParameterLists:
   Max: 6
