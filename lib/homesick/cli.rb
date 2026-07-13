@@ -237,7 +237,8 @@ module Homesick
                  "Opening a new shell in castle '#{castle}'. To return to the original one exit from the new shell.",
                  :green
       inside castle_dir do
-        system(ENV.fetch('SHELL', nil))
+        shell = ENV.fetch('SHELL', nil)
+        system("HOMESICK_SHELL=1 #{shell}") if shell
       end
     end
 
